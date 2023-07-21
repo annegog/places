@@ -1,0 +1,13 @@
+
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: fit-content;
+}
+
+@media screen and (min-width:1024px){
+    .header{
+        height: fit-content;
+    }
+}
