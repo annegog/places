@@ -93,7 +93,8 @@ export default function RegisterPage() {
               <Select
                 options={propertyOptions}
                 placeholder="Choose" 
-                type="select" value={property} onChange={ev => setProperty(ev.target.value)}
+                type="select" value={property} 
+                // onChange={ev => setProperty(ev.target.value)}
                 // multi
                 required
               />
