@@ -30,7 +30,7 @@ export default function RegisterPage(){
                             // sygkrish me to password gia na einai idio
                            />
                     {/* if everything is okay, go to next page */}
-                    <button to={'/registerB'} className="primary">Register</button>
+                    <button className="primary">Register</button>
                     <div className="text-center py-2 text-gray-500">
                         Already a member? <Link className="underline text-black" to={"/login"}>Login now</Link>
                     </div>
