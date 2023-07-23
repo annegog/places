@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-input[type="text"], input[type="password"], input[type="email"]{
+input[type="text"], input[type="password"], input[type="email"], input[type="tel"]{
     @apply w-full border my-2 py-2 px-3 rounded-2xl;
 }
 
@@ -16,12 +16,16 @@ button.primary{
 }
 
 select{
+    color: #001A64;
+}
+/* select{
     @apply rounded-2xl;
 }
+
 select.drop{
     @apply bg-primary p-2 w-full text-white rounded-2xl 
     font-medium text-sm px-5 py-2.5 text-center inline-flex
     focus:ring-2 focus:outline-none items-center
     hover:bg-blue-900
     ;
-}
+} */

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-// import { Select } from "react-dropdown-select";
-import {Select} from "react";
+import { Select } from "react-dropdown-select";
+// import {Select} from "react-select";
 import { useState } from "react";
 import axios from "axios";
 
@@ -9,7 +9,7 @@ export default function RegisterPage() {
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  // const [selectedProperties, setProperty] = useState("");
+  const [selectedProperties, setProperty] = useState("");
   const [phone, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +19,7 @@ export default function RegisterPage() {
       axios.post("/registerB", {
         first_name,
         last_name,
+        property,
         username,
         phone,
         email,
@@ -49,6 +50,13 @@ export default function RegisterPage() {
     // Your database submission logic goes here...
   };
 
+  const customStyles = {    
+    borderRadius: '15px',
+    backgroundColor: "rgba(249, 250, 251)",
+  };
+  
+  
+
   return (
     <div className="mt-4 grow flex items-center justify-around">
       <div className="mt-34">
@@ -65,7 +73,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 id="first_name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                 placeholder="John" value={first_name} onChange={ev => setFirstName(ev.target.value)}
                 required
               />
@@ -80,7 +88,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 id="last_name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                 placeholder="Doe" value={last_name} onChange={ev => setLastName(ev.target.value)}
                 required
               />
@@ -95,12 +103,12 @@ export default function RegisterPage() {
               <input
                 type="text"
                 id="username"
-                className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                className=" bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                 placeholder="username" value={username} onChange={ev => setUsername(ev.target.value)}
                 required
               />
             </div>
-            {/* <div>
+            <div>
               <label
                 for="property"
                 className="block mb-2 text-sm font-medium text-gray-900"
@@ -111,23 +119,25 @@ export default function RegisterPage() {
                 options={propertyOptions}
                 placeholder="Choose"
                 value={propertyOptions.filter(option => selectedProperties.includes(option.value))}
-                onChange={handlePropertyChange}
+                // onChange={handlePropertyChange}
                 multi
+                classNames="bg-gray-50 border-gray-300 text-gray-900 rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                 // required
+                style={customStyles}
               />
-            </div> */}
+            </div> 
             <div>
               <label
                 for="phone"
                 className="block mb-2 text-sm font-medium text-gray-900"
               >
-                Phone Number
+                Phone number
               </label>
               <input
                 type="tel"
                 id="phone"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                placeholder="Phone Number" value={phone} onChange={ev => setPhoneNumber(ev.target.value)}
+                className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                placeholder="Phone number" value={phone} onChange={ev => setPhoneNumber(ev.target.value)}
                 pattern="[0-9]{10}"
                 required
               />
@@ -159,7 +169,7 @@ export default function RegisterPage() {
               type="password"
               id="password"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-              placeholder="•••••••••" value={password} onChange={ev => setPassword(ev.target.value)}
+              placeholder="a1b2c3!" value={password} onChange={ev => setPassword(ev.target.value)}
               required
             />
           </div>
@@ -211,8 +221,8 @@ export default function RegisterPage() {
           </button>
           <div className="text-center py-2 text-gray-700 mb-6">
             Already a member?{" "}
-            <Link className="underline text-gray-700" to={"/login"}>
-              Login Now
+            <Link className="underline text-black" to={"/login"}>
+              Login now
             </Link>
           </div>
         </form>
