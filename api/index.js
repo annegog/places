@@ -42,11 +42,12 @@ app.post('/register', async (req,res) => {
 
 
 app.post('/registerB', async (req,res) => {
-    const {first_name, last_name, username, phone, email, password} = req.body;
+    const {first_name, last_name, username, property, phone, email, password} = req.body;
     const userDoc = await User.create({
         first_name,
         last_name,
         username,
+        property,
         phone,
         email,
         password:bcrypt.hashSync('password, bcryptSalt'),
@@ -55,4 +56,4 @@ app.post('/registerB', async (req,res) => {
     res.json(userDoc);
 });
 
-app.listen(3000);
+app.listen(4000);
