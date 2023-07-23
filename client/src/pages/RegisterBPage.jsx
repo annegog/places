@@ -222,7 +222,7 @@ export default function RegisterPage() {
           <div className="text-center py-2 text-gray-700 mb-6">
             Already a member?{" "}
             <Link className="underline text-black" to={"/login"}>
-              Login now
+              Login Now
             </Link>
           </div>
         </form>
