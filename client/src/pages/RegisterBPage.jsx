@@ -15,14 +15,19 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
 
   function registerUser() {
-    axios.post("/registerB", {
-      first_name,
-      last_name,
-      username,
-      phone,
-      email,
-      password,
-    });
+    try{
+      axios.post("/registerB", {
+        first_name,
+        last_name,
+        username,
+        phone,
+        email,
+        password,
+      });
+      alert('Submision successful!');
+    } catch(e){
+      alert('Registeration FAILED!');
+    }
   }
 
   const propertyOptions = [
