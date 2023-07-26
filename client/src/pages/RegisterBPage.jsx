@@ -9,7 +9,7 @@ export default function RegisterPage() {
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [selectedProperties, setProperty] = useState("");
+  const [selectedProperties, setSelectedProperties] = useState([]);
   const [phone, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,10 +38,21 @@ export default function RegisterPage() {
     { value: "anonymous", label: "Anonymous" },
   ];
 
-  const handlePropertyChange = (selectedOptions) => {
+  // var handlePropertyChange = (selectedOptions) => {
     // Extracting the values from selected options and storing them in the state
-    const selectedValues = selectedOptions.map(option => option.value);
-    setSelectedProperties(selectedValues);
+    // const selectedValues = selectedOptions.map(option => option.value);
+    // setSelectedProperties(selectedValues);
+
+    //mine
+    // console.log('Selected Properties:', selectedProperties);
+    
+    // console.log(selectedOptions);
+    // setSelectedProperties(selectedOptions.value);
+  // };
+
+  const handlePropertyChange = (selectedOptions, event) => {
+    event.preventDefault(); // Prevent the default behavior of the event
+    setSelectedProperties(selectedOptions);
   };
 
   const handleSubmit = () => {
@@ -118,10 +129,10 @@ export default function RegisterPage() {
               <Select
                 options={propertyOptions}
                 placeholder="Choose"
-                value={propertyOptions.filter(option => selectedProperties.includes(option.value))}
-                // onChange={handlePropertyChange}
+                value = {selectedProperties}// value={propertyOptions.filter(option => selectedProperties.includes(option.value))}
+                onChange = {handlePropertyChange}
                 multi
-                classNames="bg-gray-50 border-gray-300 text-gray-900 rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                // classNames="bg-gray-50 border-gray-300 text-gray-900 rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                 // required
                 style={customStyles}
               />
@@ -169,7 +180,7 @@ export default function RegisterPage() {
               type="password"
               id="password"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-              placeholder="a1b2c3!" value={password} onChange={ev => setPassword(ev.target.value)}
+              placeholder="ex. a1b2c3!" value={password} onChange={ev => setPassword(ev.target.value)}
               required
             />
           </div>
