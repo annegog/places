@@ -38,21 +38,16 @@ export default function RegisterPage() {
     { value: "anonymous", label: "Anonymous" },
   ];
 
-  // var handlePropertyChange = (selectedOptions) => {
+  const handlePropertyChange = (selectedOptions) => {
     // Extracting the values from selected options and storing them in the state
-    // const selectedValues = selectedOptions.map(option => option.value);
-    // setSelectedProperties(selectedValues);
+    const selectedValues = selectedOptions.map(option => option.value);
+    setSelectedProperties(selectedValues);
 
-    //mine
+    // mine
     // console.log('Selected Properties:', selectedProperties);
     
     // console.log(selectedOptions);
     // setSelectedProperties(selectedOptions.value);
-  // };
-
-  const handlePropertyChange = (selectedOptions, event) => {
-    event.preventDefault(); // Prevent the default behavior of the event
-    setSelectedProperties(selectedOptions);
   };
 
   const handleSubmit = () => {
@@ -115,7 +110,7 @@ export default function RegisterPage() {
                 type="text"
                 id="username"
                 className=" bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                placeholder="username" value={username} onChange={ev => setUsername(ev.target.value)}
+                placeholder="Username" value={username} onChange={ev => setUsername(ev.target.value)}
                 required
               />
             </div>
