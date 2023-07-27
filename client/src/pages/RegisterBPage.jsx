@@ -14,20 +14,21 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function registerUser() {
+  async function registerUser(ev) {
+    ev.preventDefault();
     try{
-      axios.post("/registerB", {
+      await axios.post("/registerB", {
         first_name,
         last_name,
-        property,
         username,
+        property,
         phone,
         email,
         password,
       });
-      alert('Submision successful!');
+      alert('Submission successful!');
     } catch(e){
-      alert('Registeration FAILED!');
+      alert('Submission FAILED! Try again.');
     }
   }
 
@@ -38,16 +39,21 @@ export default function RegisterPage() {
     { value: "anonymous", label: "Anonymous" },
   ];
 
-  const handlePropertyChange = (selectedOptions) => {
-    // Extracting the values from selected options and storing them in the state
-    const selectedValues = selectedOptions.map(option => option.value);
-    setSelectedProperties(selectedValues);
+  // const handlePropertyChange = (selectedOptions) => {
+  //   // Extracting the values from selected options and storing them in the state
+  //   const selectedValues = selectedOptions.map(option => option.value);
+  //   setSelectedProperties(selectedValues);
 
-    // mine
-    // console.log('Selected Properties:', selectedProperties);
+  //   // mine
+  //   // console.log('Selected Properties:', selectedProperties);
     
-    // console.log(selectedOptions);
-    // setSelectedProperties(selectedOptions.value);
+  //   // console.log(selectedOptions);
+  //   // setSelectedProperties(selectedOptions.value);
+  // };
+
+  const handlePropertyChange = (ev) => {
+    ev.preventDefault();
+    setSelectedProperties(ev.target.value);
   };
 
   const handleSubmit = () => {
@@ -124,10 +130,9 @@ export default function RegisterPage() {
               <Select
                 options={propertyOptions}
                 placeholder="Choose"
-                value = {selectedProperties}// value={propertyOptions.filter(option => selectedProperties.includes(option.value))}
-                onChange = {handlePropertyChange}
+                // value = {selectedProperties}// value={propertyOptions.filter(option => selectedProperties.includes(option.value))}
+                onChange = {handlePropertyChange} // {ev => setSelectedProperties(ev.target.value)}
                 multi
-                // classNames="bg-gray-50 border-gray-300 text-gray-900 rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                 // required
                 style={customStyles}
               />

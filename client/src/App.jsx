@@ -11,6 +11,7 @@ import axios from 'axios';
 import AccountPage from './pages/AccountPage';
 
 axios.defaults.baseURL = 'http://localhost:4000';
+axios.defaults.withCredentials = true;
 
 function App() {
 

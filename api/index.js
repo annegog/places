@@ -1,10 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require("mongoose"); //{ default: mongoose } = require('mongoose');
-require('dotenv').config();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('./models/User.js');
+require('dotenv').config();
 const app = express();
+
+const bcryptSalt = bcrypt.genSaltSync(8);
+const jwtSecret = 'abcdefghijklmnopqrstuvwxyz';
 
 app.use(express.json());
 
