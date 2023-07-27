@@ -21,7 +21,7 @@ export default function RegisterPage() {
         first_name,
         last_name,
         username,
-        property,
+        selectedProperties,
         phone,
         email,
         password,
@@ -39,22 +39,17 @@ export default function RegisterPage() {
     { value: "anonymous", label: "Anonymous" },
   ];
 
-  // const handlePropertyChange = (selectedOptions) => {
-  //   // Extracting the values from selected options and storing them in the state
-  //   const selectedValues = selectedOptions.map(option => option.value);
-  //   setSelectedProperties(selectedValues);
-
-  //   // mine
-  //   // console.log('Selected Properties:', selectedProperties);
-    
-  //   // console.log(selectedOptions);
-  //   // setSelectedProperties(selectedOptions.value);
-  // };
-
-  const handlePropertyChange = (ev) => {
-    ev.preventDefault();
-    setSelectedProperties(ev.target.value);
+  const handlePropertyChange = (selectedOptions) => {
+    // Extracting the values from selected options and storing them in the state
+    const selectedValues = selectedOptions.map(option => option.value);
+    setSelectedProperties(selectedValues);
   };
+
+  // // mine
+  // const handlePropertyChange = (ev) => {
+  //   setSelectedProperties(ev.target.value);
+  //   console.log('Selected Properties:', selectedProperties);
+  // };
 
   const handleSubmit = () => {
     // Here, you can perform any additional actions or submit the selectedProperties to the database
@@ -130,7 +125,7 @@ export default function RegisterPage() {
               <Select
                 options={propertyOptions}
                 placeholder="Choose"
-                // value = {selectedProperties}// value={propertyOptions.filter(option => selectedProperties.includes(option.value))}
+                value={propertyOptions.filter(option => selectedProperties.includes(option.value))} // value = {selectedProperties}
                 onChange = {handlePropertyChange} // {ev => setSelectedProperties(ev.target.value)}
                 multi
                 // required
