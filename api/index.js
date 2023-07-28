@@ -10,7 +10,11 @@ const app = express();
 const bcryptSalt = bcrypt.genSaltSync(8);
 const jwtSecret = 'abcdefghijklmnopqrstuvwxyz';
 
+const cookieParser = require('cookie-parser');
+
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use(cors({
     credentials: true,
@@ -86,5 +90,18 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.get('/profile', (res, req) => {
+    const {token} = req.cookie; //he has cookies
+    if (token){
+        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+            if (err) throw err;
+            const {name, email, _id} = await User.findById(userData.id); //fetch from the database
+            res.json({name, email, _id});
+        });
+    } else {
+        res.json(null);
+    }
+    res.json({token});
+})
 
 app.listen(4000);
