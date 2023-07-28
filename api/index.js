@@ -96,7 +96,7 @@ app.get('/profile', (res, req) => {
         jwt.verify(token, jwtSecret, {}, async (err, userData) => {
             if (err) throw err;
             const {name, email, _id} = await User.findById(userData.id); //fetch from the database
-            res.json({name, email, _id});
+            res.json({name, email, _id}); //i think these should be first_name
         });
     } else {
         res.json(null);
