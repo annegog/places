@@ -125,7 +125,7 @@ export default function RegisterPage() {
               <Select
                 options={propertyOptions}
                 placeholder="Choose"
-                value={propertyOptions.filter(option => selectedProperties.includes(option.value))} // value = {selectedProperties}
+                value={propertyOptions.filter(option => selectedProperties.includes(option.value))} // {selectedProperties}
                 onChange = {handlePropertyChange} // {ev => setSelectedProperties(ev.target.value)}
                 multi
                 // required
