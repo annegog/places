@@ -9,7 +9,8 @@ export default function RegisterPage() {
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [selectedProperties, setSelectedProperties] = useState([]);
+  // const [selectedProperties, setSelectedProperties] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [phone, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +26,7 @@ export default function RegisterPage() {
         first_name,
         last_name,
         username,
-        selectedProperties,
+        selectedOptions,
         phone,
         email,
         password,
@@ -36,18 +37,18 @@ export default function RegisterPage() {
     }
   }
 
-  const propertyOptions = [
-    { value: "administrator", label: "Administator" },
-    { value: "host", label: "Host" },
-    { value: "tenant", label: "Tenant" },
-    { value: "anonymous", label: "Anonymous" },
-  ];
+  // const propertyOptions = [
+  //   { value: "administrator", label: "Administator" },
+  //   { value: "host", label: "Host" },
+  //   { value: "tenant", label: "Tenant" },
+  //   { value: "anonymous", label: "Anonymous" },
+  // ];
 
-  const handlePropertyChange = (selectedOptions) => {
-    // Extracting the values from selected options and storing them in the state
-    const selectedValues = selectedOptions.map(option => option.value);
-    setSelectedProperties(selectedValues);
-  };
+  // const handlePropertyChange = (selectedOptions) => {
+  //   // Extracting the values from selected options and storing them in the state
+  //   const selectedValues = selectedOptions.map(option => option.value);
+  //   setSelectedProperties(selectedValues);
+  // };
 
   // // mine
   // const handlePropertyChange = (ev) => {
@@ -55,17 +56,29 @@ export default function RegisterPage() {
   //   console.log('Selected Properties:', selectedProperties);
   // };
 
-  const handleSubmit = () => {
-    // Here, you can perform any additional actions or submit the selectedProperties to the database
-    console.log('Selected Properties:', selectedProperties);
-    // Your database submission logic goes here...
-  };
-
-  const customStyles = {    
-    borderRadius: '15px',
-    backgroundColor: "rgba(249, 250, 251)",
-  };
   
+    const handleOptionChange = (event) => {
+      const optionValue = event.target.value;
+      if (event.target.checked) {
+        setSelectedOptions((prevSelected) => [...prevSelected, optionValue]);
+      } else {
+        setSelectedOptions((prevSelected) => prevSelected.filter((option) => option !== optionValue));
+      }
+    };
+
+
+  // const handleSubmit = () => {
+  //   // Here, you can perform any additional actions or submit the selectedProperties to the database
+  //   console.log('Selected Properties:', selectedProperties);
+  //   // Your database submission logic goes here...
+  // };
+
+  // const customStyles = {    
+  //   borderRadius: '15px',
+  //   backgroundColor: "rgba(249, 250, 251)",
+  // };
+
+  //for password
   const handlePasswordChange = (ev) => {
     const newPassword = ev.target.value;
     setPassword(newPassword);
@@ -137,38 +150,7 @@ export default function RegisterPage() {
                 required
               />
             </div>
-            <div>
-              <label
-                for="property"
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
-                Choose Property
-              </label>
-              <Select
-                options={propertyOptions}
-                placeholder="Choose"
-                value={propertyOptions.filter(option => selectedProperties.includes(option.value))} // {selectedProperties}
-                // onChange = {handlePropertyChange} // {ev => setSelectedProperties(ev.target.value)}
-                multi
-                // required
-                style={customStyles}
-              />
-              {/* <select
-                className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                // options={propertyOptions}
-                // placeholder="Choose"
-                value={selectedProperties}
-                onChange = {ev => setSelectedProperties(ev.target.value)}
-                // multi
-                required
-                // style={customStyles}
-              >
-                <option value="administator">Administator</option>
-                <option value="host">Host</option>
-                <option value="tenant">Tenant</option>
-                <option value="anonymous">Anonymous</option>
-              </select> */}
-            </div> 
+
             <div>
               <label
                 for="phone"
@@ -185,7 +167,44 @@ export default function RegisterPage() {
                 required
               />
             </div>
+
+            <div>
+              <label
+                for="property"
+                className="block mb-2 text-sm font-medium text-gray-900"
+              >
+                Choose Property
+              </label>
+        
+              <div className="flex w-full">
+                
+                <label className="w-1/2 mr-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block  p-2.5">
+                  <input
+                    type="checkbox"
+                    value="host"
+                    checked={selectedOptions.includes('host')}
+                    onChange={handleOptionChange}
+                  />
+                  {/* Host */}
+                  <span className="ml-2">Host</span>
+                </label>
+                <label className=" w-1/2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block  p-2.5">
+                  <input
+                    type="checkbox"
+                    value="tenant"
+                    checked={selectedOptions.includes('tenant')}
+                    onChange={handleOptionChange}
+                  />
+                  {/* Tenant */}
+                  <span className="ml-2">Tenant</span>
+                </label>
+                
+              </div>
+            </div> 
+
           </div>
+
+
           <div class="mb-6">
             <label
               for="email"
@@ -201,6 +220,7 @@ export default function RegisterPage() {
               required
             />
           </div>
+
           <div class="mb-6">
             <label
               for="password"
@@ -217,6 +237,7 @@ export default function RegisterPage() {
             />
             {!passwordsMatch && <p className="text-red-500 text-xs">Passwords do not match!</p>}
           </div>
+
           <div class="mb-6">
             <label
               for="confirm_password"
@@ -234,6 +255,7 @@ export default function RegisterPage() {
             ></input>
             {!passwordsMatch && <p className="text-red-500 text-xs">Passwords do not match!</p>}
           </div>
+
           {/* <div class="flex items-start mb-6">
             <div class="flex items-center h-5">
               <input
