@@ -126,11 +126,26 @@ export default function RegisterPage() {
                 options={propertyOptions}
                 placeholder="Choose"
                 value={propertyOptions.filter(option => selectedProperties.includes(option.value))} // {selectedProperties}
-                onChange = {handlePropertyChange} // {ev => setSelectedProperties(ev.target.value)}
+                // onChange = {handlePropertyChange} // {ev => setSelectedProperties(ev.target.value)}
                 multi
                 // required
                 style={customStyles}
               />
+              {/* <select
+                className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                // options={propertyOptions}
+                // placeholder="Choose"
+                value={selectedProperties}
+                onChange = {ev => setSelectedProperties(ev.target.value)}
+                // multi
+                required
+                // style={customStyles}
+              >
+                <option value="administator">Administator</option>
+                <option value="host">Host</option>
+                <option value="tenant">Tenant</option>
+                <option value="anonymous">Anonymous</option>
+              </select> */}
             </div> 
             <div>
               <label
