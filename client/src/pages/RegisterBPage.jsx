@@ -14,6 +14,10 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
+
+
   async function registerUser(ev) {
     ev.preventDefault();
     try{
@@ -62,12 +66,30 @@ export default function RegisterPage() {
     backgroundColor: "rgba(249, 250, 251)",
   };
   
-  
+  const handlePasswordChange = (ev) => {
+    const newPassword = ev.target.value;
+    setPassword(newPassword);
+
+    // Check if passwords match immediately as the user types
+    setPasswordsMatch(newPassword === confirmPassword || confirmPassword === '');
+  };
+
+  const handleConfirmPasswordChange = (ev) => {
+    const newConfirmPassword = ev.target.value;
+    setConfirmPassword(newConfirmPassword);
+
+    // Check if passwords match immediately as the user types
+    setPasswordsMatch(password === newConfirmPassword);
+  };
+
+  // Determine if the submit button should be disabled
+  const isSubmitDisabled = password === '' || confirmPassword === '' || !passwordsMatch;
 
   return (
     <div className="mt-4 grow flex items-center justify-around">
       <div className="mt-34">
         <h1 className="text-4xl text-center mt-6">Create an account</h1>
+          <p className="text-xs text-center text-gray-900">All fields are required!</p>
           <form  onSubmit={registerUser}>
           <div class="grid gap-4 mb-6 md:grid-cols-2 mt-6">
             <div>
@@ -190,11 +212,12 @@ export default function RegisterPage() {
               type="password"
               id="password"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-              placeholder="ex. a1b2c3!" value={password} onChange={ev => setPassword(ev.target.value)}
+              placeholder="ex. a1b2c3!" value={password} onChange={handlePasswordChange}
               required
             />
+            {!passwordsMatch && <p className="text-red-500 text-xs">Passwords do not match!</p>}
           </div>
-          {/* <div class="mb-6">
+          <div class="mb-6">
             <label
               for="confirm_password"
               className="block mb-2 text-sm font-medium text-gray-900"
@@ -205,12 +228,13 @@ export default function RegisterPage() {
               type="password"
               id="confirm_password"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="•••••••••"
+              placeholder="your password again!" value={confirmPassword} onChange={handleConfirmPasswordChange}
             //   ELEGXOS TOY PASSWORD
               required
             ></input>
+            {!passwordsMatch && <p className="text-red-500 text-xs">Passwords do not match!</p>}
           </div>
-          <div class="flex items-start mb-6">
+          {/* <div class="flex items-start mb-6">
             <div class="flex items-center h-5">
               <input
                 id="remember"
@@ -233,8 +257,10 @@ export default function RegisterPage() {
               </a>
             </label>
           </div> */}
+          
           <button
             type="submit" 
+            disabled={isSubmitDisabled}
             // onClick={handleSubmit}
             className="primary hover:bg-blue-900 focus:ring-2 focus:outline-none"
           >
