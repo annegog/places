@@ -37,29 +37,20 @@ app.get('/test', (req,res) => {
 // wZPJCkcvDJZj7dTJ
 // 2n0ZeUXZlp7OLVrr
 
+
 app.post('/register', async (req,res) => {
-    const {name, email, password} = req.body;
-    const userDoc = await User.create({
-        name,
-        email,
-        password:bcrypt.hashSync('password, bcryptSalt'),
-    });
-
-    res.json(userDoc);
-});
-
-
-app.post('/registerB', async (req,res) => {
-    const {first_name, last_name, username, selectedProperties, phone, email, password} = req.body;
+    const {first_name, last_name, username, phone, email, password, host, tenant} = req.body;
     try{
         const userDoc = await User.create({
             first_name,
             last_name,
             username,
-            selectedProperties,
+            // selectedProperties,
             phone,
             email,
             password:bcrypt.hashSync('password, bcryptSalt'),
+            host,
+            tenant
         });
         res.json(userDoc);
     } catch(e){
