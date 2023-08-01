@@ -45,10 +45,9 @@ app.post('/register', async (req,res) => {
             first_name,
             last_name,
             username,
-            // selectedProperties,
             phone,
             email,
-            password:bcrypt.hashSync('password, bcryptSalt'),
+            password:bcrypt.hashSync(password, bcryptSalt),
             host,
             tenant
         });
