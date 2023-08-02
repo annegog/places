@@ -41,7 +41,7 @@ export default function LoginPage() {
             type="email"
             placeholder="your@email.com"
             value={email}
-            onChange={(ev) => setEmail(ev.target.value)}
+            onChange={ev => setEmail(ev.target.value)}
             required
           />
           <label for="password" className="text-sm font-medium text-gray-900">
@@ -51,7 +51,7 @@ export default function LoginPage() {
             type="password"
             placeholder="password"
             value={password}
-            onChange={(ev) => setPassword(ev.target.value)}
+            onChange={ev => setPassword(ev.target.value)}
             required
           />
           <button className="primary">Login</button>

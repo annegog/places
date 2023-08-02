@@ -41,7 +41,7 @@ export default function Header(){
                     </div>
                     {!!user && (
                         <div>
-                            {user.name}
+                            {user.first_name}
                         </div>
                     )}
                 </Link>

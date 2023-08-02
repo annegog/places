@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require("mongoose"); //{ default: mongoose } = require('mongoose');
+const mongoose = require("mongoose"); 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User.js');
@@ -21,7 +21,6 @@ app.use(cors({
     origin: 'http://localhost:5173',
 }))
 
-// console.log("mongodb+srv://places:2n0ZeUXZlp7OLVrr@cluster0.blhlj9j.mongodb.net/?retryWrites=true&w=majority")
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => {
   console.log('Connected to MongoDB');
@@ -59,12 +58,11 @@ app.post('/register', async (req,res) => {
 
 
 app.post('/login', async (req, res) => {
-    mongoose.connect(process.env.MONGO_URL);
     const {email, password} = req.body;
-    const userDoc = await User.findOne({email});
-    if (userDoc) {      
-        const passOk = bcrypt.compareSync(password, userDoc.password);
-        if (passOk) {  
+    const userDoc = await User.findOne({email}); 
+    if (userDoc) {   
+        const passOK = bcrypt.compareSync(password, userDoc.password);
+        if (passOK) {  
             jwt.sign({
                 email:userDoc.email,
                 id:userDoc._id
@@ -73,20 +71,20 @@ app.post('/login', async (req, res) => {
                 res.cookie('token', token).json(userDoc);
               });
         } else {
-          res.status(422).json('pass not ok');
+          res.status(422).json('Wrong password');
         }
     } else {
-        res.json('not found');
+        res.json('User not found');
     }
 });
 
-app.get('/profile', (res, req) => {
-    const {token} = req.cookie; //he has cookies
+app.get('/profile', (req, res) => {
+    const {token} = req.cookies;
     if (token){
         jwt.verify(token, jwtSecret, {}, async (err, userData) => {
             if (err) throw err;
-            const {name, email, _id} = await User.findById(userData.id); //fetch from the database
-            res.json({name, email, _id}); //i think these should be first_name
+            const {first_name, email, _id} = await User.findById(userData.id); //fetch from the database
+            res.json({first_name, email, _id}); 
         });
     } else {
         res.json(null);
