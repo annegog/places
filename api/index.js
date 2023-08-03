@@ -89,7 +89,7 @@ app.get('/profile', (req, res) => {
     } else {
         res.json(null);
     }
-    res.json({token});
+    // res.json({token});
 })
 
 app.listen(4000);
