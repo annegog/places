@@ -4,7 +4,7 @@ import axios from "axios";
 import { UserContext } from "../UserContext";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
 
@@ -14,7 +14,7 @@ export default function LoginPage() {
     ev.preventDefault();
     try {
       const {data} = await axios.post("/login", {
-        email,
+        username, //email,
         password,
       });
       setUser(data);
@@ -35,13 +35,13 @@ export default function LoginPage() {
         <h1 className="text-4xl text-center mt-6">Login</h1>
         <form className="max-w-md mx-auto" onSubmit={handleLogin}>
           <label for="email" className="text-sm font-medium text-gray-900">
-            Email
+            Username
           </label>
           <input
-            type="email"
-            placeholder="your@email.com"
-            value={email}
-            onChange={ev => setEmail(ev.target.value)}
+            type="text"
+            placeholder="username"
+            value={username}
+            onChange={ev => setUsername(ev.target.value)}
             required
           />
           <label for="password" className="text-sm font-medium text-gray-900">

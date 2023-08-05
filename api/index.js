@@ -58,13 +58,13 @@ app.post('/register', async (req,res) => {
 
 
 app.post('/login', async (req, res) => {
-    const {email, password} = req.body;
-    const userDoc = await User.findOne({email}); 
+    const {username, password} = req.body;
+    const userDoc = await User.findOne({username}); 
     if (userDoc) {   
         const passOK = bcrypt.compareSync(password, userDoc.password);
         if (passOK) {  
             jwt.sign({
-                email:userDoc.email,
+                email:userDoc.email, //should this be changed??
                 id:userDoc._id
               }, jwtSecret, {}, (err,token) => {
                 if (err) throw err;
@@ -83,8 +83,8 @@ app.get('/profile', (req, res) => {
     if (token){
         jwt.verify(token, jwtSecret, {}, async (err, userData) => {
             if (err) throw err;
-            const {first_name, email, _id} = await User.findById(userData.id); //fetch from the database
-            res.json({first_name, email, _id}); 
+            const {username, email, _id} = await User.findById(userData.id); //fetch from the database
+            res.json({username, email, _id}); 
         });
     } else {
         res.json(null);
