@@ -34,8 +34,31 @@ export default function RegisterPage() {
         tenant
       });
       alert('Submission successful!');
+      //redirect as logged in-else to login!!!!!!!!
     } catch(e){
-      alert('Submission FAILED! Try again.');
+      // alert('Submission FAILED! Try again.');
+      if (e.response) {
+        if (e.response.status === 422) {
+          const errorCode = e.response.data?.code; // Use optional chaining to handle undefined data.code
+          if (errorCode === 11000) {
+            const keyPattern = e.response.data?.keyPattern;
+            const keyValue = e.response.data?.keyValue;
+            if (keyPattern.username === 1) {
+              alert(`Username "${keyValue.username}" ALREADY been used! Please try a different one.`);
+            } else if (keyPattern.email === 1) {
+              alert(`Email "${keyValue.email}" ALREADY been used! Please try a different one.`);
+            } else {
+              alert("Submission FAILED: Unknown error.");
+            }
+          } else {
+            alert("Submission FAILED: Unknown error.");
+          }
+        } else {
+          alert("Submission FAILED: " + e.response.statusText);
+        }
+      } else {
+        alert("Submission FAILED: " + e.message);
+      }
     }
   }
   

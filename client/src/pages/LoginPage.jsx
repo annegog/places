@@ -18,10 +18,20 @@ export default function LoginPage() {
         password,
       });
       setUser(data);
-      alert("Login successful");
+      // alert("Login successful");
       setRedirect(true);
     } catch (e) {
-      alert("Login FAILD! Try again.");
+      if (e.response) {
+        if (e.response.status === 422) {
+          alert("Your password is WRONG! Try again.");
+        } else if (e.response.status === 404) {
+          alert("Your username is WRONG! Try again.");
+        } else {
+          alert("Login FAILED! Try again.");
+        }
+      } else {
+        alert("Login FAILED: " + e.message);
+      }
     }
   }
 

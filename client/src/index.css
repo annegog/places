@@ -18,3 +18,10 @@ button.primary{
 select{
     color: #001A64;
 }
+
+.account-navigation{
+    /* background-color: #F6C6BD; */
+    /* border-color: #ADDFFF; */
+    background-color: #001A64
+    /* #ADDFFF #F6C6BD */
+}

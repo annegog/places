@@ -71,10 +71,10 @@ app.post('/login', async (req, res) => {
                 res.cookie('token', token).json(userDoc);
               });
         } else {
-          res.status(422).json('Wrong password');
+          res.status(422).json('Wrong password'); //we should put the apropriate messages for the user
         }
     } else {
-        res.json('User not found');
+        res.status(404).json('User not found');  //we should put the apropriate messages for the user
     }
 });
 
@@ -90,6 +90,11 @@ app.get('/profile', (req, res) => {
         res.json(null);
     }
     // res.json({token});
-})
+});
+
+app.post('/logout', (req, res) => {
+    res.cookie('token', '').json(true);
+});
+
 
 app.listen(4000);

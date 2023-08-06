@@ -6,7 +6,7 @@ const UserSchema = new Schema({
     last_name: String,
     username: {type:String, unique:true},
     phone: Number,
-    email: {type:String, unique:true},
+    email: String,
     password: String,
     host: Boolean,
     tenant: Boolean
