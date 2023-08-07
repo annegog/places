@@ -15,6 +15,11 @@ button.primary{
     @apply bg-primary p-2 w-full text-white rounded-2xl;
 }
 
+button.add{
+    background-color: #769ABE;
+    @apply p-2 text-white text-center rounded-2xl px-10 justify-around;
+}
+
 select{
     color: #001A64;
 }
