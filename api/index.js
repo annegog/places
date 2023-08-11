@@ -11,10 +11,11 @@ const bcryptSalt = bcrypt.genSaltSync(8);
 const jwtSecret = 'abcdefghijklmnopqrstuvwxyz';
 
 const cookieParser = require('cookie-parser');
+const imageDownloader = require('image-downloader');
 
 app.use(express.json());
-
 app.use(cookieParser());
+app.use('/Uploads', express.static(__dirname+'/Uploads'));
 
 app.use(cors({
     credentials: true,
@@ -96,5 +97,18 @@ app.post('/logout', (req, res) => {
     res.cookie('token', '').json(true);
 });
 
-
+app.post('/upload-by-link', async (req,res) =>{
+    const {link} = req.body;
+    const newFile = 'photo_'+ Date.now()+'.jpg';
+    try {
+        await imageDownloader.image({
+            url: link,
+            dest: __dirname + '/Uploads/' + newFile,
+        });
+        res.json(newFile);
+    } catch (error) {
+        console.error('Error downloading image:', error);
+        res.status(500).json({ error: 'Image download failed' });
+    }
+})
 app.listen(4000);

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 import Perks from "../Perks";
+import Image from "../Image";
+
 
 export default function PlacesPage() {
   const { action } = useParams();
@@ -19,10 +22,21 @@ export default function PlacesPage() {
     return <h2 className="text-xl mt-4">{text}</h2>;
   }
 
-  function addPhotoByLink(){
-    
+  async function addPhotoByLink(ev) {
+    ev.preventDefault();
+    try {
+      const { date: filename } = await axios.post("/upload-by-link", {
+        link: photoLink,
+      });
+      setAddedPhotos((prev) => {
+        return [...prev, filename];
+      });
+      console.log("Image uploaded:", filename.data);
+    } catch (error) {
+      console.error("Error uploading the image:", error);
+    }
+    setPhotoLink("");
   }
-
   return (
     <div>
       {action !== "new" && (
@@ -72,9 +86,21 @@ export default function PlacesPage() {
                 onChange={(ev) => setPhotoLink(ev.target.value)}
                 placeholder={"Add using a link ... jpg"}
               />
-              <button className="add text-center">Add Photo</button>
+              <button onClick={addPhotoByLink} className="add text-center">
+                Add Photo
+              </button>
             </div>
-            <div className="mt-2 grid grid-cols-3 lg:grid-cols-6 md:grid-cols-4">
+            <div className="mt-2 grid gap-2 grid-cols-3 lg:grid-cols-6 md:grid-cols-4">
+              {addedPhotos.length > 0 &&
+                addedPhotos.map((filename) => (
+                  <div className="h-32 flex relative" key={filename}>
+                    <img
+                      className="rounded-2xl w-full object-cover"
+                      src={'http://http://localhost:4000/Uploads/'+ filename}
+                      alt=""
+                    />
+                  </div>
+                ))}
               <button className="flex justify-center border bg-transparent rounded-xl p-8 text-2xl text-gray-450 ">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
