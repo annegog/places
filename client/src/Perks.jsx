@@ -1,8 +1,17 @@
 export default function Perk({selected, onChange}) {
+  function handleCheckBox(ev) {
+    const {checked,name} = ev.target;
+    if (checked) {
+      onChange([...selected,name]);
+    } else {
+      onChange([...selected.filter(selectedName => selectedName !== name)]);
+    }
+  }
+  
   return (
     <>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" />
+        <input type="checkbox" name="wifi" onClick={handleCheckBox}/>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -21,7 +30,7 @@ export default function Perk({selected, onChange}) {
         <span>Wifi</span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" />
+        <input type="checkbox" name="parkinig" onClick={handleCheckBox}/>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -39,7 +48,7 @@ export default function Perk({selected, onChange}) {
         <span>Parking spot</span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" />
+        <input type="checkbox" name="pets" onClick={handleCheckBox}/>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -58,7 +67,7 @@ export default function Perk({selected, onChange}) {
         <span>Pets Allowed</span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" />
+        <input type="checkbox" name="ac" onClick={handleCheckBox}/>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -77,7 +86,7 @@ export default function Perk({selected, onChange}) {
         <span>AC</span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" />
+        <input type="checkbox" name="enterns" onClick={handleCheckBox}/>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -96,7 +105,7 @@ export default function Perk({selected, onChange}) {
         <span>Private enterns </span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" />
+        <input type="checkbox" name="tv" onClick={handleCheckBox}/>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

@@ -12,6 +12,8 @@ const jwtSecret = 'abcdefghijklmnopqrstuvwxyz';
 
 const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
+const multer = require('multer');
+const fs = require('fs'); 
 
 app.use(express.json());
 app.use(cookieParser());
@@ -110,5 +112,22 @@ app.post('/upload-by-link', async (req,res) =>{
         console.error('Error downloading image:', error);
         res.status(500).json({ error: 'Image download failed' });
     }
-})
+});
+
+const photosMiddleware = multer({dest:'tmp/'})
+app.post('/upload-photos', photosMiddleware.array('photos', 50), async (req,res) =>{
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+        const {path,originalname} = req.files[i];
+        const parts = originalname.split('.');
+        const ext = parts[parts.length-1];
+        const newPath = path + '_' + ext;
+        fs.renameSync(path,newPath);
+        uploadedFiles.push(newPath.replace('Uploads/', ''));
+        // const url = await uploadToS3(path, originalname, mimetype);
+        // uploadedFiles.push(url);
+    }
+    res.json(uploadedFiles);
+});
+
 app.listen(4000);

@@ -4,7 +4,6 @@ import axios from "axios";
 import Perks from "../Perks";
 import Image from "../Image";
 
-
 export default function PlacesPage() {
   const { action } = useParams();
   const [title, setTitle] = useState("");
@@ -37,6 +36,31 @@ export default function PlacesPage() {
     }
     setPhotoLink("");
   }
+
+  function uploadPhoto(ev) {
+    ev.preventDefault();
+    try {
+      const files = ev.target.files;
+      const data = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        data.append("photos", files[i]);
+      }
+      axios
+        .post("/upload-photos", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((response) => {
+          const { data: filename } = response;
+          onChange((prev) => {
+            return [...prev, ...filename];
+          });
+          console.log("Image uploaded from your device:", files);
+        });
+    } catch (error) {
+      console.error("Error uploading the photo from your device:", error);
+    }
+  }
+
   return (
     <div>
       {action !== "new" && (
@@ -90,18 +114,20 @@ export default function PlacesPage() {
                 Add Photo
               </button>
             </div>
+            <input type="file" multiple className="hidden" />
             <div className="mt-2 grid gap-2 grid-cols-3 lg:grid-cols-6 md:grid-cols-4">
               {addedPhotos.length > 0 &&
                 addedPhotos.map((filename) => (
                   <div className="h-32 flex relative" key={filename}>
                     <img
                       className="rounded-2xl w-full object-cover"
-                      src={'http://http://localhost:4000/Uploads/'+ filename}
+                      src={"http://localhost:4000/Uploads/" + filename}
                       alt=""
                     />
                   </div>
                 ))}
-              <button className="flex justify-center border bg-transparent rounded-xl p-8 text-2xl text-gray-450 ">
+              <label className="cursor-pointer flex justify-center border bg-transparent rounded-xl p-8 text-2xl text-gray-450 ">
+                <input type="file" className="hidden" onChange={uploadPhoto} />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -117,7 +143,7 @@ export default function PlacesPage() {
                   />
                 </svg>
                 Upload
-              </button>
+              </label>
             </div>
             {inputHeader("Description")}
             <textarea
