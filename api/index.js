@@ -114,14 +114,14 @@ app.post('/upload-by-link', async (req,res) =>{
     }
 });
 
-const photosMiddleware = multer({dest:'tmp/'})
+const photosMiddleware = multer({dest:'Uploads/'})
 app.post('/upload-photos', photosMiddleware.array('photos', 50), async (req,res) =>{
     const uploadedFiles = [];
     for (let i = 0; i < req.files.length; i++) {
         const {path,originalname} = req.files[i];
         const parts = originalname.split('.');
         const ext = parts[parts.length-1];
-        const newPath = path + '_' + ext;
+        const newPath = path + '.' + ext;
         fs.renameSync(path,newPath);
         uploadedFiles.push(newPath.replace('Uploads/', ''));
         // const url = await uploadToS3(path, originalname, mimetype);
