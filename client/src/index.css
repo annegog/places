@@ -17,6 +17,15 @@ button.primary{
     @apply bg-primary p-2 w-full text-white rounded-2xl;
 }
 
+.center-container {
+    display: grid;
+    place-items: center; /* Center both horizontally and vertically */
+  }
+button.saveButton{
+    background-color: #001A64;
+    @apply bg-primary p-2 px-40 justify-center text-white rounded-2xl;
+}
+
 button.add{
     background-color: #769ABE;
     @apply text-white text-center rounded-2xl w-40 justify-around;
