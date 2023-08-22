@@ -15,6 +15,8 @@ const PlaceSchema = new Schema({
     numBedrooms: Number,
     maxBeds: Number,
     numBaths: Number,
+    area: Number,
+    minDays: Number
 });
 
 const PlaceModel = mongoose.model('Place', PlaceSchema);

@@ -20,15 +20,16 @@ button.primary{
 .center-container {
     display: grid;
     place-items: center; /* Center both horizontally and vertically */
-  }
+}
+
 button.saveButton{
     background-color: #001A64;
     @apply bg-primary p-2 px-40 justify-center text-white rounded-2xl;
 }
 
 button.add{
-    background-color: #769ABE;
-    @apply text-white text-center rounded-2xl w-40 justify-around;
+    background-color:#769ABE;
+    @apply text-white text-center rounded-2xl w-40 py-0.5 justify-around;
 }
 
 select{
@@ -38,6 +39,6 @@ select{
 .account-navigation{
     /* background-color: #F6C6BD; */
     /* border-color: #ADDFFF; */
-    background-color: #001A64
+    background-color:#769ABE;
     /* #ADDFFF #F6C6BD */
 }

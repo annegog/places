@@ -4,6 +4,8 @@ import axios from "axios";
 import Perks from "../Perks";
 import Image from "../Image";
 
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
+
 export default function PlacesPage() {
   const { action } = useParams();
   const [title, setTitle] = useState("");
@@ -20,6 +22,8 @@ export default function PlacesPage() {
   const [numBaths, setNumBaths] = useState(1);
   const [numBedrooms, setNumBedrooms] = useState(1);
   const [area, setArea] = useState(50);
+  const [minDays, setMinDays] = useState(2);
+  const [price, setPrice] = useState(1);
 
   function inputHeader(text) {
     return <h2 className="text-xl mt-4">{text}</h2>;
@@ -49,9 +53,11 @@ export default function PlacesPage() {
       for (let i = 0; i < files.length; i++) {
         data.append("photos", files[i]);
       }
-      axios.post("/upload-photos", data, {
+      axios
+        .post("/upload-photos", data, {
           headers: { "Content-Type": "multipart/form-data" },
-        }).then(response => {
+        })
+        .then((response) => {
           const { data: filenames } = response;
           setAddedPhotos((prev) => {
             return [...prev, ...filenames];
@@ -95,7 +101,7 @@ export default function PlacesPage() {
               type="text"
               value={title}
               onChange={(ev) => setTitle(ev.target.value)}
-              placeholder="title, for example: My exotic house"
+              placeholder="for example: My exotic house"
             />
 
             {inputHeader("Address")}
@@ -105,9 +111,9 @@ export default function PlacesPage() {
               onChange={(ev) => setAddress(ev.target.value)}
               placeholder="address"
             />
-            
+
             {inputHeader("Extra informations")}
-              <div className="mt-2 grid gap-2 sm:grid-cols-3">
+            <div className="mt-2 grid gap-2 sm:grid-cols-3">
               <div>
                 <h3 className="mb-2">Bedrooms</h3>
                 <input
@@ -145,6 +151,15 @@ export default function PlacesPage() {
                 />
               </div>
               <div>
+                <h3 className="mb-2">Min Days</h3>
+                <input
+                  type="number"
+                  value={minDays}
+                  onChange={(ev) => setMinDays(ev.target.value)}
+                  placeholder="2"
+                />
+              </div>
+              <div>
                 <h3 className="mb-2">Area(cm)</h3>
                 <input
                   type="number"
@@ -173,7 +188,7 @@ export default function PlacesPage() {
                   placeholder="11:30"
                 />
               </div>
-              </div>
+            </div>
 
             {inputHeader("Perks")}
             <p className="text-gray-600 test-sm">
@@ -181,7 +196,7 @@ export default function PlacesPage() {
             </p>
             <div className="mt-2 grid gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
               <Perks selected={perks} onChange={setPerks} />
-            </div> 
+            </div>
 
             {inputHeader("Description")}
             <textarea
@@ -189,7 +204,23 @@ export default function PlacesPage() {
               onChange={(ev) => setDescription(ev.target.value)}
               placeholder="Give a description about your place"
             />
-            
+
+            <div className="mt-2 grid gap-4 sm:grid-cols-3">
+              <div>
+                <h2 className="mb-2">Kind of house</h2>
+                <input type="text" placeholder="Mounten House" />
+              </div>
+              <div>
+                <h2 className="mb-2">Price per night</h2>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(ev) => setPrice(ev.target.value)}
+                  placeholder="99"
+                />
+              </div>
+            </div>
+
             {inputHeader("Photos")}
             <div className="flex gap-2">
               <input
@@ -204,18 +235,24 @@ export default function PlacesPage() {
             </div>
 
             <div className="mt-2 grid gap-2 grid-cols-3 lg:grid-cols-6 md:grid-cols-4">
-              {addedPhotos.length > 0 && addedPhotos.map(filename => (
-                   <div className="h-32 flex relative" key={filename}> 
+              {addedPhotos.length > 0 &&
+                addedPhotos.map((filename) => (
+                  <div className="h-32 flex relative" key={filename}>
                     <img
                       className="rounded-2xl w-full object-cover"
-                      src={"http://localhost:4000/Uploads/" + filename}
+                      src={"http://localhost:4000/" + filename}
                       alt=""
                     />
                   </div>
                 ))}
 
               <label className="cursor-pointer flex items-center justify-center border bg-transparent rounded-xl p-8 text-2xl text-gray-450 ">
-                <input type="file" multiple className="hidden" onChange={uploadPhoto} />
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={uploadPhoto}
+                />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -234,16 +271,19 @@ export default function PlacesPage() {
               </label>
             </div>
 
-            <p className="text-gray-600 mt-2 test-sm">
-              Anything else you need to add
-            </p>
-            <textarea
-              value={extraInfo}
-              onChange={(ev) => setExtraInfo(ev.target.value)}
-              placeholder="The house rules, ect"
-            />
+            <div className="mt-2 grid ">
+              <h2 className="text-gray-600  mt-2 test-sm">
+                Anything else you need to add
+              </h2>
+              <textarea
+                value={extraInfo}
+                onChange={(ev) => setExtraInfo(ev.target.value)}
+                placeholder="The house rules, ect"
+              />
+            </div>
+
             <div className="center-container">
-              <button className="saveButton">Save</button>
+              <button className="saveButton">Place your home</button>
             </div>
           </form>
         </div>

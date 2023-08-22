@@ -123,7 +123,7 @@ export default function RegisterPage() {
         <h1 className="text-4xl text-center mt-6">Create an account</h1>
           <p className="text-xs text-center text-gray-900">All fields are required!</p>
           <form  onSubmit={registerUser}>
-          <div class="grid gap-4 mb-6 md:grid-cols-2 mt-6">
+          <div className="grid gap-4 mb-6 md:grid-cols-2 mt-6">
             <div>
               <label
                 for="first_name"
@@ -226,7 +226,7 @@ export default function RegisterPage() {
           </div>
 
 
-          <div class="mb-6">
+          <div className="mb-6">
             <label
               for="email"
               className="block mb-2 text-sm font-medium text-gray-900"
@@ -242,7 +242,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          <div class="mb-6">
+          <div className="mb-6">
             <label
               for="password"
               className="block mb-2 text-sm font-medium text-gray-900"
@@ -259,7 +259,7 @@ export default function RegisterPage() {
             {!passwordsMatch && <p className="text-red-500 text-xs">Passwords do not match!</p>}
           </div>
 
-          <div class="mb-6">
+          <div className="mb-6">
             <label
               for="confirm_password"
               className="block mb-2 text-sm font-medium text-gray-900"
