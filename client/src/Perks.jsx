@@ -11,7 +11,7 @@ export default function Perk({ selected, onChange }) {
   return (
     <>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="party" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('party')} name="party" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -30,7 +30,7 @@ export default function Perk({ selected, onChange }) {
       </label>
 
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="party" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('livingRoom')} name="livingRoom" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -49,7 +49,7 @@ export default function Perk({ selected, onChange }) {
       </label>
 
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="party" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('smoking')}  name="smoking" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -68,7 +68,7 @@ export default function Perk({ selected, onChange }) {
       </label>
 
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="wifi" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('wifi')} name="wifi" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -87,7 +87,7 @@ export default function Perk({ selected, onChange }) {
         <span>Wifi</span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="parkinig" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('parking')} name="parkinig" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -105,7 +105,7 @@ export default function Perk({ selected, onChange }) {
         <span>Parking spot</span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="pets" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('pets')} name="pets" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -124,7 +124,7 @@ export default function Perk({ selected, onChange }) {
         <span>Pets Allowed</span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="ac" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('ac')} name="ac" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -143,7 +143,7 @@ export default function Perk({ selected, onChange }) {
         <span>AC</span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="enterns" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('enterns')} name="enterns" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -162,7 +162,7 @@ export default function Perk({ selected, onChange }) {
         <span>Private enterns </span>
       </label>
       <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="tv" onClick={handleCheckBox} />
+        <input type="checkbox" checked={selected.includes('tv')} name="tv" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

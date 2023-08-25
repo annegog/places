@@ -40,6 +40,9 @@ app.get('/test', (req,res) => {
 // wZPJCkcvDJZj7dTJ
 // 2n0ZeUXZlp7OLVrr
 
+//
+// --------------------------------------------------------------------------------------
+//
 
 app.post('/register', async (req,res) => {
     const {first_name, last_name, username, phone, email, password, host, tenant} = req.body;
@@ -100,6 +103,10 @@ app.post('/logout', (req, res) => {
     res.cookie('token', '').json(true);
 });
 
+//
+// --------------------------------------------------------------------------------------
+// PLACES PAGE - make new place - update existing place
+
 app.post('/upload-by-link', async (req,res) =>{
     const {link} = req.body;
     const newFile = 'photo_'+ Date.now()+'.jpg';
@@ -118,19 +125,25 @@ app.post('/upload-by-link', async (req,res) =>{
 const photosMiddleware = multer({dest:'Uploads/'})
 app.post('/upload-photos', photosMiddleware.array('photos', 50), async (req,res) =>{
     const uploadedFiles = [];
-    for (let i = 0; i < req.files.length; i++) {
-        const {path,originalname} = req.files[i];
-        const parts = originalname.split('.');
-        const ext = parts[parts.length-1];
-        const newPath = path + '.' + ext;
-        fs.renameSync(path,newPath);
-        uploadedFiles.push(newPath.replace('Uploads/', ''));
-        // const url = await uploadToS3(path, originalname, mimetype);
-        // uploadedFiles.push(url);
+    try{
+        for (let i = 0; i < req.files.length; i++) {
+            const {path,originalname} = req.files[i];
+            const parts = originalname.split('.');
+            const ext = parts[parts.length-1];
+            const newPath = path + '.' + ext;
+            fs.renameSync(path,newPath);
+            uploadedFiles.push(newPath.replace('Uploads/', ''));
+            // const url = await uploadToS3(path, originalname, mimetype);
+            // uploadedFiles.push(url);
+        }
+        res.json(uploadedFiles);
+    }catch(err){
+        console.error('Error uploading image:', err);
+        res.status(500).json({ error: 'Image download failed' });
     }
-    res.json(uploadedFiles);
 });
 
+// upload a new place
 app.post('/places', (req,res) =>{
     const {token} = req.cookies;
     const {title, address, addedPhotos,
@@ -138,30 +151,86 @@ app.post('/places', (req,res) =>{
         checkIn, checkOut, maxGuests, numBaths,
         maxBeds, numBedrooms,
         area, minDays, price } = req.body;
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err;
-       
-        const placeDoc = await Place.create({  
-            owner: userData.id, 
-            title, address, photos:addedPhotos,
-            photos:photoLink, description, perks, extraInfo,
-            checkIn, checkOut, maxGuests, numBaths,
-            maxBeds, numBedrooms, area, minDays, price 
-        });
-        res.json(placeDoc);
-    })
+    try{
+        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err;
+            const placeDoc = await Place.create({  
+                owner: userData.id, 
+                title, address,
+                photos: {
+                    addedPhotos: addedPhotos,
+                    photoLink: photoLink
+                }, 
+                description, perks, extraInfo,
+                checkIn, checkOut, maxGuests, numBaths,
+                maxBeds, numBedrooms, area, minDays, price 
+            });
+            res.json(placeDoc);
+        })
+    }catch(err){
+        res.status(500).json({ error: 'Error uploading place' });
+    }
 });
 
+// get the places of this user-host
 app.get('/places', async (req, res) => {
-    const { token } = req.cookies;
-    try {
-      const decodedToken = jwt.verify(token, jwtSecret);
-      const { id } = decodedToken;
-  
-      const userPlaces = await Place.find({ owner: id }).exec();
-      res.json(userPlaces);
-    } catch (err) {
-      res.status(500).json({ error: 'Error fetching user places' });
+    const {token} = req.cookies;
+    try{
+        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err;
+        const {id} = userData;
+        res.json(await Place.find({owner:id})); 
+        });
+    } catch(error){
+        res.status(500).json({ error: 'Error fetching places' });
     }
-  });
+});
+
+// get the place=id 
+app.get('/places/:id', async (req, res) => {
+    const {id} = req.params;
+    console.log("Fetching place with ID:", id);    
+    try {
+      const place = await Place.findById(id).exec();
+      res.json(place);
+    } catch (error) {
+      res.status(500).json({ error: 'Error fetching place' });
+    }
+});
+
+// update the place=id
+app.put('/places/:id', async (req, res) => {
+    const {token} = req.cookies;
+    const {id, title, address, addedPhotos,
+        photoLink, description, perks, extraInfo,
+        checkIn, checkOut, maxGuests, numBaths,
+        maxBeds, numBedrooms,
+        area, minDays, price } = req.body;
+    try {
+        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+            const place = await Place.findById(id).exec();
+            if(userData.id === place.owner.toString()){
+                place.set({ 
+                    title, address, 
+                    photos: {
+                        addedPhotos: addedPhotos,
+                        photoLink: photoLink
+                    }, 
+                    description, perks, extraInfo,
+                    checkIn, checkOut, maxGuests, numBaths,
+                    maxBeds, numBedrooms, area, minDays, price
+                });
+                await place.save();
+                res.json('Update is ok'); 
+            }
+        });
+    } catch (err) {
+      res.status(500).json({ error: 'Error fetching place' });
+    }
+});
+
+//
+// --------------------------------------------------------------------------------------
+//
+
 app.listen(4000);

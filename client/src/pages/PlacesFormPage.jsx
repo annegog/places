@@ -4,16 +4,17 @@ import Perks from "../Perks";
 import Image from "../Image";
 import AccountNav from "../AccounNav";
 import { useParams } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function PlacesFormPage() {
-  const {id} = useParams();
+  const { id } = useParams();
+  console.log({ id });
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
-  const [photoLink, setPhotoLink] = useState("");
+  const [photoLink, setPhotoLink] = useState([]);
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
   const [extraInfo, setExtraInfo] = useState("");
@@ -29,13 +30,38 @@ export default function PlacesFormPage() {
 
   const [redirect, setRedirect] = useState(false);
 
-  // useEffect(() =>{
-  //   if(!id){
-  //     return;
-  // }
-  // axios.get('/places/'+id)
-  // }, [id]);
-  
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    console.log("Fetching place with ID:", id);
+    axios.get('/places/' + id).then((response) => {
+      const { data } = response;
+      setTitle(data.title);
+      setAddress(data.address);
+      setDescription(data.description);
+      setAddedPhotos(data.addedPhotos);
+      setPhotoLink(data.photoLink);
+      setPerks(data.perks);
+      setExtraInfo(data.extraInfo);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+      setMaxBeds(data.maxBeds);
+      setNumBaths(data.numBaths);
+      setNumBedrooms(data.numBedrooms);
+      setArea(data.area);
+      setMinDays(data.minDays);
+      setPrice(data.price);
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 404) {
+        console.error("Resource not found:", error);
+      } else {
+        console.error("An error occurred:", error);
+      }
+    });
+  }, [id]);
 
   // headers
   function inputHeader(text) {
@@ -46,7 +72,7 @@ export default function PlacesFormPage() {
   async function addPhotoByLink(ev) {
     ev.preventDefault();
     try {
-      const { data: filename } = await axios.post("/upload-by-link", {
+      const { data: filename } = await axios.post('/upload-by-link"', {
         link: photoLink,
       });
       setAddedPhotos((prev) => {
@@ -85,33 +111,35 @@ export default function PlacesFormPage() {
   }
 
   // Adding the new place
-  async function addNewPlace(ev) {
+  async function savePlace(ev) {
     ev.preventDefault();
     try {
       const placeData = {
-        title,
-        address,
-        addedPhotos,
-        photoLink,
-        description,
-        perks,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
-        numBaths,
-        maxBeds,
-        numBedrooms,
-        area,
-        minDays,
-        price,
+        title, address,
+        addedPhotos, photoLink,
+        description, perks,
+        extraInfo, checkIn,
+        checkOut, maxGuests,
+        numBaths, maxBeds,
+        numBedrooms, area,
+        minDays, price,
       };
-      await axios.post("/places", placeData);
-      console.log("New place is ready");
-      // Navigate to the specified page
-      navigate("/account/places");
+      if(id){
+        // update- edit existing place
+        await axios.put('/places/'+ id, placeData);
+        console.log("updating the place:", id);
+        // Navigate to the Places page
+        navigate("/account/places");
+      } else{
+        // Place new place
+        await axios.post("/places", placeData);
+        console.log("New place is ready");
+        // Navigate to the Places page
+        navigate("/account/places");
+      }
+      
     } catch (error) {
-      console.error("Error uploading the new place:", error);
+      console.error("Error uploading/editting the place:", error);
     }
   }
 
@@ -123,7 +151,7 @@ export default function PlacesFormPage() {
     <div>
       <AccountNav />
       <div className="mt-4 grow items-center flex justify-around">
-        <form onSubmit={addNewPlace}>
+        <form onSubmit={savePlace}>
           {inputHeader("Title")}
           <input
             type="text"
@@ -263,7 +291,7 @@ export default function PlacesFormPage() {
           </div>
 
           <div className="mt-2 grid gap-2 grid-cols-3 lg:grid-cols-6 md:grid-cols-4">
-            {addedPhotos.length > 0 &&
+            {addedPhotos && addedPhotos.length > 0 &&
               addedPhotos.map((filename) => (
                 <div className="h-32 flex relative" key={filename}>
                   <img
@@ -311,7 +339,7 @@ export default function PlacesFormPage() {
           </div>
 
           <div className="center-container">
-            <button className="saveButton">Place your home</button>
+            <button className="saveButton">Save</button>
           </div>
         </form>
       </div>
