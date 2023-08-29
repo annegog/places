@@ -1,5 +1,5 @@
 // import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 
@@ -19,6 +19,7 @@ export default function RegisterPage() {
 
   const [atLeastOneChecked, setAtLeastOneChecked] = useState(true);
 
+  const [redirect, setRedirect] = useState(false);
 
   async function registerUser(ev) {
     ev.preventDefault();
@@ -35,6 +36,7 @@ export default function RegisterPage() {
       });
       alert('Submission successful!');
       //redirect as logged in-else to login!!!!!!!!
+      setRedirect(true);
     } catch(e){
       // alert('Submission FAILED! Try again.');
       if (e.response) {
@@ -116,6 +118,10 @@ export default function RegisterPage() {
     // }
 
   };
+
+  if (redirect) {
+    return <Navigate to={'/login'} />
+  }
 
   return (
     <div className="mt-4 grow flex items-center justify-around">
