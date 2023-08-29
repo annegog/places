@@ -14,6 +14,8 @@ const jwtSecret = 'abcdefghijklmnopqrstuvwxyz';
 const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
+
+const fetch = require('node-fetch');
 const fs = require('fs'); 
 
 app.use(express.json());
@@ -110,11 +112,20 @@ app.post('/logout', (req, res) => {
 app.post('/upload-by-link', async (req,res) =>{
     const {link} = req.body;
     const newFile = 'photo_'+ Date.now()+'.jpg';
+    const imagePath = __dirname + '/Uploads/' + newFile;
     try {
-        await imageDownloader.image({
-            url: link,
-            dest: __dirname + '/Uploads/' + newFile,
-        });
+        // await imageDownloader.image({
+        //     url: link,
+        //     dest: __dirname + '/Uploads/' + newFile,
+        // });
+        // const fetchModule = await import('node-fetch');
+        const response = await fetch(link);
+        if (!response.ok) {
+            throw new Error('Image download failed');
+        }
+        const buffer = await response.buffer();
+        fs.writeFileSync(imagePath, buffer);
+       
         res.json(newFile);
     } catch (error) {
         console.error('Error downloading image:', error);
@@ -130,9 +141,11 @@ app.post('/upload-photos', photosMiddleware.array('photos', 50), async (req,res)
             const {path,originalname} = req.files[i];
             const parts = originalname.split('.');
             const ext = parts[parts.length-1];
-            const newPath = path + '.' + ext;
+            // const newPath = path + '.' + ext;
+            const newFile = 'photo_' + Date.now() + '.' + ext; // Generate the new filename
+            const newPath = __dirname + '/Uploads/' + newFile; // Construct the new path
             fs.renameSync(path,newPath);
-            uploadedFiles.push(newPath.replace('Uploads/', ''));
+            uploadedFiles.push(newFile);
             // const url = await uploadToS3(path, originalname, mimetype);
             // uploadedFiles.push(url);
         }
@@ -147,7 +160,7 @@ app.post('/upload-photos', photosMiddleware.array('photos', 50), async (req,res)
 app.post('/places', (req,res) =>{
     const {token} = req.cookies;
     const {title, address, addedPhotos,
-        photoLink, description, perks, extraInfo,
+        description, perks, extraInfo,
         checkIn, checkOut, maxGuests, numBaths,
         maxBeds, numBedrooms,
         area, minDays, price } = req.body;
@@ -157,10 +170,7 @@ app.post('/places', (req,res) =>{
             const placeDoc = await Place.create({  
                 owner: userData.id, 
                 title, address,
-                photos: {
-                    addedPhotos: addedPhotos,
-                    photoLink: photoLink
-                }, 
+                photos:addedPhotos,
                 description, perks, extraInfo,
                 checkIn, checkOut, maxGuests, numBaths,
                 maxBeds, numBedrooms, area, minDays, price 
@@ -173,7 +183,7 @@ app.post('/places', (req,res) =>{
 });
 
 // get the places of this user-host
-app.get('/places', async (req, res) => {
+app.get('/user-places', async (req, res) => {
     const {token} = req.cookies;
     try{
         jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -188,6 +198,7 @@ app.get('/places', async (req, res) => {
 
 // get the place=id 
 app.get('/places/:id', async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
     const {id} = req.params;
     console.log("Fetching place with ID:", id);    
     try {
@@ -200,34 +211,62 @@ app.get('/places/:id', async (req, res) => {
 
 // update the place=id
 app.put('/places/:id', async (req, res) => {
-    const {token} = req.cookies;
-    const {id, title, address, addedPhotos,
-        photoLink, description, perks, extraInfo,
-        checkIn, checkOut, maxGuests, numBaths,
-        maxBeds, numBedrooms,
-        area, minDays, price } = req.body;
     try {
+        const {token} = req.cookies;
+        const {id, title, address, addedPhotos,
+            description, perks, extraInfo,
+            checkIn, checkOut, maxGuests, numBaths,
+            maxBeds, numBedrooms,
+            area, minDays, price } = req.body;
+    
         jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-            const place = await Place.findById(id).exec();
-            if(userData.id === place.owner.toString()){
-                place.set({ 
-                    title, address, 
-                    photos: {
-                        addedPhotos: addedPhotos,
-                        photoLink: photoLink
-                    }, 
-                    description, perks, extraInfo,
-                    checkIn, checkOut, maxGuests, numBaths,
-                    maxBeds, numBedrooms, area, minDays, price
-                });
-                await place.save();
-                res.json('Update is ok'); 
+            if (err) {
+                return res.status(401).json({ error: 'Invalid token' });
             }
+            const place = await Place.findById(id).exec();
+            
+            if (!place) {
+                return res.status(404).json({ error: 'Place not found' });
+            }
+            if (userData.id !== place.owner.toString()) {
+                return res.status(403).json({ error: 'Unauthorized' });
+            }
+
+            // Update the place data
+            place.title = title;
+            place.address = address;
+            place.photos = addedPhotos;
+            place.description = description;
+            place.perks = perks;
+            place.extraInfo = extraInfo;
+            place.checkIn = checkIn;
+            place.checkOut = checkOut;
+            place.maxGuests = maxGuests;
+            place.numBaths = numBaths;
+            place.maxBeds = maxBeds;
+            place.numBedrooms = numBedrooms;
+            place.area = area;
+            place.minDays = minDays;
+            place.price = price;
+
+            // Save the updated place
+            await place.save();
+            
+            res.json({ message: 'Place updated successfully' });
         });
     } catch (err) {
       res.status(500).json({ error: 'Error fetching place' });
     }
 });
+
+//
+// --------------------------------------------------------------------------------------
+// Home Page
+
+// get every place 
+app.get('/places', async (req, res) => {
+    res.json(await Place.find());
+})
 
 //
 // --------------------------------------------------------------------------------------
