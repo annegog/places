@@ -1,8 +1,5 @@
 export default function Image({src,...rest}) {
-    src = src && src.includes('https://')
-      ? src
-      : 'http://localhost:4000/Uploads/'+src;
-    return (
-      <img {...rest} src={src} alt={''} />
-    );
-  }
+  const baseUrl = "http://localhost:4000/";
+  src = src && src.includes("https://") ? src : baseUrl + "Uploads/" + src;
+  return <img {...rest} src={src} alt={""} />;
+}
