@@ -6,17 +6,11 @@ import PlacesPage from "./PlacesPage";
 import AccountNav from "../AccounNav.jsx";
 
 export default function ProfilePage() {
-  const [redirect, setRedirect] = useState(null);
+  const [redirect, setRedirect] = useState(false);
   const { ready, user, setUser } = useContext(UserContext);
   let { subpage } = useParams();
   if (subpage === undefined) {
     subpage = "profile";
-  }
-
-  async function logout() {
-    await axios.post("/logout");
-    setRedirect("/");
-    setUser(null);
   }
 
   if (!ready) {
@@ -30,7 +24,7 @@ export default function ProfilePage() {
   }
 
   if (redirect) {
-    return <Navigate to={redirect} />;
+    return <Navigate to={"/"} />;
   }
   return (
     <div>
