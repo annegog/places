@@ -9,7 +9,8 @@ const UserSchema = new Schema({
     email: String,
     password: String,
     host: Boolean,
-    tenant: Boolean
+    tenant: Boolean,
+    isAdmin: {type:Boolean, default:false}
 });
 
 const UserModel = mongoose.model('User', UserSchema);

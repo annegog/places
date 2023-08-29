@@ -9,7 +9,8 @@ require('dotenv').config();
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(8);
-const jwtSecret = 'abcdefghijklmnopqrstuvwxyz';
+const jwtSecretUser = "jwtSecretUser1";
+const jwtSecretAdmin = "jwtSecretAdmin2";
 
 const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
@@ -72,13 +73,24 @@ app.post('/login', async (req, res) => {
     if (userDoc) {   
         const passOK = bcrypt.compareSync(password, userDoc.password);
         if (passOK) {  
-            jwt.sign({
-                email:userDoc.email, //should this be changed??
-                id:userDoc._id
-              }, jwtSecret, {}, (err,token) => {
-                if (err) throw err;
-                res.cookie('token', token).json(userDoc);
-              });
+            if (userDoc.isAdmin) { //token for admin authentication
+                jwt.sign({
+                    email:userDoc.email, //should this be changed??
+                    id:userDoc._id
+                  }, jwtSecretAdmin, {}, (err,token) => {
+                    if (err) throw err;
+                    res.cookie('token', token).json(userDoc);
+                  });
+            } else { //token for user authentication
+                jwt.sign({
+                    email:userDoc.email, //should this be changed??
+                    id:userDoc._id
+                  }, jwtSecretUser, {}, (err,token) => {
+                    if (err) throw err;
+                    res.cookie('token', token).json(userDoc);
+                  });
+            }
+            
         } else {
           res.status(422).json('Wrong password'); //we should put the apropriate messages for the user
         }
@@ -90,7 +102,7 @@ app.post('/login', async (req, res) => {
 app.get('/profile', (req, res) => {
     const {token} = req.cookies;
     if (token){
-        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
             const {username, email, _id} = await User.findById(userData.id); //fetch from the database
             res.json({username, email, _id}); 

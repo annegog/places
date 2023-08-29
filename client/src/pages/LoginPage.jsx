@@ -6,7 +6,8 @@ import { UserContext } from "../UserContext";
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [redirect, setRedirect] = useState(false);
+  const [redirectUser, setRedirectUser] = useState(false);
+  const [redirectAdmin, setRedirectAdmin] = useState(false);
 
   const {setUser} = useContext(UserContext);
 
@@ -19,7 +20,11 @@ export default function LoginPage() {
       });
       setUser(data);
       // alert("Login successful");
-      setRedirect(true);
+      if (data.isAdmin) {
+        setRedirectAdmin(true);
+      } else {
+        setRedirectUser(true);
+      }
     } catch (e) {
       if (e.response) {
         if (e.response.status === 422) {
@@ -35,8 +40,12 @@ export default function LoginPage() {
     }
   }
 
-  if (redirect) {
+  if (redirectUser) {
     return <Navigate to={'/'} />
+  }
+
+  if (redirectAdmin) {
+    return <Navigate to={'/admin'} />
   }
 
   return (

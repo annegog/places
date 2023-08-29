@@ -5,13 +5,13 @@ import IndexPage from './pages/IndexPage.jsx';
 import LoginPage from './pages/LoginPage';
 import Layout from './Layout';
 import RegisterPage from './pages/RegisterPage';
-// import RegisterBPage from './pages/RegisterBPage';
 
 import axios from 'axios';
 import AccountPage from './pages/AccountPage';
 import { UserContextProvider } from './UserContext';
 import PlacesPage from './pages/PlacesPage';
 import PlacesFormPage from './pages/PlacesFormPage';
+import AdminPage from './pages/AdminPage';
 
 axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials = true;
@@ -31,6 +31,10 @@ function App() {
           <Route path="/account/places/:id" element={<PlacesFormPage />} />
           <Route path="/account/:subpage/:action" element={<AccountPage />} />
         </Route>      
+      </Routes>
+
+      <Routes path="/">
+      <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </UserContextProvider>
   )
