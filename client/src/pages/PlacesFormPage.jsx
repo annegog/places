@@ -233,7 +233,7 @@ export default function PlacesFormPage() {
           <p className="text-gray-600 test-sm">
             Select all the perks about your place
           </p>
-          <div className="mt-2 grid gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+          <div className="mt-2 grid gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <Perks selected={perks} onChange={setPerks} />
           </div>
 

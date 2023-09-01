@@ -45,3 +45,16 @@ select{
     background-color:#769ABE;
     /* #ADDFFF #F6C6BD */
 }
+
+.info-container {
+    display: flex;
+    align-items: center;
+}
+.info-container text {
+    display: inline-block;
+    margin-right: 5px; /* Adjust this value for spacing between elements */
+}
+.info-container text + text::before {
+    content: " •"; /* Unicode character for dot is \2022 */
+    margin: 0 5px; /* Adjust this value for spacing between text and dot */
+}

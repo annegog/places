@@ -126,11 +126,6 @@ app.post('/upload-by-link', async (req,res) =>{
     const newFile = 'photo_'+ Date.now()+'.jpg';
     const imagePath = __dirname + '/Uploads/' + newFile;
     try {
-        // await imageDownloader.image({
-        //     url: link,
-        //     dest: __dirname + '/Uploads/' + newFile,
-        // });
-        // const fetchModule = await import('node-fetch');
         const response = await fetch(link);
         if (!response.ok) {
             throw new Error('Image download failed');
@@ -212,7 +207,7 @@ app.get('/user-places', async (req, res) => {
 app.get('/places/:id', async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
     const {id} = req.params;
-    console.log("Fetching place with ID:", id);    
+    // console.log("Fetching place with ID:", id);    
     try {
       const place = await Place.findById(id).exec();
       res.json(place);
