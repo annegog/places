@@ -1,4 +1,4 @@
-import { useEffect, useState, useMapEvents } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Perks from "../Perks";
 import AccountNav from "../AccounNav";
@@ -11,12 +11,11 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 
 export default function PlacesFormPage() {
   const { id } = useParams();
-  console.log({ id });
+
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(""); // Default position
   const [address, setAddress] = useState("");
-  // const [addedPhotos, setAddedPhotos] = useState<string[]>([]);
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
@@ -30,6 +29,7 @@ export default function PlacesFormPage() {
   const [area, setArea] = useState(50);
   const [minDays, setMinDays] = useState(2);
   const [price, setPrice] = useState(1);
+  const [pinPosition, setPinPosition] = useState([38.99, 21.98]); //add this
 
   const [redirect, setRedirect] = useState(false);
 
@@ -44,8 +44,9 @@ export default function PlacesFormPage() {
         const { data } = response;
         setTitle(data.title);
         setAddress(data.address);
+        setPinPosition(data.pinPosition);
         setDescription(data.description);
-        setAddedPhotos(data.addedPhotos);
+        setAddedPhotos(data.photos);
         setPerks(data.perks);
         setExtraInfo(data.extraInfo);
         setCheckIn(data.checkIn);
@@ -79,6 +80,7 @@ export default function PlacesFormPage() {
       const placeData = {
         title,
         address,
+        pinPosition,
         addedPhotos,
         description,
         perks,
@@ -115,6 +117,31 @@ export default function PlacesFormPage() {
     return <Navigator to={"/account/places"} />;
   }
 
+  // Get the map instance for adding the pin
+  // const map = useMap();
+
+  // Function to handle address input change
+  const handleAddressChange = (ev) => {
+    const newAddress = ev.target.value;
+    setAddress(newAddress);
+
+    axios
+      .get(`/mapCord/${newAddress}`)
+      .then((response) => {
+        const { data } = response;
+        if (data.lat && data.lng) {
+          console.log("New address:", newAddress);
+          console.log("Response data:", data);
+          setPinPosition([data.lat, data.lng]);
+          // Center the map on the new pin position
+          // map.setView([data.lat, data.lng], 13);
+        }
+      })
+      .catch((error) => {
+        console.error("Error geocoding address:", error);
+      });
+  };
+
   return (
     <div>
       <AccountNav />
@@ -132,14 +159,14 @@ export default function PlacesFormPage() {
           <input
             type="text"
             value={address}
-            onChange={(ev) => setAddress(ev.target.value)}
+            onChange={handleAddressChange}
             placeholder="address"
           />
 
           <div className="relative">
             <MapContainer
-              center={[51.5, -0.09]}
-              zoom={13}
+              center={pinPosition} // Center the map on the pin position
+              zoom={5}
               style={{ height: "400px", width: "100%" }}
               className="z-0"
             >
@@ -147,7 +174,8 @@ export default function PlacesFormPage() {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              <Marker position={[51.5, -0.09]} />
+              <Marker position={pinPosition} />{" "}
+              {/* Add a marker at the pin position */}
             </MapContainer>
           </div>
 

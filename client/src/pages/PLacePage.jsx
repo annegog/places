@@ -11,6 +11,7 @@ export default function PlacePage() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [open, setOpen] = useState(false); //for descriptions dialog
+  const [showPerks, setShowPerks] = useState(false);
 
   // descriptions smaller than 5
   const [expanded, setExpanded] = useState(false);
@@ -84,7 +85,7 @@ export default function PlacePage() {
         </div>
         <div className="relative">
           <MapContainer
-            center={[51.5, -0.09]}
+            center={place.pinPosition}
             zoom={13}
             style={{ height: "400px", width: "100%" }}
             className="z-0"
@@ -93,7 +94,7 @@ export default function PlacePage() {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={[51.5, -0.09]} />
+            <Marker position={place.pinPosition} />
           </MapContainer>
         </div>
       </div>
@@ -135,6 +136,18 @@ export default function PlacePage() {
         </div>
       </div>
     );
+  }
+
+  if(showPerks){
+    for (let index = 0; index < place.perks.length; index++) {
+        const element = place.perks[index];
+        return (<text>element</text>)
+    }
+    return(
+      <div>
+        aaaaa
+      </div>
+    )
   }
 
   return (
@@ -296,7 +309,7 @@ export default function PlacePage() {
                     <dialogContentText className="text-justify align-text-top">
                       {place.description}{" "}
                     </dialogContentText>
-                    {place.extraInfo.length && place.extraInfo.length > 0 && (
+                    {place.extraInfo && place.extraInfo.length > 0 && (
                       <div>
                         <h3 className="mt-4 text-lg text-gray-700 font-semibold mb-2">
                           Extra informations
@@ -329,6 +342,15 @@ export default function PlacePage() {
             <div className="bg-gray-200 shadow-xl rounded-2xl p-2 grid grid-cols-1">
               <text>Area: {place.area} (cm)</text>
               <text className="text-lg">Perks</text>
+          <div className="mt-2 grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {place.perks && place.perks.length > 0 && (
+              <div>
+              
+                <text>{place.perks}</text>
+              </div>
+            )}
+          </div>
+
             </div>
           </div>
         </div>
@@ -352,7 +374,7 @@ export default function PlacePage() {
         </h1>
         <div className="relative mt-3">
           <MapContainer
-            center={[51.5, -0.09]}
+            center={place.pinPosition}
             zoom={13}
             style={{ height: "400px", width: "100%" }}
             className="z-0"
@@ -361,7 +383,7 @@ export default function PlacePage() {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={[51.5, -0.09]} />
+            <Marker position={place.pinPosition} />
           </MapContainer>
         </div>
       </div>

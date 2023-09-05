@@ -1,3 +1,7 @@
+import {  URLSearchParams } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
+
 import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
 import { GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, 
         GiForestCamp, GiIsland} from 'react-icons/gi';
@@ -70,17 +74,22 @@ const categories = [
 ];
 
 export default function Categories(){
-    return(
-        <div className="pt-4 flex flex-row items-center justify-between overflow-x-auto">
+  
+  // const params = new useSearchParams();
+  // // URLSearchParams.get()
+  // // Returns the first value associated with the given search parameter.
+  // const category = params.get('category');
+  return(
+        <div className="pt-6 flex flex-row items-center justify-between overflow-x-auto">
             
-        {categories.map((item) => (
+        {/* {categories.map((item) => (
           <CategoryBox 
             key={item.label}
             label={item.label}
             icon={item.icon}
             // selected={category === item.label}
           />
-        ))}
+        ))} */}
            
         </div>
     )
