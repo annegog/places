@@ -6,7 +6,7 @@ const PlaceSchema = new Schema({
     title: String,
     address: String,
     pinPosition: [Number],
-    extraInfoAddress: String,
+    extraInfoAddress: String, // about neib ect
     photos: [String],
     description: String,
     perks: [String],

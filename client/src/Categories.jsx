@@ -74,7 +74,7 @@ const categories = [
 ];
 
 export default function Categories(){
-  
+  // no
   // const params = new useSearchParams();
   // // URLSearchParams.get()
   // // Returns the first value associated with the given search parameter.
