@@ -10,6 +10,11 @@ export function UserContextProvider({children}) {
     useEffect( () => {
         if (!user) {
             axios.get('/profile').then( ({data}) => {
+                // if (data.isAdmin) {
+                //     setAdmin(data);
+                // } else {
+                //     setUser(data);
+                // }
                 setUser(data);
                 setReady(true);
             });

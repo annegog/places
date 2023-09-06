@@ -8,6 +8,7 @@ import AccountNav from "../AccounNav.jsx";
 export default function ProfilePage() {
   const [redirect, setRedirect] = useState(false);
   const { ready, user, setUser } = useContext(UserContext);
+
   let { subpage } = useParams();
   if (subpage === undefined) {
     subpage = "profile";
@@ -26,6 +27,7 @@ export default function ProfilePage() {
   if (redirect) {
     return <Navigate to={"/"} />;
   }
+
   return (
     <div>
       <AccountNav />
