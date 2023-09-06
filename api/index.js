@@ -9,6 +9,7 @@ require('dotenv').config();
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(8);
+// const jwtSecret = "jwtSecret0";
 const jwtSecretUser = "jwtSecretUser1";
 const jwtSecretAdmin = "jwtSecretAdmin2";
 
@@ -79,7 +80,7 @@ app.post('/login', async (req, res) => {
                 jwt.sign({
                     email:userDoc.email, //should this be changed??
                     id:userDoc._id
-                  }, jwtSecretAdmin, {}, (err,token) => {
+                  }, jwtSecretAdmin, {/*expiresIn: 10h*/}, (err,token) => {
                     if (err) throw err;
                     res.cookie('token', token).json(userDoc);
                   });
@@ -106,8 +107,8 @@ app.get('/profile', (req, res) => {
     if (token){
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
-            const {username, email, _id} = await User.findById(userData.id); //fetch from the database
-            res.json({username, email, _id}); 
+            const {first_name, last_name, username, phone, email, host, tenant, isAdmin} = await User.findById(userData.id); //fetch from the database
+            res.json({first_name, last_name, username, phone, email, host, tenant, isAdmin}); 
         });
     } else {
         res.json(null);
@@ -119,6 +120,21 @@ app.post('/logout', (req, res) => {
     res.cookie('token', '').json(true);
 });
 
+///////------admin----------//////////
+
+app.get('/profile-admin', (req, res) => {
+    const {token} = req.cookies;
+    if (token){
+        jwt.verify(token, jwtSecretAdmin, {}, async (err, userData) => {
+            if (err) throw err;
+            const {first_name, last_name, username, phone, email, host, tenant, isAdmin} = await User.findById(userData.id); //fetch from the database
+            res.json({first_name, last_name, username, phone, email, host, tenant, isAdmin}); 
+        });
+    } else {
+        res.json(null);
+    }
+    // res.json({token});
+});
 //
 // --------------------------------------------------------------------------------------
 // PLACES PAGE - make new place - update existing place

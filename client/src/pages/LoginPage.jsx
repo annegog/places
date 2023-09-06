@@ -2,6 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { UserContext } from "../UserContext";
+import { AdminContext } from "../AdminContext";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [redirectAdmin, setRedirectAdmin] = useState(false);
 
   const {setUser} = useContext(UserContext);
+  const {setAdmin} = useContext(AdminContext)
 
   async function handleLogin(ev) {
     ev.preventDefault();
@@ -18,11 +20,15 @@ export default function LoginPage() {
         username, //email,
         password,
       });
-      setUser(data);
+      
       // alert("Login successful");
       if (data.isAdmin) {
+        setAdmin(data);
+        setUser(null);
         setRedirectAdmin(true);
       } else {
+        setAdmin(null);
+        setUser(data);
         setRedirectUser(true);
       }
     } catch (e) {
