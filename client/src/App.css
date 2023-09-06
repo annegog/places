@@ -11,17 +11,4 @@
         height: fit-content;
     }
 }
-/* 
-*{
-    box-sizing: border-box;
-    margin:0;
-    padding: 0;
-}
-#root{ 
-    height: 100vh;
-}
 
-sizing of map
-.leaflet-container{
-    height: 100vh;
-} */

@@ -8,11 +8,10 @@ import RegisterPage from './pages/RegisterPage';
 
 import axios from 'axios';
 import AccountPage from './pages/AccountPage';
-import { UserContext, UserContextProvider } from './UserContext';
+import { UserContextProvider } from './UserContext';
 import PlacesPage from './pages/PlacesPage';
 import PlacesFormPage from './pages/PlacesFormPage';
 import AdminPage from './pages/AdminPage';
-import { useContext } from 'react';
 import { AdminContextProvider } from './AdminContext';
 
 axios.defaults.baseURL = 'http://localhost:4000';

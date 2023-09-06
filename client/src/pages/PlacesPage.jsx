@@ -4,8 +4,6 @@ import axios from "axios";
 import PlacesFormPage from "./PlacesFormPage";
 import AccountNav from "../AccounNav";
 
-// import { MapContainer, TileLayer, Marker } from "react-leaflet";
-
 export default function PlacesPage() {
   const { id } = useParams();
 

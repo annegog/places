@@ -5,6 +5,7 @@ const PlaceSchema = new Schema({
     owner: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     title: String,
     address: String,
+    pinPosition: [Number],
     photos: [String],
     description: String,
     perks: [String],

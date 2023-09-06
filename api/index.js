@@ -20,6 +20,8 @@ const multer = require('multer');
 const fetch = require('node-fetch');
 const fs = require('fs'); 
 
+const opencage = require('opencage-api-client'); //for map
+
 app.use(express.json());
 app.use(cookieParser());
 app.use('/Uploads', express.static(__dirname+'/Uploads'));
@@ -142,11 +144,6 @@ app.post('/upload-by-link', async (req,res) =>{
     const newFile = 'photo_'+ Date.now()+'.jpg';
     const imagePath = __dirname + '/Uploads/' + newFile;
     try {
-        // await imageDownloader.image({
-        //     url: link,
-        //     dest: __dirname + '/Uploads/' + newFile,
-        // });
-        // const fetchModule = await import('node-fetch');
         const response = await fetch(link);
         if (!response.ok) {
             throw new Error('Image download failed');
@@ -184,20 +181,43 @@ app.post('/upload-photos', photosMiddleware.array('photos', 50), async (req,res)
     }
 });
 
+// get the pin of the map
+app.get('/mapCord/:address', async (req, res) =>{
+    const {address} = req.params;
+    opencage
+  .geocode({ q: address })
+  .then((data) => {
+    // console.log(JSON.stringify(data));
+    if (data.status.code === 200 && data.results.length > 0) {
+      const place = data.results[0];
+      res.json(place.geometry);
+    } else {
+      console.log('Status', data.status.message);
+      console.log('total_results', data.total_results);
+    }
+  })
+  .catch((error) => {
+    console.log('Error', error.message);
+    if (error.status.code === 402) {
+      console.log('Sorry...hit free trial daily limit');
+    }
+  });
+})
+
 // upload a new place
 app.post('/places', (req,res) =>{
     const {token} = req.cookies;
-    const {title, address, addedPhotos,
+    const {title, address, pinPosition, addedPhotos,
         description, perks, extraInfo,
         checkIn, checkOut, maxGuests, numBaths,
         maxBeds, numBedrooms,
         area, minDays, price } = req.body;
     try{
-        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
         if (err) throw err;
             const placeDoc = await Place.create({  
                 owner: userData.id, 
-                title, address,
+                title, address, pinPosition,
                 photos:addedPhotos,
                 description, perks, extraInfo,
                 checkIn, checkOut, maxGuests, numBaths,
@@ -214,7 +234,7 @@ app.post('/places', (req,res) =>{
 app.get('/user-places', async (req, res) => {
     const {token} = req.cookies;
     try{
-        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
         if (err) throw err;
         const {id} = userData;
         res.json(await Place.find({owner:id})); 
@@ -228,7 +248,7 @@ app.get('/user-places', async (req, res) => {
 app.get('/places/:id', async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
     const {id} = req.params;
-    console.log("Fetching place with ID:", id);    
+    // console.log("Fetching place with ID:", id);    
     try {
       const place = await Place.findById(id).exec();
       res.json(place);
@@ -241,13 +261,13 @@ app.get('/places/:id', async (req, res) => {
 app.put('/places/:id', async (req, res) => {
     try {
         const {token} = req.cookies;
-        const {id, title, address, addedPhotos,
+        const {id, title, address, pinPosition, addedPhotos,
             description, perks, extraInfo,
             checkIn, checkOut, maxGuests, numBaths,
             maxBeds, numBedrooms,
             area, minDays, price } = req.body;
     
-        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) {
                 return res.status(401).json({ error: 'Invalid token' });
             }
@@ -263,6 +283,7 @@ app.put('/places/:id', async (req, res) => {
             // Update the place data
             place.title = title;
             place.address = address;
+            place.pinPosition = pinPosition;
             place.photos = addedPhotos;
             place.description = description;
             place.perks = perks;
