@@ -16,6 +16,8 @@ export default function PlacesFormPage() {
 
   const [title, setTitle] = useState(""); // Default position
   const [address, setAddress] = useState("");
+  const [pinPosition, setPinPosition] = useState([45,37]);
+  const [extraInfoAddress, setExtraInfoAddress] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
@@ -29,7 +31,7 @@ export default function PlacesFormPage() {
   const [area, setArea] = useState(50);
   const [minDays, setMinDays] = useState(2);
   const [price, setPrice] = useState(1);
-  const [pinPosition, setPinPosition] = useState([38.99, 21.98]); //add this
+  
 
   const [redirect, setRedirect] = useState(false);
 
@@ -37,7 +39,7 @@ export default function PlacesFormPage() {
     if (!id) {
       return;
     }
-    console.log("Fetching place with ID:", id);
+    // console.log("Fetching place with ID:", id);
     axios
       .get("/places/" + id)
       .then((response) => {
@@ -45,6 +47,7 @@ export default function PlacesFormPage() {
         setTitle(data.title);
         setAddress(data.address);
         setPinPosition(data.pinPosition);
+        setExtraInfoAddress(data.extraInfoAddress);
         setDescription(data.description);
         setAddedPhotos(data.photos);
         setPerks(data.perks);
@@ -81,6 +84,7 @@ export default function PlacesFormPage() {
         title,
         address,
         pinPosition,
+        extraInfoAddress,
         addedPhotos,
         description,
         perks,
@@ -119,8 +123,7 @@ export default function PlacesFormPage() {
 
   // Get the map instance for adding the pin
   // const map = useMap();
-
-  // Function to handle address input change
+  // handle address input change
   const handleAddressChange = (ev) => {
     const newAddress = ev.target.value;
     setAddress(newAddress);
@@ -130,7 +133,6 @@ export default function PlacesFormPage() {
       .then((response) => {
         const { data } = response;
         if (data.lat && data.lng) {
-          console.log("New address:", newAddress);
           console.log("Response data:", data);
           setPinPosition([data.lat, data.lng]);
           // Center the map on the new pin position
@@ -165,8 +167,8 @@ export default function PlacesFormPage() {
 
           <div className="relative">
             <MapContainer
-              center={pinPosition} // Center the map on the pin position
-              zoom={5}
+              center={pinPosition}
+              zoom={3}
               style={{ height: "400px", width: "100%" }}
               className="z-0"
             >
@@ -178,8 +180,12 @@ export default function PlacesFormPage() {
               {/* Add a marker at the pin position */}
             </MapContainer>
           </div>
+          <div className="mt-2">
+            <h2 className="text-lg">Extra Information about the Address</h2>
+            <textarea value={extraInfoAddress} onChange={(ev) => setExtraInfoAddress(ev.target.value)} placeholder="Please provide details about the neighborhood surrounding your property and its accessibility via public transportation"/>
+          </div>
 
-          {inputHeader("Extra informations")}
+          {inputHeader("Basic Informations")}
           <div className="mt-2 grid gap-2 sm:grid-cols-3">
             <div>
               <h3 className="mb-2">Bedrooms</h3>

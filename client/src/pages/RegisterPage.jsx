@@ -228,6 +228,20 @@ export default function RegisterPage() {
               </div>
               {!atLeastOneChecked  && <p className="mt-2 text-red-500 text-xs">Check at least one!</p>}
             </div> 
+            <div>
+              <label
+                for="photo"
+                className="block mb-2 text-sm font-medium text-gray-900"
+              >
+                Profil Photo
+              </label>
+              <input
+                type="photo"
+                id="photo"
+                className="bg-gray-50 border-gray-300 rounded-lg block w-full p-2.5 "
+                value={phone} onChange={ev => setPhoneNumber(ev.target.value)}
+              />
+            </div>
 
           </div>
 

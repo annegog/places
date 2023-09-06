@@ -191,7 +191,8 @@ app.get('/mapCord/:address', async (req, res) =>{
 // upload a new place
 app.post('/places', (req,res) =>{
     const {token} = req.cookies;
-    const {title, address, pinPosition, addedPhotos,
+    const {title, address, pinPosition, 
+        extraInfoAddress, addedPhotos,
         description, perks, extraInfo,
         checkIn, checkOut, maxGuests, numBaths,
         maxBeds, numBedrooms,
@@ -202,7 +203,7 @@ app.post('/places', (req,res) =>{
             const placeDoc = await Place.create({  
                 owner: userData.id, 
                 title, address, pinPosition,
-                photos:addedPhotos,
+                photos:addedPhotos, extraInfoAddress,
                 description, perks, extraInfo,
                 checkIn, checkOut, maxGuests, numBaths,
                 maxBeds, numBedrooms, area, minDays, price 
@@ -245,10 +246,11 @@ app.get('/places/:id', async (req, res) => {
 app.put('/places/:id', async (req, res) => {
     try {
         const {token} = req.cookies;
-        const {id, title, address, pinPosition, addedPhotos,
+        const {id, title, address, pinPosition,
+            extraInfoAddress, addedPhotos,
             description, perks, extraInfo,
-            checkIn, checkOut, maxGuests, numBaths,
-            maxBeds, numBedrooms,
+            checkIn, checkOut, maxGuests, 
+            numBaths, maxBeds, numBedrooms,
             area, minDays, price } = req.body;
     
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
@@ -268,6 +270,7 @@ app.put('/places/:id', async (req, res) => {
             place.title = title;
             place.address = address;
             place.pinPosition = pinPosition;
+            place.extraInfoAddress = extraInfoAddress;
             place.photos = addedPhotos;
             place.description = description;
             place.perks = perks;

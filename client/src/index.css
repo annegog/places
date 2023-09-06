@@ -5,7 +5,7 @@
 input[type="text"], input[type="password"], input[type="email"], 
 input[type="tel"], input[type="number"] ,
 textarea{
-    @apply w-full border my-2 py-2 px-3 rounded-2xl;
+    @apply w-full border my-2 py-2 px-3 rounded-lg;
 }
 textarea{
     height: 130px;

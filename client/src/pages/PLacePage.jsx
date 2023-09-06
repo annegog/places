@@ -56,12 +56,12 @@ export default function PlacePage() {
 
   if (showMap) {
     return (
-      <div className="absolute inset-4 bg-white min-h-screen">
-        <div className="p-8 grid gap-4">
-          <div>
+      <div className="absolute inset-4 bg-white min-h-screen mr-5 ml-5 lg:mr-20 lg:ml-20 xl:mr-30 xl:ml-30">
+        <div className="p-8 grid gap-4 ">
+          <div className="grid grid-cols-2">
             <button
               onClick={() => setShowMap(false)}
-              className="fixed flex py-2 px-4 rounded-2xl bg-transparent "
+              className="flex py-2 px-4 rounded-2xl bg-transparent "
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +87,7 @@ export default function PlacePage() {
           <MapContainer
             center={place.pinPosition}
             zoom={13}
-            style={{ height: "400px", width: "100%" }}
+            style={{ height: "500px", width: "100%" }}
             className="z-0"
           >
             <TileLayer
@@ -97,6 +97,22 @@ export default function PlacePage() {
             <Marker position={place.pinPosition} />
           </MapContainer>
         </div>
+        <div className="mt-4">
+          <textarea
+            className="font-semibold"
+            readOnly
+            style={{ whiteSpace: "pre", height: "350px" }}
+          >
+            {place.extraInfoAddress}
+          </textarea>
+        </div>
+        <hr className="mt-6 mb-4 w-80" />
+        <text className="text-gray-500 font-serif">
+          This is not the exact location of the property, as we prioritize
+          security. Please reach out to the host after making a reservation to
+          obtain the precise location.
+        </text>
+        <hr className="mt-10" />
       </div>
     );
   }
@@ -129,7 +145,10 @@ export default function PlacePage() {
           </div>
           {place?.photos?.length > 0 &&
             place.photos.map((photo) => (
-              <div className="grid grid-cols-[2fr] gap-2" style={{ maxWidth: 1000 }}>
+              <div
+                className="grid grid-cols-[2fr] gap-2"
+                style={{ maxWidth: 1000 }}
+              >
                 <Image src={photo} alt="" />
               </div>
             ))}
@@ -138,16 +157,11 @@ export default function PlacePage() {
     );
   }
 
-  if(showPerks){
+  if (showPerks) {
     for (let index = 0; index < place.perks.length; index++) {
-        const element = place.perks[index];
-        return (<text>element</text>)
+      const element = place.perks[index];
+      return <text>element A</text>;
     }
-    return(
-      <div>
-        aaaaa
-      </div>
-    )
   }
 
   return (
@@ -340,17 +354,15 @@ export default function PlacePage() {
               What this place offers
             </h2>
             <div className="bg-gray-200 shadow-xl rounded-2xl p-2 grid grid-cols-1">
-              <text>Area: {place.area} (cm)</text>
+              <text>Area: {place.area} (m2)</text>
               <text className="text-lg">Perks</text>
-          <div className="mt-2 grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {place.perks && place.perks.length > 0 && (
-              <div>
-              
-                <text>{place.perks}</text>
+              <div className="mt-2 grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {place.perks && place.perks.length > 0 && (
+                  <div>
+                    <text>{place.perks}</text>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-
             </div>
           </div>
         </div>
@@ -385,9 +397,14 @@ export default function PlacePage() {
             />
             <Marker position={place.pinPosition} />
           </MapContainer>
+          <Link
+            onClick={() => setShowMap(true)}
+            className="flex underline mt-2"
+          >
+            Additional Information Regarding the Location of the Place
+          </Link>
         </div>
       </div>
-
     </div>
   );
 }
