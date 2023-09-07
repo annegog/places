@@ -25,6 +25,7 @@ const opencage = require('opencage-api-client'); //for map
 app.use(express.json());
 app.use(cookieParser());
 app.use('/Uploads', express.static(__dirname+'/Uploads'));
+app.use('/Uploads/profilePhotos', express.static(__dirname+'/Uploads/profilePhotos'));
 
 app.use(cors({
     credentials: true,
@@ -51,12 +52,13 @@ app.get('/test', (req,res) => {
 // USER - resgisteratiom - login - logout
 
 app.post('/register', async (req,res) => {
-    const {first_name, last_name, username, phone, email, password, host, tenant} = req.body;
+    const {first_name, last_name, username, phone, email, password, profilephoto, host, tenant} = req.body;
     try{
         const userDoc = await User.create({
             first_name,
             last_name,
             username,
+            profilephoto,
             phone,
             email,
             password:bcrypt.hashSync(password, bcryptSalt),
@@ -67,6 +69,26 @@ app.post('/register', async (req,res) => {
     } catch(e){
         res.status(422).json(e);
     } 
+});
+
+const photosMiddlewareProfile = multer({dest:'Uploads/profilePhotos/'})
+app.post('/upload-profilePhoto', photosMiddlewareProfile.array('profilephoto', 1), async (req, res) => {
+    const uploadedFiles = []; // Use an array, not an empty string
+    try {
+        for (let i = 0; i < req.files.length; i++) {
+            const { path, originalname } = req.files[i];
+            const parts = originalname.split('.');
+            const ext = parts[parts.length - 1];
+            const newFile = 'profilePhoto_newUser_' + Date.now() + '.' + ext;
+            const newPath = __dirname + '/Uploads/profilePhotos/' + newFile;
+            fs.renameSync(path, newPath);
+            uploadedFiles.push(newFile); // Push the new file name to the array
+        }
+        res.json(uploadedFiles); // Send the array of uploaded files
+    } catch (err) {
+        console.error('Error uploading image:', err);
+        res.status(500).json({ error: 'Image upload failed' });
+    }
 });
 
 
@@ -107,8 +129,8 @@ app.get('/profile', (req, res) => {
     if (token){
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
-            const {first_name, last_name, username, phone, email, host, tenant, isAdmin} = await User.findById(userData.id); //fetch from the database
-            res.json({first_name, last_name, username, phone, email, host, tenant, isAdmin}); 
+            const {first_name, last_name, username, profilephoto, phone, email, host, tenant, isAdmin} = await User.findById(userData.id); //fetch from the database
+            res.json({first_name, last_name, username, profilephoto, phone, email, host, tenant, isAdmin}); 
         });
     } else {
         res.json(null);
@@ -126,7 +148,7 @@ app.post('/logout', (req, res) => {
 app.get('/profile-admin', (req, res) => {
     const { token } = req.cookies;
     if (token) {
-        console.log('Verifying Token ADMIN'); // for debugging
+        // console.log('Verifying Token ADMIN'); // for debugging
         jwt.verify(token, jwtSecretAdmin, {}, async (err, userData) => {
             // if (err) throw err; // Αν αφήσω αυτό το throw τρώει σκάλωμα και δεν τρέχει!!!!
             // if (err) {

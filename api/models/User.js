@@ -8,6 +8,7 @@ const UserSchema = new Schema({
     phone: Number,
     email: String,
     password: String,
+    profilephoto: [],
     host: Boolean,
     tenant: Boolean,
     isAdmin: {type:Boolean, default:false}
