@@ -307,7 +307,7 @@ export default function RegisterPage() {
             </label>
 
             <div className="flex w-full">
-              <label className="cursor-pointer w-1/2 mr-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full block p-2.5">
+              <label className="cursor-pointer w-1/2 mr-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5">
                 <input
                   className="cursor-pointer"
                   type="checkbox"
@@ -318,7 +318,7 @@ export default function RegisterPage() {
                 {/* Host */}
                 <span className="ml-2">Host</span>
               </label>
-              <label className="cursor-pointer w-1/2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full block p-2.5">
+              <label className="cursor-pointer w-1/2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5">
                 <input
                   className="cursor-pointer"
                   type="checkbox"
