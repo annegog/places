@@ -20,6 +20,8 @@ export default function RegisterPage() {
 
   const [atLeastOneChecked, setAtLeastOneChecked] = useState(true);
 
+  const [uploadedProfilePhoto, setUploadedProfilePhoto] = useState(true);
+
   const [redirect, setRedirect] = useState(false);
   const flagPhoto = false;
 
@@ -42,6 +44,7 @@ export default function RegisterPage() {
           });
           console.log("Image uploaded from your device:", files);
         });
+        setUploadedProfilePhoto(true);
     } catch (error) {
       console.error("Error uploading the photo from your device:", error);
     }
@@ -49,6 +52,7 @@ export default function RegisterPage() {
  
   function removePhoto(filename){
     setProfilePhoto([...profilephoto.filter(profilephoto => profilephoto !== filename)]);
+    setUploadedProfilePhoto(false);
   }
   
   async function registerUser(ev) {
@@ -150,9 +154,10 @@ export default function RegisterPage() {
       ev.preventDefault();
       setAtLeastOneChecked(false);
     }
-    // if (!passwordsMatch) {
-    //   ev.preventDefault();
-    // }
+    if (profilephoto.length === 0) {
+      ev.preventDefault();
+      setUploadedProfilePhoto(false);
+    }
   };
 
   if (redirect) {
@@ -241,6 +246,7 @@ export default function RegisterPage() {
                     type="file"
                     className="hidden"
                     onChange={uploadPhoto}
+                    required
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -258,6 +264,9 @@ export default function RegisterPage() {
                   </svg>
                 </label>
               ) : null}
+              {!uploadedProfilePhoto && (
+              <p className="mt-2 text-red-500 text-xs">Profile photo is required!</p>
+            )}
             </div>
 
             <div>
