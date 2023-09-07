@@ -48,7 +48,7 @@ app.get('/test', (req,res) => {
 
 //
 // --------------------------------------------------------------------------------------
-//
+// USER - resgisteratiom - login - logout
 
 app.post('/register', async (req,res) => {
     const {first_name, last_name, username, phone, email, password, host, tenant} = req.body;
@@ -113,28 +113,39 @@ app.get('/profile', (req, res) => {
     } else {
         res.json(null);
     }
-    // res.json({token});
 });
 
 app.post('/logout', (req, res) => {
     res.cookie('token', '').json(true);
 });
 
-///////------admin----------//////////
+//
+// --------------------------------------------------------------------------------------
+// ADMIN
 
 app.get('/profile-admin', (req, res) => {
-    const {token} = req.cookies;
-    if (token){
+    const { token } = req.cookies;
+    if (token) {
+        console.log('Verifying Token ADMIN'); // for debugging
         jwt.verify(token, jwtSecretAdmin, {}, async (err, userData) => {
-            if (err) throw err;
-            const {first_name, last_name, username, phone, email, host, tenant, isAdmin} = await User.findById(userData.id); //fetch from the database
-            res.json({first_name, last_name, username, phone, email, host, tenant, isAdmin}); 
+            // if (err) throw err; // Αν αφήσω αυτό το throw τρώει σκάλωμα και δεν τρέχει!!!!
+            // if (err) {
+            //     console.error('JWT Verification Error:', err.message);
+            //     res.status(401).json({ error: 'Invalid token' });
+            // } else {
+                if (userData && userData.id) {
+                    const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = await User.findById(userData.id);
+                    res.json({ first_name, last_name, username, phone, email, host, tenant, isAdmin });
+                } else {
+                    res.status(500).json({ error: 'User data not found' });
+                }
+            // }
         });
     } else {
         res.json(null);
     }
-    // res.json({token});
 });
+
 //
 // --------------------------------------------------------------------------------------
 // PLACES PAGE - make new place - update existing place
@@ -234,6 +245,8 @@ app.post('/places', (req,res) =>{
 // get the places of this user-host
 app.get('/user-places', async (req, res) => {
     const {token} = req.cookies;
+    console.log('Verifying Token 3:', token); // Add this line for debugging
+
     try{
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
         if (err) throw err;

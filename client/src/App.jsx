@@ -11,6 +11,7 @@ import AccountPage from './pages/AccountPage';
 import { UserContextProvider } from './UserContext';
 import PlacesPage from './pages/PlacesPage';
 import PlacesFormPage from './pages/PlacesFormPage';
+import PlacePage from './pages/PLacePage';
 import AdminPage from './pages/AdminPage';
 import { AdminContextProvider } from './AdminContext';
 
@@ -32,6 +33,7 @@ function App() {
             <Route path="/account/places" element={<PlacesPage />} />
             <Route path="/account/places/new" element={<PlacesFormPage />} />
             <Route path="/account/places/:id" element={<PlacesFormPage />} />
+            <Route path="/place/:id" element={<PlacePage />} />
             <Route path="/account/:subpage/:action" element={<AccountPage />} />
             
             <Route path="/admin" element={<AdminPage />} />
