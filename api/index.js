@@ -106,9 +106,13 @@ app.get('/profile', (req, res) => {
     const {token} = req.cookies;
     if (token){
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
-            if (err) throw err;
-            const {first_name, last_name, username, phone, email, host, tenant, isAdmin} = await User.findById(userData.id); //fetch from the database
-            res.json({first_name, last_name, username, phone, email, host, tenant, isAdmin}); 
+            // if (err) throw err;
+            if (userData && userData.id) {
+                const {first_name, last_name, username, phone, email, host, tenant, isAdmin} = await User.findById(userData.id); //fetch from the database
+                res.json({first_name, last_name, username, phone, email, host, tenant, isAdmin}); 
+            } else {
+                res.json(null);
+            }
         });
     } else {
         res.json(null);
@@ -126,18 +130,19 @@ app.post('/logout', (req, res) => {
 app.get('/profile-admin', (req, res) => {
     const { token } = req.cookies;
     if (token) {
-        console.log('Verifying Token ADMIN'); // for debugging
-        jwt.verify(token, jwtSecretAdmin, {}, async (err, userData) => {
+        // console.log('Verifying Token ADMIN'); // for debugging
+        jwt.verify(token, jwtSecretAdmin, {}, async (err, adminData) => {
             // if (err) throw err; // Αν αφήσω αυτό το throw τρώει σκάλωμα και δεν τρέχει!!!!
             // if (err) {
             //     console.error('JWT Verification Error:', err.message);
             //     res.status(401).json({ error: 'Invalid token' });
             // } else {
-                if (userData && userData.id) {
-                    const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = await User.findById(userData.id);
+                if (adminData && adminData.id) {
+                    const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = await User.findById(adminData.id);
                     res.json({ first_name, last_name, username, phone, email, host, tenant, isAdmin });
                 } else {
-                    res.status(500).json({ error: 'User data not found' });
+                    res.json(null);
+                    //res.status(500).json({ error: 'Admin data not found' });
                 }
             // }
         });
