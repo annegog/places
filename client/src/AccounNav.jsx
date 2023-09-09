@@ -1,11 +1,17 @@
 import {Link, useLocation} from "react-router-dom";
+import { useContext } from "react"; 
+import { UserContext } from "./UserContext";
 
 export default function AccountNav() {
+
   const {pathname} = useLocation();
+  const { user } = useContext(UserContext); // Access user data from UserContext
+
   let subpage = pathname.split('/')?.[2];
   if (subpage === undefined) {
     subpage = 'profile';
   }
+
   function linkClasses (type=null) {
     let classes = 'inline-flex gap-1 py-2 px-6 rounded-full';
     if (type === subpage) {
@@ -15,6 +21,7 @@ export default function AccountNav() {
     }
     return classes;
   }
+  
   return (
     <nav className="w-full flex justify-center mt-8 mb-8 gap-3">
       <Link className={linkClasses("profile")} to={"/account"}>
@@ -51,6 +58,7 @@ export default function AccountNav() {
         </svg>
         My bookings
       </Link>
+      {user && user.host && ( // Conditionally render the link based on the isHost() function
       <Link className={linkClasses("places")} to={"/account/places"}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -68,6 +76,7 @@ export default function AccountNav() {
         </svg>
         My accommodations
       </Link>
+      )}
     </nav>
   );
 }

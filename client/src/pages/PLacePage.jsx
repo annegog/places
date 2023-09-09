@@ -4,10 +4,12 @@ import axios from "axios";
 import Image from "../Image";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import BookingWindow from "../BookingWindow";
+import ImageProfile from "../ImageProfile"
 
 export default function PlacePage() {
   const { id } = useParams();
   const [place, setPlace] = useState(null);
+  const [host, setHost] = useState(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [open, setOpen] = useState(false); //for descriptions dialog
@@ -21,13 +23,16 @@ export default function PlacePage() {
   };
 
   const getDescription = () => {
-    if (expanded) {
-      return place.description;
-    } else {
-      // Display only the first 5 rows
-      const descriptionArray = place.description.split("\n");
-      return descriptionArray.slice(0, 5).join("\n");
+    if (place && place.description) {
+      if (expanded) {
+        return place.description;
+      } else {
+        // Display only the first 5 rows
+        const descriptionArray = place.description.split("\n");
+        return descriptionArray.slice(0, 5).join("\n");
+      }
     }
+    return "";
   };
 
   const handleClickToOpen = () => {
@@ -38,25 +43,26 @@ export default function PlacePage() {
     setOpen(false);
   };
 
-  //
-
   useEffect(() => {
     if (!id) {
       return;
     }
-    axios.get("/places/" + id).then((response) => {
-      setPlace(response.data);
+    axios.get("/place/" + id).then((response) => {
+      setPlace(response.data.place);
+      setHost(response.data.host);
     });
-    // axios.get("/profile").then((res) => {
-    //   setHost(res.data);
-    // });
   }, [id]);
+
+  useEffect(() => {
+    console.log("Host:", host);
+    setHost(host);
+  }, [host]);
 
   if (!place) return "";
 
   if (showMap) {
     return (
-      <div className="absolute inset-4 bg-white min-h-screen mr-5 ml-5 lg:mr-20 lg:ml-20 xl:mr-30 xl:ml-30">
+      <div className="absolute inset-4 bg-white min-h-screen mr-5 ml-5 xl:mr-30 xl:ml-30">
         <div className="p-8 grid gap-4 ">
           <div className="grid grid-cols-2">
             <button
@@ -375,7 +381,34 @@ export default function PlacePage() {
 
       <hr className="mt-6 mb-6" />
       <div>
-        <h2 className="text-xl font-semibold">Hosting by </h2>
+        <div className="grid grid-cols-[0.2fr,2fr,1fr] gap-4">
+          <div className="rounded-full item-button border border-gray-600 overflow-hidden">
+            { host.photoprofile ? (
+              <ImageProfile
+                className="rounded-full w-16 h-16 sm:w-10 sm:h-10 object-cover relative"
+                src={ host.photoprofile?.[0]}
+                alt=""
+              />
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="rounded-full w-10 h-10 relative self-center left-2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                />
+              </svg>
+            )}
+          </div>
+          <h2 className="text-3xl font-semibold">Hosting by: {host.username} </h2>
+        </div>
+
         <h2>contact with the host</h2>
       </div>
 

@@ -266,7 +266,7 @@ app.post('/places', (req,res) =>{
 // get the places of this user-host
 app.get('/user-places', async (req, res) => {
     const {token} = req.cookies;
-    console.log('Verifying Token 3:', token); // Add this line for debugging
+    // console.log('Verifying Token 3:', token); // Add this line for debugging
 
     try{
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
@@ -283,7 +283,6 @@ app.get('/user-places', async (req, res) => {
 app.get('/places/:id', async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
     const {id} = req.params;
-    // console.log("Fetching place with ID:", id);    
     try {
       const place = await Place.findById(id).exec();
       res.json(place);
@@ -291,6 +290,23 @@ app.get('/places/:id', async (req, res) => {
       res.status(500).json({ error: 'Error fetching place' });
     }
 });
+
+// get the place=id 
+app.get('/place/:id', async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
+    const {id} = req.params;
+    // console.log("Fetching place (from indexpage) with ID:", id);    
+    try {
+      const place = await Place.findById(id).exec();
+      const host = await User.findOne({ _id: place.owner }).exec();
+      res.json({place: place, host: {"username": host.username,
+      "photoprofile": host.profilephoto}
+       });
+    } catch (error) {
+      res.status(500).json({ error: 'Error fetching place' });
+    }
+});
+
 
 // update the place=id
 app.put('/places/:id', async (req, res) => {
