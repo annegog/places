@@ -167,6 +167,51 @@ app.get('/profile-admin', (req, res) => {
     }
 });
 
+
+app.get('/users', async (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+        jwt.verify(token, jwtSecretAdmin, {}, async (err, adminData) => {
+            if (adminData && adminData.id) {
+                res.json((await User.find()).filter(user => user.id !== adminData.id));
+            } else {
+                res.json(null);
+            } 
+        });
+    } else {
+        res.json(null);
+    }
+})
+
+app.get('/hosts', async (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+        jwt.verify(token, jwtSecretAdmin, {}, async (err, adminData) => {
+            if (adminData && adminData.id) {
+                res.json((await User.find()).filter(user => user.host === true));
+            } else {
+                res.json(null);
+            } 
+        });
+    } else {
+        res.json(null);
+    }
+})
+
+app.get('/tenants', async (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+        jwt.verify(token, jwtSecretAdmin, {}, async (err, adminData) => {
+            if (adminData && adminData.id) {
+                res.json((await User.find()).filter(user => user.tenant === true));
+            } else {
+                res.json(null);
+            } 
+        });
+    } else {
+        res.json(null);
+    }
+})
 //
 // --------------------------------------------------------------------------------------
 // PLACES PAGE - make new place - update existing place

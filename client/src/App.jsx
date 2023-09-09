@@ -12,9 +12,13 @@ import { UserContextProvider } from './UserContext';
 import PlacesPage from './pages/PlacesPage';
 import PlacesFormPage from './pages/PlacesFormPage';
 import PlacePage from './pages/PLacePage';
-import AdminPage from './pages/AdminPage';
-import { AdminContextProvider } from './AdminContext';
 import MyBookings from './pages/MyBookings';
+
+import { AdminContextProvider } from './AdminContext';
+import AdminPage from './pages/AdminPage';
+import UsersPage from './pages/UsersPage';
+import HostsPage from './pages/HostsPage';
+import TenantsPage from './pages/TenantsPage';
 
 axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials = true;
@@ -43,6 +47,12 @@ function App() {
             
             // Admins Pages - Admin access ONLY
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin/users" element={<UsersPage />} />
+            {/* <Route path="/account/places/:id" element={<PlacesFormPage />} */}
+            <Route path="/admin/hosts" element={<HostsPage />} />
+            {/*  */}
+            <Route path="/admin/tenants" element={<TenantsPage />} />
+            {/*  */}
           
           </Route> 
             
