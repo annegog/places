@@ -6,6 +6,13 @@ import { AdminContext } from "../AdminContext.jsx";
 export default function AdminPage() {
   const [redirect, setRedirect] = useState(false);
   const { ready, admin, setAdmin } = useContext(AdminContext);
+
+  const [users, setUsers] = useState([]);
+  // useEffect(()=>{
+  //   axios.get('/users').then(response =>{
+  //       setUsers(response.data);
+  //   });
+  // }, []);
   
   if (!ready) {
     return "Loading...";
