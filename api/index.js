@@ -52,7 +52,7 @@ app.get('/test', (req,res) => {
 // USER - resgisteratiom - login - logout
 
 app.post('/register', async (req,res) => {
-    const {first_name, last_name, username, phone, email, password, profilephoto, host, tenant} = req.body;
+    const {first_name, last_name, username, phone, email, password, profilephoto, host, tenant, isApproved} = req.body;
     try{
         const userDoc = await User.create({
             first_name,
@@ -63,7 +63,8 @@ app.post('/register', async (req,res) => {
             email,
             password:bcrypt.hashSync(password, bcryptSalt),
             host,
-            tenant
+            tenant,
+            isApproved
         });
         res.json(userDoc);
     } catch(e){
@@ -212,6 +213,25 @@ app.get('/tenants', async (req, res) => {
         res.json(null);
     }
 })
+// should make a verification function for admin and user
+app.post('/delete-user', async (req, res) => {
+    try {
+        //user id and token for verification
+        const {userId} = req.body
+        res.json(await User.deleteOne({_id: userId}));
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Delete user failed' });
+    }
+})
+
+app.post('/accept-host', async (req, res) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+});
 //
 // --------------------------------------------------------------------------------------
 // PLACES PAGE - make new place - update existing place

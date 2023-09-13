@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { AdminContext } from "../AdminContext.jsx";
+import AdminNav from "../AdminNav"
 import HostsPage from "./HostsPage.jsx";
 import TenantsPage from "./TenantsPage.jsx";
 import UsersPage from "./UsersPage.jsx";
@@ -32,16 +33,18 @@ export default function AdminPage() {
 
   return (
     <div>
+       <AdminNav />
       {subpage === "users" && <UsersPage />}
-      <div className="text-center ">
-        Logged in as {admin.username} ({}) <br />
-        <button onClick={logout} className="primary max-w-xs mt-10">
-            {" "}
-            Logout{" "}
-        </button>
-      </div>
       {subpage === "hosts" && <HostsPage />}
       {subpage === "tenants" && <TenantsPage />}
+
+      {/* na mpei sto admin header to logout */}
+      <div className="text-center ">
+        <button onClick={logout} className="primary max-w-xs mt-10">
+            Logout
+        </button>
+      </div>
+
     </div>
   );
 }

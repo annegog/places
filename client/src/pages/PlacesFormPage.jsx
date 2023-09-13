@@ -293,7 +293,7 @@ export default function PlacesFormPage() {
               />
             </div>
           </div>
-//
+          
           {inputHeader("Photos")}
           <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
 

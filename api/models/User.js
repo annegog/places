@@ -11,6 +11,7 @@ const UserSchema = new Schema({
     profilephoto: [],
     host: Boolean,
     tenant: Boolean,
+    isApproved: Boolean,
     isAdmin: {type:Boolean, default:false}
 });
 

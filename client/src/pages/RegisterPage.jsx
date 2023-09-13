@@ -14,6 +14,7 @@ export default function RegisterPage() {
   const [host, setHost] = useState(false);
   const [tenant, setTenant] = useState(false);
   const [profilephoto, setProfilePhoto] = useState([]);
+  const [isApproved, setIsApproved] = useState(true);
 
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(true);
@@ -68,6 +69,7 @@ export default function RegisterPage() {
         password,
         host,
         tenant,
+        isApproved
       });
       alert("Submission successful!");
       //redirect as logged in-else to login!!!!!!!!
@@ -111,6 +113,7 @@ export default function RegisterPage() {
     switch (optionValue) {
       case "host":
         setHost(isChecked);
+        setIsApproved(!isChecked);
         if (isChecked) {
           setAtLeastOneChecked(true);
         }
