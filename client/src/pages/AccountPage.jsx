@@ -1,10 +1,6 @@
-import { useContext, useState } from "react";
-import { UserContext } from "../UserContext.jsx";
-import { Link, Navigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { useParams } from "react-router-dom";
 import PlacesPage from "./PlacesPage";
 import AccountNav from "../AccounNav.jsx";
-import ImageProfile from "../ImageProfile";
 import ProfilePage from "./ProfilePage.jsx";
 
 
