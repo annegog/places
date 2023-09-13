@@ -1,11 +1,14 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import PlacesFormPage from "./PlacesFormPage";
 import AccountNav from "../AccounNav";
+import { UserContext } from "../UserContext";
 
 export default function PlacesPage() {
   const { id } = useParams();
+
+  const {user} = useContext(UserContext);
 
   const [places, setPlaces] = useState([]);
   useEffect(() => {
@@ -18,7 +21,7 @@ export default function PlacesPage() {
     <div>
       <AccountNav />
 
-      <div className="text-center">
+      {user && user.isApproved && (<div className="text-center">
         <Link
           className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full"
           to={"/account/places/new"}
@@ -37,7 +40,15 @@ export default function PlacesPage() {
           </svg>
           Add a new place
         </Link>
+      </div>)}
+
+      {user && !user.isApproved &&(
+        <div className="text-center text-lg font-bold mt-48 bg-primary text-white rounded-full py-4">
+          Your account, as host, must first be approved! <br />
+          The Admin will accept you soon (or not :D)!
       </div>
+      )}
+
       <div className="mt-4 grid gap-2 lg:ml-10 lg:mr-10">
           {places.length > 0 && places.map(place => (
             <Link key={place._id} to={'/account/places/'+place._id} className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl">
