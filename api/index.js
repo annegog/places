@@ -47,6 +47,39 @@ app.get('/test', (req,res) => {
 // wZPJCkcvDJZj7dTJ
 // 2n0ZeUXZlp7OLVrr
 
+///verification functions for admin
+const verifyJWTadmin = (req, res, next) => {
+    const {token} = req.cookies;
+    if (token){
+        jwt.verify(token, jwtSecretAdmin, {}, async (err, adminData) => {
+            if (err) {
+                return res.status(401).json({ error: 'Admin Token verification failed' });
+            }
+            req.id = adminData.id;
+            // console.log("correct verification for admin ")
+            next();
+        });
+    } else {
+        res.status(401).json({ error: 'Token for admin not provided' });
+    }
+};
+/// verification functions for user
+const verifyJWTuser = (req, res, next) => {
+    const {token} = req.cookies;
+    if (token){
+        jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
+            if (err) {
+                return res.status(401).json({ error: 'User Token verification failed' });
+            }
+            req.id = userData.id;
+            // console.log("correct verification for user ")
+            next();
+        });
+    } else {
+        res.status(401).json({ error: 'Token for user not provided' });
+    }
+};
+
 //
 // --------------------------------------------------------------------------------------
 // USER - resgisteratiom - login - logout
@@ -150,19 +183,14 @@ app.post('/logout', (req, res) => {
 // --------------------------------------------------------------------------------------
 // ADMIN
 
-app.get('/profile-admin', (req, res) => {
-    const { token } = req.cookies;
-    if (token) {
-        // console.log('Verifying Token ADMIN'); // for debugging
-        jwt.verify(token, jwtSecretAdmin, {}, async (err, adminData) => {
-            if (adminData && adminData.id) {
-                const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = await User.findById(adminData.id);
-                res.json({ first_name, last_name, username, phone, email, host, tenant, isAdmin });
-            } else {
-                res.json(null);
-            }
-            
-        });
+app.get('/profile-admin' ,verifyJWTadmin, (req, res) => {
+    
+
+    const adminId = req.id;
+
+    if (adminId) {
+        const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = User.findById(adminId);
+        res.json({ first_name, last_name, username, phone, email, host, tenant, isAdmin });
     } else {
         res.json(null);
     }
@@ -217,8 +245,9 @@ app.get('/tenants', async (req, res) => {
 app.post('/delete-user', async (req, res) => {
     try {
         //user id and token for verification
-        const {userId} = req.body
-        res.json(await User.deleteOne({_id: userId}));
+        const {userId} = req.body;
+        await User.deleteOne({_id: userId});
+        res.status(200).json("User Deleted");
     } catch (error) {
         console.error('Error deleting user:', error);
         res.status(500).json({ error: 'Delete user failed' });
@@ -227,9 +256,27 @@ app.post('/delete-user', async (req, res) => {
 
 app.post('/accept-host', async (req, res) => {
     try {
-        
+        const {userId} = req.body;
+        await User.updateOne({_id: userId}, {
+            $set: {
+                isApproved: true
+            }
+        }); 
+        res.status(200).json("Host Accepted");
     } catch (error) {
-        
+        console.error('Error approving a user:', error);
+        res.status(500).json({ error: 'Approve user failed' });
+    }
+});
+
+app.get('/admin-user-places', async (req, res) => {
+    try {
+        const {id} = req.body;
+        console.log(id);
+        res.json(await Place.find({owner: id}));
+    } catch (error) {
+        console.error('Error finding places:', error);
+        res.status(500).json({ error: 'Fiding places failed' });
     }
 });
 //

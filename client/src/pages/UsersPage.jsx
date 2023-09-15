@@ -5,22 +5,30 @@ import { Link } from "react-router-dom";
 
 export default function UsersPage() {
     const [users, setUsers] = useState([]);
-    useEffect(()=>{
-      axios.get('/users').then(response =>{
-          setUsers(response.data);
+    useEffect(()=> {
+        axios.get('/users').then(response =>{
+        setUsers(response.data);
       });
     }, []);
 
     //maybe and all the places a host has must be deleted
-    const handleDelete = (userId, username) => {
+    const handleDelete = async (userId, username) => {
         if (window.confirm(`Are you sure, you want to delete user: ${username}`)) {
-            axios.post('/delete-user', {userId});
-            setUsers(users.filter((user) => user._id !== userId));
+            await axios.post('/delete-user', {userId});
+            // setUsers(users.filter((user) => user._id !== userId));
+            const response = await axios.get('/users');
+            setUsers(response.data);
         } 
     }
 
-    const handleAccept = (userId) => {
-
+    const handleAccept = async (userId, username) => {
+        if (window.confirm(`Are you sure, you want to accept host: ${username}`)) {
+            await axios.post('/accept-host', {userId});
+            // setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+            // setUsers(users.filter((user) => user._id !== userId));
+            const response = await axios.get('/users');
+            setUsers(response.data);
+        } 
     }
     
     return (
@@ -55,7 +63,7 @@ export default function UsersPage() {
                             <div className=""> {/*flex gap-3*/}
                                 <button 
                                 className="bg-green-700 text-sm text-white p-2 rounded-2xl flex" 
-                                onClick={() => handleAccept(user._id)}>
+                                onClick={() => handleAccept(user._id, user.username)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                     </svg>
