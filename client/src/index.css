@@ -58,3 +58,8 @@ select{
     content: " •"; /* Unicode character for dot is \2022 */
     margin: 0 5px; /* Adjust this value for spacing between text and dot */
 }
+
+button.contact{
+    background-color:#769ABE;
+    @apply p-5 w-40 text-white text-center rounded-2xl;
+}
