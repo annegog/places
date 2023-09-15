@@ -4,7 +4,7 @@ import axios from "axios";
 import Image from "../Image";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import BookingWindow from "../BookingWindow";
-import ImageProfile from "../ImageProfile"
+import ImageProfile from "../ImageProfile";
 
 export default function PlacePage() {
   const { id } = useParams();
@@ -380,14 +380,18 @@ export default function PlacePage() {
       </div>
 
       <hr className="mt-6 mb-6" />
-      <div>
-        <div className="grid grid-cols-[0.2fr,2fr,1fr] gap-4">
-          <div className="rounded-full item-button border border-gray-600 overflow-hidden">
-            { host.photoprofile ? (
+      <div className="grid grid-cols-2 mb-2">
+        <div className="grid grid-cols-[0.1fr,0.8fr] gap-4">
+          <div
+            className="rounded-full item-button border border-gray-600 overflow-hidden"
+            style={{ width: "40px" }}
+          >
+            {host.photoprofile ? (
               <ImageProfile
-                className="rounded-full w-16 h-16 sm:w-10 sm:h-10 object-cover relative"
-                src={ host.photoprofile?.[0]}
+                className="rounded-full object-cover relative"
+                src={host.photoprofile?.[0]}
                 alt=""
+                style={{ width: "40px" }}
               />
             ) : (
               <svg
@@ -406,12 +410,15 @@ export default function PlacePage() {
               </svg>
             )}
           </div>
-          <h2 className="text-3xl font-semibold">Hosting by: {host.username} </h2>
+          <h2 className="text-3xl font-light">Hosting by: {host.username}</h2>
         </div>
-
-        <h2>contact with the host</h2>
       </div>
-
+      
+      <div className="px-4">
+        <button className="contact">
+          contact with the host
+        </button>
+      </div>
       <hr className="mt-3 mb-6" />
       <div className="mb-10">
         <h1 className="text-2xl font-semibold text-gray-700">

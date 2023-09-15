@@ -13,13 +13,14 @@ import PlacesPage from './pages/PlacesPage';
 import PlacesFormPage from './pages/PlacesFormPage';
 import ProfilePage from './pages/ProfilePage';
 import PlacePage from './pages/PLacePage';
-import MyBookings from './pages/MyBookings';
-
+import BookingsPage from './pages/BookingsPage';
+import BookingPage from './pages/BookingPage';
 import { AdminContextProvider } from './AdminContext';
 import AdminPage from './pages/AdminPage';
 import UsersPage from './pages/UsersPage';
 import HostsPage from './pages/HostsPage';
 import TenantsPage from './pages/TenantsPage';
+
 
 
 axios.defaults.baseURL = 'http://localhost:4000';
@@ -41,8 +42,9 @@ function App() {
 
             // Bookings - host and tenent access
             <Route path="/account/profile" element={<ProfilePage />} />
-            <Route path="/account/bookings" element={<MyBookings />} />
-            
+            <Route path="/account/bookings" element={<BookingsPage />} />
+            <Route path="/account/bookings/:id" element={<BookingPage/>} />
+
             // Places Page - host access
             <Route path="/account/places" element={<PlacesPage />} />
             <Route path="/account/places/new" element={<PlacesFormPage />} />

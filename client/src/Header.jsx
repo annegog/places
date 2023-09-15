@@ -75,7 +75,7 @@ export default function Header(){
                         <div className="rounded-full item-button border border-gray-600 overflow-hidden">  
                             {user && user.profilephoto?.[0] ?  ( 
                                 <ImageProfile
-                                className="rounded-3xl w-6 object-cover aspect-square"
+                                className="rounded-3xl w-8 object-cover aspect-square"
                                 src={user.profilephoto?.[0]}
                                 alt=""
                             />
