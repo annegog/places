@@ -182,12 +182,12 @@ app.post('/logout', (req, res) => {
 // --------------------------------------------------------------------------------------
 // ADMIN
 
-app.get('/profile-admin' ,verifyJWTadmin, (req, res) => {
-    
+app.get('/profile-admin', verifyJWTadmin, (req, res) => {
     const adminId = req.id;
-
+    console.log(adminId)
     if (adminId) {
-        const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = User.findById(adminId);
+        const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = User.findById({_id: adminId});
+        console.log(first_name)
         res.json({ first_name, last_name, username, phone, email, host, tenant, isAdmin });
     } else {
         res.json(null);
@@ -208,7 +208,7 @@ app.get('/users', async (req, res) => {
     } else {
         res.json(null);
     }
-})
+});
 
 app.get('/hosts', async (req, res) => {
     const { token } = req.cookies;
@@ -223,7 +223,7 @@ app.get('/hosts', async (req, res) => {
     } else {
         res.json(null);
     }
-})
+});
 
 app.get('/tenants', async (req, res) => {
     const { token } = req.cookies;
@@ -238,19 +238,23 @@ app.get('/tenants', async (req, res) => {
     } else {
         res.json(null);
     }
-})
+});
 // should make a verification function for admin and user
 app.post('/delete-user', async (req, res) => {
     try {
         //user id and token for verification
         const {userId} = req.body;
         await User.deleteOne({_id: userId});
+        //also delete the places!!!!
+        //and the photosssss
+        ///!!!!!!!!!!!!!!!!
+        //sosososososososso
         res.status(200).json("User Deleted");
     } catch (error) {
         console.error('Error deleting user:', error);
         res.status(500).json({ error: 'Delete user failed' });
     }
-})
+});
 
 app.post('/accept-host', async (req, res) => {
     try {
@@ -267,9 +271,9 @@ app.post('/accept-host', async (req, res) => {
     }
 });
 
-app.get('/admin-user-places', async (req, res) => {
+app.get('/admin-user-places/:id', async (req, res) => {
     try {
-        const {id} = req.body;
+        const {id} = req.params;
         console.log(id);
         res.json(await Place.find({owner: id}));
     } catch (error) {

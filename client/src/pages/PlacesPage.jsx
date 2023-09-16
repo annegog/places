@@ -43,9 +43,11 @@ export default function PlacesPage() {
       </div>)}
 
       {user && !user.isApproved &&(
-        <div className="text-center text-lg font-bold mt-48 bg-primary text-white rounded-full py-4">
-          Your account, as host, must first be approved! <br />
-          The Admin will accept you soon (or not :D)!
+        <div className="text-center ">
+          <textarea className="text-lg font-bold mt-48 bg-primary text-white rounded-full py-4 ">
+            Your account, as host, must first be approved! 
+            The Admin will accept you soon (or not :D)!
+          </textarea>
       </div>
       )}
 

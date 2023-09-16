@@ -4,6 +4,7 @@ import './App.css';
 import { UserContext } from "./UserContext";
 import ImageProfile from "./ImageProfile";
 import axios from "axios";
+import logo from "./logo.png"
 
 export default function Header(){
     const [redirect, setRedirect] = useState(false);
@@ -32,14 +33,9 @@ export default function Header(){
     return(
         <div>
             <header className="header"> 
-                <Link to={'/'} className="flex items-center gap-2 bg-primary text-white rounded-full p-2"> 
-                    {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                    </svg> */}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" />
-                    </svg>
-                    <span className="font-bold text-xl mr-1"> Find A Place </span>
+                <Link to={'/'} className="text-center flex items-center"> 
+                    <img src={logo} alt="logo" className="object-f w-12 rounded-lg mr-2"/> 
+                    <span className="text-indigo-400 tracking-tighter font-bold text-xl logo-text">Find Your Place</span>
                 </Link>
                 
                 <div className="flex gap-6 items-center border border-gray-300 rounded-full py-2 px-4 shadow-md shadow-gray-250">
