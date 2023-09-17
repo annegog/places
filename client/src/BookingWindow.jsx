@@ -75,15 +75,15 @@ export default function BookingWindow({ place }) {
     setDiffInDays(diffInDays);
   };
 
-  // redirections to loin and sing in pages //
-  const [redirectLogin, setRedirectLogin] = useState(false);
-  const [redirectRegister, setRedirectRegister] = useState(false);
-  if (redirectLogin) {
-    return <Navigate to={"/login"} />;
-  }
-  if (redirectRegister) {
-    return <Navigate to={"/register"} />;
-  }
+  // // redirections to loin and sing in pages //
+  // const [redirectLogin, setRedirectLogin] = useState(false);
+  // const [redirectRegister, setRedirectRegister] = useState(false);
+  // if (redirectLogin) {
+  //   return <Navigate to={"/login"} />;
+  // }
+  // if (redirectRegister) {
+  //   return <Navigate to={"/register"} />;
+  // }
 
   async function bookIt(ev) {
     ev.preventDefault();
@@ -304,7 +304,7 @@ export default function BookingWindow({ place }) {
             <text className="font-semibold text-lg text-center">Total</text>
           </div>
           <div className="text-center">
-            <text className="font-medium text-lg text-center">
+            <text className="font-medium text-lg text-center" onChange={()=>setTotalCost(plsce.price*diffInDays)}>
               € {place.price * diffInDays}
             </text>
           </div>
