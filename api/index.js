@@ -391,7 +391,7 @@ app.get('/user-places', async (req, res) => {
 });
 
 // get the place=id 
-app.get('/places/:id', async (req, res) => {
+app.get('/places/:id', verifyJWTuser, async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
     const { id } = req.params;
     try {
