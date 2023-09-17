@@ -63,3 +63,9 @@ button.contact{
     background-color:#769ABE;
     @apply p-5 w-40 text-white text-center rounded-2xl;
 }
+
+@media (max-width: 900px) {
+    .logo-text {
+      display: none;
+    }
+  }

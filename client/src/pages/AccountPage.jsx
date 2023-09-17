@@ -15,7 +15,7 @@ export default function AccountPage() {
     <div>
       <AccountNav />
       {subpage === "profile" && <ProfilePage />}
-      {subpage == "places" && <PlacesPage />}
+      {/* {subpage == "places" && <PlacesPage />} */}
     </div>
   );
 }

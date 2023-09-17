@@ -32,7 +32,8 @@ export default function UsersPage() {
     }
     
     return (
-        <div>    
+        //grid
+        <div className="">    
             {users.length > 0 && users.map(user => (
                 <div key={user._id} className="bg-gray-200  mb-2 rounded-xl flex justify-between">
                     <Link to={user._id} className="font-bold m-1 pl-2">
