@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { useContext } from "react";
+import { useParams } from "react-router-dom";
 import { AdminContext } from "../AdminContext.jsx";
 import AdminNav from "../AdminNav"
 import HostsPage from "./HostsPage.jsx";
@@ -8,8 +7,7 @@ import TenantsPage from "./TenantsPage.jsx";
 import UsersPage from "./UsersPage.jsx";
 
 export default function AdminPage() {
-  const [redirect, setRedirect] = useState(false);
-  const { ready, admin, setAdmin } = useContext(AdminContext);
+  const { ready } = useContext(AdminContext);
 
   let { subpage } = useParams();
 
@@ -21,30 +19,12 @@ export default function AdminPage() {
     return "Loading...";
   }
 
-  async function logout() {
-    await axios.post("/logout");
-    setAdmin(null);
-    setRedirect(true);
-  }
-
-  if (redirect) {
-    return <Navigate to={"/"} />;
-  }
-
   return (
     <div>
-       <AdminNav />
+      <AdminNav />
       {subpage === "users" && <UsersPage />}
       {subpage === "hosts" && <HostsPage />}
       {subpage === "tenants" && <TenantsPage />}
-
-      {/* na mpei sto admin header to logout */}
-      <div className="text-center ">
-        <button onClick={logout} className="primary max-w-xs mt-10">
-            Logout
-        </button>
-      </div>
-
     </div>
   );
 }

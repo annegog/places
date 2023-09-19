@@ -22,6 +22,7 @@ import AdminPage from './pages/AdminPage';
 import HostsPage from './pages/HostsPage';
 import TenantsPage from './pages/TenantsPage';
 import UserPage from './pages/UserPage';
+import AdminProfile from './pages/AdminProfile';
 
 
 
@@ -56,6 +57,7 @@ function App() {
             // Admins Pages - Admin access ONLY
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/admin/:id" element={<UserPage/>} />
+            <Route path="/admin/profile" element={<AdminProfile/>} />
             {/* <Route path="/admin/users" element={<UsersPage />} /> */}
 
             <Route path="/admin/hosts" element={<HostsPage />} />

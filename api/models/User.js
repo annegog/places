@@ -13,6 +13,7 @@ const UserSchema = new Schema({
     tenant: Boolean,
     isApproved: Boolean,
     isAdmin: {type:Boolean, default:false}
+    // type: String, default: "false" //-- "true" + "render"
 });
 
 const UserModel = mongoose.model('User', UserSchema);
