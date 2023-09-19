@@ -366,7 +366,7 @@ app.post('/places', (req, res) => {
         extraInfoAddress, addedPhotos,
         description, perks, extraInfo, category,
         checkIn, checkOut, maxGuests, numBaths,
-        maxBeds, numBedrooms,
+        maxBeds, numBedrooms, extraPrice,
         area, minDays, price } = req.body;
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
@@ -377,7 +377,7 @@ app.post('/places', (req, res) => {
                 photos: addedPhotos, extraInfoAddress,
                 description, perks, extraInfo, category,
                 checkIn, checkOut, maxGuests, numBaths,
-                maxBeds, numBedrooms, area, minDays, price
+                maxBeds, numBedrooms, area, minDays, price, extraPrice
             });
             res.json(placeDoc);
         })
@@ -422,7 +422,7 @@ app.put('/places/:id', async (req, res) => {
             category ,extraInfo,
             checkIn, checkOut, maxGuests,
             numBaths, maxBeds, numBedrooms,
-            area, minDays, price } = req.body;
+            area, minDays, price, extraPrice } = req.body;
 
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) {
@@ -456,6 +456,7 @@ app.put('/places/:id', async (req, res) => {
             place.area = area;
             place.minDays = minDays;
             place.price = price;
+            place.extraPrice = extraPrice;
 
             // Save the updated place
             await place.save();
@@ -502,7 +503,7 @@ app.post('/booking', (req, res) => {
             if (err) throw err;
             const bookingDoc = await Booking.create({
                 place, user: userData.id, checkIn, checkOut, numGuests, stayNights,
-                first_name, last_name, phone, email, price
+                first_name, last_name, phone, email, price, extraPrice
             })
             res.json(bookingDoc);
         });

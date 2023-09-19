@@ -16,6 +16,7 @@ const PlaceSchema = new Schema({
     checkOut: String,
     maxGuests: Number,
     price: Number,
+    extraPrice: Number,
     numBedrooms: Number,
     maxBeds: Number,
     numBaths: Number,

@@ -6,7 +6,7 @@ export default function PlaceGallery({ place }) {
 
   if (showAllPhotos) {
     return (
-      <div className="absolute inset-0 bg-white min-h-screen lg:mr-10 lg:ml-10">
+      <div className="absolute inset-0 bg-white min-h-max lg:mr-10 lg:ml-10">
         <div className="p-8 grid gap-4 mr-5 ml-5">
           <div>
             <button
@@ -31,8 +31,8 @@ export default function PlaceGallery({ place }) {
             <h2 className="text-2xl text-right text-black">{place.title}</h2>
           </div>
           {place?.photos?.length > 0 &&
-            place.photos.map((photo) => (
-              <div className="">
+            place.photos.map((photo, index) => (
+              <div key={index} className="">
                 <Image src={photo} alt="" />
               </div>
             ))}
