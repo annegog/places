@@ -163,8 +163,8 @@ app.get('/profile', (req, res) => {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             // if (err) throw err;
             if (userData && userData.id) {
-                const { first_name, last_name, username, profilephoto, phone, email, host, tenant, isAdmin } = await User.findById(userData.id); //fetch from the database
-                res.json({ first_name, last_name, username, profilephoto, phone, email, host, tenant, isAdmin });
+                const { first_name, last_name, username, profilephoto, phone, email, host, tenant, isApproved, isAdmin } = await User.findById(userData.id); //fetch from the database
+                res.json({ first_name, last_name, username, profilephoto, phone, email, host, tenant, isApproved, isAdmin });
             } else {
                 res.json(null);
             }
