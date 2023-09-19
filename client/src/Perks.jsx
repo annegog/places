@@ -1,3 +1,13 @@
+import React from "react";
+import { ReactComponent as PartyIcon } from "./assets/svg/party.svg";
+import { ReactComponent as LikeIcon } from "./assets/svg/like.svg";
+import { ReactComponent as SmokingIcon } from "./assets/svg/smoking.svg";
+import { ReactComponent as WifiIcon } from "./assets/svg/wifi.svg";
+import { ReactComponent as ParkingIcon } from "./assets/svg/parking.svg";
+import { ReactComponent as AcIcon } from "./assets/svg/ac.svg";
+import { ReactComponent as EntersIcon } from "./assets/svg/enterns.svg";
+import { ReactComponent as TVIcon } from "./assets/svg/tv.svg";
+
 export default function Perk({ selected, onChange }) {
   function handleCheckBox(ev) {
     const { checked, name } = ev.target;
@@ -8,9 +18,40 @@ export default function Perk({ selected, onChange }) {
     }
   }
 
+  const perksList = [
+    { label: "Parties Allowed", name: "party", icon: <PartyIcon /> },
+    { label: "Living Room", name: "livingRoom", icon: <LikeIcon /> },
+    { label: "Smoking Area", name: "smoking", icon: <SmokingIcon /> },
+    { label: "Wifi", name: "wifi", icon: <WifiIcon /> },
+    { label: "Parking spot", name: "parking", icon: <ParkingIcon /> },
+    { label: "Pets Allowed", name: "pets", icon: <LikeIcon /> },
+    { label: "AC", name: "ac", icon: <AcIcon /> },
+    { label: "Private enterns", name: "enterns", icon: <EntersIcon /> },
+    { label: "TV", name: "tv", icon: <TVIcon /> },
+  ];
+
   return (
     <>
-      <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
+      {perksList.filter((perk) => perk.name).map((perk) => (
+          <label
+            key={perk.name}
+            className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              checked={selected.includes(perk.name)}
+              name={perk.name}
+              onClick={handleCheckBox}
+            />
+            <div style={{ width: 30 }}>{perk.icon}</div>
+            <span>{perk.label}</span>
+          </label>
+        ))}
+    </>
+  );
+}
+
+{/* <label className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
         <input type="checkbox" checked={selected.includes('party')} name="party" onClick={handleCheckBox} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +219,5 @@ export default function Perk({ selected, onChange }) {
           />
         </svg>
         <span>TV </span>
-      </label>
-    </>
-  );
+      </label> */
 }

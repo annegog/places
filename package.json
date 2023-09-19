@@ -1,0 +1,6 @@
+{
+  "dependencies": {},
+  "devDependencies": {
+    "@svgr/rollup": "^8.1.0"
+  }
+}

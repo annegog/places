@@ -356,7 +356,7 @@ app.post('/places', (req, res) => {
     const { token } = req.cookies;
     const { title, address, pinPosition,
         extraInfoAddress, addedPhotos,
-        description, perks, extraInfo,
+        description, perks, extraInfo, category,
         checkIn, checkOut, maxGuests, numBaths,
         maxBeds, numBedrooms,
         area, minDays, price } = req.body;
@@ -367,7 +367,7 @@ app.post('/places', (req, res) => {
                 owner: userData.id,
                 title, address, pinPosition,
                 photos: addedPhotos, extraInfoAddress,
-                description, perks, extraInfo,
+                description, perks, extraInfo, category,
                 checkIn, checkOut, maxGuests, numBaths,
                 maxBeds, numBedrooms, area, minDays, price
             });
@@ -381,8 +381,6 @@ app.post('/places', (req, res) => {
 // get the places of this user-host
 app.get('/user-places', async (req, res) => {
     const { token } = req.cookies;
-    // console.log('Verifying Token 3:', token); // Add this line for debugging
-
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
@@ -412,7 +410,8 @@ app.put('/places/:id', async (req, res) => {
         const { token } = req.cookies;
         const { id, title, address, pinPosition,
             extraInfoAddress, addedPhotos,
-            description, perks, extraInfo,
+            description, perks, 
+            category ,extraInfo,
             checkIn, checkOut, maxGuests,
             numBaths, maxBeds, numBedrooms,
             area, minDays, price } = req.body;
@@ -438,6 +437,7 @@ app.put('/places/:id', async (req, res) => {
             place.photos = addedPhotos;
             place.description = description;
             place.perks = perks;
+            place.category = category;
             place.extraInfo = extraInfo;
             place.checkIn = checkIn;
             place.checkOut = checkOut;
@@ -486,14 +486,14 @@ app.get('/place/:id', async (req, res) => {
 app.post('/booking', (req, res) => {
     const { token } = req.cookies;
     const {
-        place, checkIn, checkOut, numGuests, stayDays,
+        place, checkIn, checkOut, numGuests, stayNights,
         first_name, last_name, phone, email, price
     } = req.body;
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
             const bookingDoc = await Booking.create({
-                place, user: userData.id, checkIn, checkOut, numGuests, stayDays,
+                place, user: userData.id, checkIn, checkOut, numGuests, stayNights,
                 first_name, last_name, phone, email, price
             })
             res.json(bookingDoc);
@@ -514,12 +514,27 @@ app.get('/bookings', (req, res) => {
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
-            res.json(await Booking.find({ user: userData.id }).populate('place'));
+            res.json(await Booking.find({ user: userData.id }).populate('place')); 
+            // **Querying with .populate()**: When you use .populate('place') in your query,
+            //  it tells Mongoose to retrieve the referenced Place document(s) associated with each Booking document in the result.
         });
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching booking' });
+        res.status(500).json({ error: 'Error fetching bookings' });
     }
-})
+});
+
+// get the bookings a host for his place(s)
+app.get('/bookings-host', verifyJWTuser, async (req, res) => {
+    try {
+        const places = await Place.find({ owner: req.id });
+        const bookings = await Booking.find({ 'place': places });
+        res.json(bookings);
+    } catch (error) {
+        console.error('Error fetching bookings for the host:', error);
+        res.status(500).json({ error: 'Error fetching bookings for the host' });
+    }
+});
+
 
 //
 // --------------------------------------------------------------------------------------

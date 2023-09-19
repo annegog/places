@@ -9,9 +9,9 @@ export default function BookingWindow({ place }) {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [numGuests, setNumGuests] = useState(1);
-  const [diffInDays, setDiffInDays] = useState(1);
-  const [totalCost, setTotalCost] = useState(diffInDays*place.price);
-  
+  const [diffInDays, setDiffInDays] = useState(place.minDays);
+  const [totalCost, setTotalCost] = useState(diffInDays * place.price);
+
   ///////
 
   const [first_name, setFirstName] = useState("");
@@ -20,7 +20,7 @@ export default function BookingWindow({ place }) {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
-  if (user && !first_name && !last_name && !phone && !email) {
+  if (user && user.tenant && !first_name && !last_name && !phone && !email) {
     console.log("User:", user);
     setFirstName(user.first_name);
     setLastName(user.last_name);
@@ -69,10 +69,12 @@ export default function BookingWindow({ place }) {
     if (diffInDays < 1) {
       setCheckIn("");
       setCheckOut("");
-      setDiffInDays(null);
+      setDiffInDays(0);
       return;
     }
+
     setDiffInDays(diffInDays);
+    setTotalCost(place.price * diffInDays);
   };
 
   // // redirections to loin and sing in pages //
@@ -89,9 +91,16 @@ export default function BookingWindow({ place }) {
     ev.preventDefault();
     try {
       const response = await axios.post("/booking", {
-        place: place._id, checkIn, checkOut, 
-        numGuests, stayDays:diffInDays, 
-        first_name, last_name, phone, email, price:totalCost,
+        place: place._id,
+        checkIn,
+        checkOut,
+        numGuests,
+        stayNights: diffInDays,
+        first_name,
+        last_name,
+        phone,
+        email,
+        price: totalCost,
       });
       const bookedId = response.data._id;
       // redirect?
@@ -139,7 +148,11 @@ export default function BookingWindow({ place }) {
           </div>
         </div>
         <div>
-          <button className="primary" onClick={handleClickToOpen}>
+          <button
+            className="primary "
+            onClick={handleClickToOpen}
+            disabled={!checkIn || !checkOut || numGuests < 1}
+          >
             Reserve
           </button>
           {!open && (
@@ -204,85 +217,96 @@ export default function BookingWindow({ place }) {
                   </div>
                 </div>
               )}
-              {user && (
-              <div className="mt-2 mb-8">
-                <dialogContent>
-                  <div className="border rounded-2xl mt-2 mb-2">
-                    <div className="grid grid-cols-3">
-                      <div className=" py-3 px-2 border-r">
-                        <label>Check in: </label>
-                        <input type="date" value={checkIn} readOnly />
-                      </div>
-                      <div className="py-3 px-2  border-r">
-                        <label>Check out: </label>
-                        <input type="date" value={checkOut} readOnly />
-                      </div>
-                      <div className=" py-3 px-2 border-t text-center">
-                        <text type="number">Guests: {numGuests}</text>
-                      </div>
-                    </div>
-                    <div>
-                      <div className=" py-3 px-2 border-t ">
-                        <label>First Name: </label>
-                        <input
-                          type="text"
-                          value={first_name}
-                          onChange={(ev) => setFirstName(ev.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className=" py-3 px-2 border-t ">
-                        <label>Last Name: </label>
-                        <input
-                          type="text"
-                          value={last_name}
-                          onChange={(ev) => setLastName(ev.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className=" py-3 px-2 border-t ">
-                        <label>Phone number:</label>
-                        <input
-                          type="tel"
-                          value={phone}
-                          onChange={(ev) => setPhone(ev.target.value)}
-                          pattern="[0-9]{10}"
-                          required
-                        />
-                      </div>
-                      <div className=" py-3 px-2 border-t ">
-                        <label>Email address</label>
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(ev) => setEmail(ev.target.value)}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <hr className="mt-1 mb-2" />
-                    <div className="ml-4 grid grid-cols-2 mb-4">
-                      <div className="text-left">
-                        <text className="font-semibold text-lg text-center">
-                          Total
-                        </text>
-                      </div>
-                      <div className="text-center">
-                        <text className="font-medium text-lg text-center">
-                          € {place.price * diffInDays}
-                        </text>
-                      </div>
-                    </div>
+              {user && !user.tenant && user.host && (
+                <div className="mt-2">
+                  <div className="text-center text-2xl py-2 text-gray-800">
+                  Upgrade to Tenant Rights{" "}
+                    <Link className="underline text-black" to={"/account"}>
+                      Here
+                    </Link>{"."}
                   </div>
-                  <button
-                    type="submit" onClick={bookIt}
-                    className="primary hover:bg-blue-900 focus:ring-2 focus:outline-none mt-2"
-                  >
-                    Book it now
-                  </button>
-                </dialogContent>
-              </div>
-            )}
+                </div>
+              )}
+              {user && user.tenant && (
+                <div className="mt-2 mb-8">
+                  <dialogContent>
+                    <div className="border rounded-2xl mt-2 mb-2">
+                      <div className="grid grid-cols-3">
+                        <div className=" py-3 px-2 border-r">
+                          <label>Check in: </label>
+                          <input type="date" value={checkIn} readOnly />
+                        </div>
+                        <div className="py-3 px-2  border-r">
+                          <label>Check out: </label>
+                          <input type="date" value={checkOut} readOnly />
+                        </div>
+                        <div className=" py-3 px-2 border-t text-center">
+                          <text type="number">Guests: {numGuests}</text>
+                        </div>
+                      </div>
+                      <div>
+                        <div className=" py-3 px-2 border-t ">
+                          <label>First Name: </label>
+                          <input
+                            type="text"
+                            value={first_name}
+                            onChange={(ev) => setFirstName(ev.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className=" py-3 px-2 border-t ">
+                          <label>Last Name: </label>
+                          <input
+                            type="text"
+                            value={last_name}
+                            onChange={(ev) => setLastName(ev.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className=" py-3 px-2 border-t ">
+                          <label>Phone number:</label>
+                          <input
+                            type="tel"
+                            value={phone}
+                            onChange={(ev) => setPhone(ev.target.value)}
+                            pattern="[0-9]{10}"
+                            required
+                          />
+                        </div>
+                        <div className=" py-3 px-2 border-t ">
+                          <label>Email address</label>
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(ev) => setEmail(ev.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <hr className="mt-1 mb-2" />
+                      <div className="ml-4 grid grid-cols-2 mb-4">
+                        <div className="text-left">
+                          <text className="font-semibold text-lg text-center">
+                            Total
+                          </text>
+                        </div>
+                        <div className="text-center">
+                          <text className="font-medium text-lg text-center">
+                            € {totalCost}
+                          </text>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      onClick={bookIt}
+                      className="primary hover:bg-blue-900 focus:ring-2 focus:outline-none mt-2"
+                    >
+                      Book it now
+                    </button>
+                  </dialogContent>
+                </div>
+              )}
             </dialog>
           </div>
         )}
@@ -291,11 +315,11 @@ export default function BookingWindow({ place }) {
           <div className="text-left">
             <text className="underline">
               {" "}
-              € {place.price} x {diffInDays} days
+              € {place.price} x {diffInDays} nights
             </text>
           </div>
           <div className="text-center">
-            <text>€ {place.price * diffInDays}</text>
+            <text>€ {totalCost}</text>
           </div>
         </div>
         <hr className="mt-4 mb-2" />
@@ -304,8 +328,8 @@ export default function BookingWindow({ place }) {
             <text className="font-semibold text-lg text-center">Total</text>
           </div>
           <div className="text-center">
-            <text className="font-medium text-lg text-center" onChange={()=>setTotalCost(plsce.price*diffInDays)}>
-              € {place.price * diffInDays}
+            <text className="font-medium text-lg text-center">
+              € {totalCost}
             </text>
           </div>
         </div>
