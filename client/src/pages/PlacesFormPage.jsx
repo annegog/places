@@ -8,6 +8,7 @@ import PhotosUploader from "../PhotoUploader";
 import "leaflet/dist/leaflet.css";
 
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import Categories from "../Categories";
 
 export default function PlacesFormPage() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ export default function PlacesFormPage() {
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
+  const [category, setCategory] = useState("");
   const [extraInfo, setExtraInfo] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
@@ -51,6 +53,7 @@ export default function PlacesFormPage() {
         setDescription(data.description);
         setAddedPhotos(data.photos);
         setPerks(data.perks);
+        setCategory(data.category);
         setExtraInfo(data.extraInfo);
         setCheckIn(data.checkIn);
         setCheckOut(data.checkOut);
@@ -88,6 +91,7 @@ export default function PlacesFormPage() {
         addedPhotos,
         description,
         perks,
+        category,
         extraInfo,
         checkIn,
         checkOut,
@@ -264,11 +268,17 @@ export default function PlacesFormPage() {
           </div>
 
           {inputHeader("Perks")}
-          <p className="text-gray-600 test-sm">
+          <p className="text-gray-600">
             Select all the perks about your place
           </p>
           <div className="mt-2 grid gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <Perks selected={perks} onChange={setPerks} />
+          </div>
+          <div className="mt-4">
+            <h2 className="mb-2 text-gray-700 text-lg">Category of house</h2><text className="text-2xl font-bold">(not in database)</text>
+            <div className="mt-2 grid gap-2 md:grid-cols-3 lg:grid-cols-5">
+              <Categories selected={category} onChange={setCategory} />
+            </div>
           </div>
 
           {inputHeader("Description")}
@@ -278,11 +288,7 @@ export default function PlacesFormPage() {
             placeholder="Give a description about your place"
           />
 
-          <div className="mt-2 grid gap-4 sm:grid-cols-3">
-            <div>
-              <h2 className="mb-2">Kind of house (not in database)</h2>
-              <input type="text" placeholder="Mounten House" />
-            </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
             <div>
               <h2 className="mb-2">Price per night</h2>
               <input

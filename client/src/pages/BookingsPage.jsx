@@ -1,42 +1,35 @@
 import AccountNav from "../AccounNav";
-import { useContext, useEffect, useState } from "react"; // Import useContext
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import Image from "../Image";
+
+import BookingsForTetants from "../BookingsForTetans";
+import BookingsForHosts from "../BookingsForHosts";
 
 export default function BookingsPage() {
-  const { user } = useContext(UserContext); // Access user data from UserContext
+  const { user } = useContext(UserContext);
 
   const isHost = () => {
     return user && user.host;
   };
 
   const isTenant = () => {
-    return user && user.tenant;
+    return user && user.tenant && !user.host;
   };
-
-  const [bookings, setBookings] = useState([]);
-  useEffect(() => {
-    axios.get("/bookings").then((response) => {
-      setBookings(response.data);
-    });
-  }, []);
 
   return (
     <div>
       <AccountNav />
-      Myyyyyyy Bookings are here
-      <div>
-        {bookings?.length > 0 && bookings.map(booking => (
-            <Link to={`/account/bookings/${booking._id}`} className="flex gap-4 bg-gray-200 rounded-2xl overflow-hidden mb-2">
-            
-                        <div className="py-3 pr-3 grow">
-              <h2 className="text-xl">{booking.place.title}</h2>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {user && user.host && <BookingsForHosts />}
+      {user && user.host && user.tenant && (
+        <div>
+          <hr className="w-60 mt-6 mb-6" />
+          <h2 className="text-center text-2xl">
+            Check Your Reservations at Other Destinations
+          </h2>
+          <BookingsForTetants />
+        </div>
+      )}
+      {user && user.tenant && !user.host && <BookingsForTetants />}
     </div>
   );
 }

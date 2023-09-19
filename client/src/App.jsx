@@ -14,7 +14,8 @@ import PlacesFormPage from './pages/PlacesFormPage';
 // import ProfilePage from './pages/ProfilePage';
 import PlacePage from './pages/PLacePage';
 import BookingsPage from './pages/BookingsPage';
-import BookingPage from './pages/BookingPage';
+import BookingPageTenant from './pages/BookingPageTenant';
+import BookingPageHost from './pages/BookingPageHost';
 import { AdminContextProvider } from './AdminContext';
 import AdminPage from './pages/AdminPage';
 // import UsersPage from './pages/UsersPage';
@@ -41,10 +42,12 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/account" element={ <AccountPage />} /> 
             <Route path="/place/:id" element={<PlacePage />} />
+            <Route path="/account/bookings/:id" element={<BookingPageTenant/>} />
 
             // Bookings - host and tenent access
             <Route path="/account/bookings" element={<BookingsPage />} />
-            <Route path="/account/bookings/:id" element={<BookingPage/>} />
+            //Bookign page - messages - host access
+            <Route path="/account/forbookings/:id" element={<BookingPageHost/>} />
 
             // Places Page - host access
             <Route path="/account/places" element={<PlacesPage />} />

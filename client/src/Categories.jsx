@@ -1,96 +1,42 @@
-import {  URLSearchParams } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
+import React from "react";
+import { ReactComponent as LikeIcon } from "./assets/svg/like.svg";
+import { ReactComponent as HomeIcon } from "./assets/svg/home.svg";
 
-import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
-import { GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, 
-        GiForestCamp, GiIsland} from 'react-icons/gi';
-import { FaSkiing } from 'react-icons/fa';
-import { IoDiamond } from 'react-icons/io5';
-import { MdOutlineVilla } from 'react-icons/md';
-import CategoryBox from './CategoryBox';
+export default function Categories({ selected, onChange }) {
+  function handleCheckBox(ev) {
+    const { checked, name } = ev.target;
+    if (checked) {
+      onChange(name); 
+    } else {
+      onChange(selected.replace(name, '')); // Remove the name
+    }
+  }
 
-const categories = [
-    {
-        label:'Beach',
-        icon: TbBeach,
-        description: 'This property is close to the beach'
-    },
-      {
-        label: 'Modern',
-        icon: MdOutlineVilla,
-        description: 'This property is modern!'
-      },
-      {
-        label: 'Countryside',
-        icon: TbMountain,
-        description: 'This property is in the countryside'
-      },
-      {
-        label: 'Pools',
-        icon: TbPool,
-        description: 'This is property has a beautiful pool!'
-      },
-      {
-        label: 'Islands',
-        icon: GiIsland,
-        description: 'This property is on an island'
-      },
-      {
-        label: 'Lake',
-        icon: GiBoatFishing,
-        description: 'This property is near a lake'
-      },
-      {
-        label: 'Skiing',
-        icon: FaSkiing,
-        description: 'This property has skiing activies!'
-      },
-      {
-        label: 'Castles',
-        icon: GiCastle,
-        description: 'This property is an ancient castle'
-      },
-      {
-        label: 'Caves',
-        icon: GiCaveEntrance,
-        description: 'This property is in a spooky cave'
-      },
-      {
-        label: 'Camping',
-        icon: GiForestCamp,
-        description: 'This property offers camping activities'
-      },
-      {
-        label: 'Desert',
-        icon: GiCactus,
-        description: 'This property is in the desert'
-      },
-      {
-        label: 'Lux',
-        icon: IoDiamond,
-        description: 'This property is brand new and luxurious!'
-      }
-];
+  const categoriesList = [
+    { label: "Single", name: "single", icon: <HomeIcon /> },
+    { label: "Big", name: "big", icon: <LikeIcon /> },
+    { label: "Very Big", name: "verybig", icon: <LikeIcon /> },
+  ];
 
-export default function Categories(){
-  // no
-  // const params = new useSearchParams();
-  // // URLSearchParams.get()
-  // // Returns the first value associated with the given search parameter.
-  // const category = params.get('category');
-  return(
-        <div className="pt-6 flex flex-row items-center justify-between overflow-x-auto">
-            
-        {/* {categories.map((item) => (
-          <CategoryBox 
-            key={item.label}
-            label={item.label}
-            icon={item.icon}
-            // selected={category === item.label}
-          />
-        ))} */}
-           
-        </div>
-    )
+  return (
+    <>
+      {categoriesList.filter((category) => category.name).map((category) => (
+          <label
+            key={category.name}
+            className="order p-4 flex rounded-2xl gap-2 items-center cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              checked={selected===category.name}
+              name={category.name}
+              onClick={handleCheckBox}
+            />
+            <div style={{ width: 30 }}>{category.icon}</div>
+            <span>{category.label}</span>
+          </label>
+        ))}
+    </>
+  );
 }
+      

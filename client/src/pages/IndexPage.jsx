@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Image from "../Image";
-import Categories from "../Categories";
 
 export default function IndexPage(){
     const [places, setPlaces] = useState([]);
@@ -14,8 +13,7 @@ export default function IndexPage(){
 
     return(
     <div>
-      <Categories/>
-      <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="mt-10 grid gap-x-6 gap-y-8 grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
         {places.length > 0 && places.map(place => (
           <Link key={place._id} to={'/place/'+place._id}>
             <div className="bg-gray-500 mb-2 rounded-2xl flex">
