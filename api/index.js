@@ -182,12 +182,10 @@ app.post('/logout', (req, res) => {
 // --------------------------------------------------------------------------------------
 // ADMIN
 
-app.get('/profile-admin', verifyJWTadmin, (req, res) => {
+app.get('/profile-admin', verifyJWTadmin, async (req, res) => {
     const adminId = req.id;
-    console.log(adminId)
     if (adminId) {
-        const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = User.findById({_id: adminId});
-        console.log(first_name)
+        const { first_name, last_name, username, phone, email, host, tenant, isAdmin } = await User.findById(adminId);
         res.json({ first_name, last_name, username, phone, email, host, tenant, isAdmin });
     } else {
         res.json(null);
@@ -274,11 +272,21 @@ app.post('/accept-host', async (req, res) => {
 app.get('/admin-user-places/:id', async (req, res) => {
     try {
         const {id} = req.params;
-        console.log(id);
+        // console.log(id);
         res.json(await Place.find({owner: id}));
     } catch (error) {
         console.error('Error finding places:', error);
         res.status(500).json({ error: 'Fiding places failed' });
+    }
+});
+
+app.get('/user/:id', async (req, res) => {
+    try {
+        const {id} = req.params;
+        res.json(await User.findById(id));
+    } catch (error) {
+        console.error('Error finding user:', error);
+        res.status(500).json({ error: 'Fiding user failed' });
     }
 });
 
