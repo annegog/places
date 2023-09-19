@@ -496,7 +496,7 @@ app.post('/booking', (req, res) => {
     const { token } = req.cookies;
     const {
         place, checkIn, checkOut, numGuests, stayNights,
-        first_name, last_name, phone, email, price
+        first_name, last_name, phone, email, price, extraPrice
     } = req.body;
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
