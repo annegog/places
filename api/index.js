@@ -366,7 +366,7 @@ app.post('/places', (req, res) => {
         extraInfoAddress, addedPhotos,
         description, perks, extraInfo, category,
         checkIn, checkOut, maxGuests, numBaths,
-        maxBeds, numBedrooms, extraPrice,
+        maxBeds, numBedrooms, extraPrice, selectedDays,
         area, minDays, price } = req.body;
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
@@ -377,7 +377,8 @@ app.post('/places', (req, res) => {
                 photos: addedPhotos, extraInfoAddress,
                 description, perks, extraInfo, category,
                 checkIn, checkOut, maxGuests, numBaths,
-                maxBeds, numBedrooms, area, minDays, price, extraPrice
+                maxBeds, numBedrooms, area, minDays, 
+                price, extraPrice, selectedDays
             });
             res.json(placeDoc);
         })
@@ -419,7 +420,7 @@ app.put('/places/:id', async (req, res) => {
         const { id, title, address, pinPosition,
             extraInfoAddress, addedPhotos,
             description, perks, 
-            category ,extraInfo,
+            category ,extraInfo, selectedDays,
             checkIn, checkOut, maxGuests,
             numBaths, maxBeds, numBedrooms,
             area, minDays, price, extraPrice } = req.body;
@@ -457,7 +458,7 @@ app.put('/places/:id', async (req, res) => {
             place.minDays = minDays;
             place.price = price;
             place.extraPrice = extraPrice;
-
+            place.selectedDays = selectedDays;
             // Save the updated place
             await place.save();
 

@@ -41,7 +41,8 @@ export default function Perk({ selected, onChange }) {
               type="checkbox"
               checked={selected.includes(perk.name)}
               name={perk.name}
-              onClick={handleCheckBox}
+              onChange={handleCheckBox}
+              // onClick={handleCheckBox}
             />
             <div style={{ width: 30 }}>{perk.icon}</div>
             <span>{perk.label}</span>

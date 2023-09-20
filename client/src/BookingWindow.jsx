@@ -8,16 +8,22 @@ export default function BookingWindow({ place }) {
   const { user, setUser } = useContext(UserContext);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
-  const [numGuests, setNumGuests] = useState(1);
+  const [numGuests, setNumGuests] = useState(5);
   const [diffInDays, setDiffInDays] = useState(place.minDays);
-  const [totalCost, setTotalCost] = useState(diffInDays * place.price);
-
+  const [extraPerson, setExtraPerson] = useState(0);
+  const [extraCharges, setExtraCharges] = useState(
+    place.extraPrice * diffInDays * extraPerson
+  );
+  const [totalCost, setTotalCost] = useState(diffInDays * place.price + extraCharges);
+  
   ///////
+  const [extraGuests, setExtraGuests] = useState(false);
 
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [phone, setPhone] = useState();
   const [email, setEmail] = useState("");
+
   const navigate = useNavigate();
 
   if (user && user.tenant && !first_name && !last_name && !phone && !email) {
@@ -87,6 +93,22 @@ export default function BookingWindow({ place }) {
   //   return <Navigate to={"/register"} />;
   // }
 
+  const handleGuestsNum = (ev) => {
+    const inputValue = parseInt(ev.target.value, 10);
+
+    // Prevent negative numbers
+    const updatedNumGuests = Math.max(1, inputValue);
+    // Restrict to a maximum value
+    const finalNumGuests = Math.min(place.maxGuests + 2, updatedNumGuests);
+    const plusperson = finalNumGuests - place.maxGuests;
+    
+    setExtraGuests(finalNumGuests > place.maxGuests);
+    setExtraPerson(plusperson);
+    setExtraCharges(place.extraPrice * diffInDays * plusperson);
+    setNumGuests(finalNumGuests);
+  };
+
+
   async function bookIt(ev) {
     ev.preventDefault();
     try {
@@ -100,6 +122,7 @@ export default function BookingWindow({ place }) {
         last_name,
         phone,
         email,
+        extraCharges: extraCharges,
         price: totalCost,
       });
       const bookedId = response.data._id;
@@ -140,11 +163,7 @@ export default function BookingWindow({ place }) {
           </div>
           <div className=" py-3 px-2 border-t ">
             <label>Guests: </label>
-            <input
-              type="number"
-              value={numGuests}
-              onChange={(ev) => setNumGuests(ev.target.value)}
-            />
+            <input type="number" value={numGuests} onChange={handleGuestsNum} />
           </div>
         </div>
         <div>
@@ -167,8 +186,8 @@ export default function BookingWindow({ place }) {
             <dialog
               style={{
                 width: "50%",
-                maxWidth: "600px",
-                maxHeight: "900px",
+                maxWidth: "500px",
+                maxHeight: "700px",
                 position: "fixed",
                 top: "50%",
                 left: "50%",
@@ -183,7 +202,8 @@ export default function BookingWindow({ place }) {
               open={open}
               onClose={handleToClose}
             >
-              <button onClick={handleToClose} className="bg-transparent">
+              <div className="flex gap-6">
+                <button onClick={handleToClose} className="bg-transparent">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -199,9 +219,11 @@ export default function BookingWindow({ place }) {
                   />
                 </svg>
               </button>
-              <h2 className="mt-2 text-2xl font-semibold text-center">
+              <h2 className="mt-2 text-2xl font-semibold text-right">
                 Complete the reservation
               </h2>
+              </div>
+              
               {!user && (
                 <div>
                   <div className="text-center py-2 text-gray-700">
@@ -220,21 +242,22 @@ export default function BookingWindow({ place }) {
               {user && !user.tenant && user.host && (
                 <div className="mt-2">
                   <div className="text-center text-2xl py-2 text-gray-800">
-                  Upgrade to Tenant Rights{" "}
+                    Upgrade to Tenant Rights{" "}
                     <Link className="underline text-black" to={"/account"}>
                       Here
-                    </Link>{"."}
+                    </Link>
+                    {"."}
                   </div>
                 </div>
               )}
               {user && user.tenant && (
                 <div className="mt-2 mb-8">
-                  <dialogContent>
+                  <div>
                     <div className="border rounded-2xl mt-2 mb-2">
                       <div className="grid grid-cols-3">
                         <div className=" py-3 px-2 border-r">
-                          <label>Check in: </label>
-                          <input type="date" value={checkIn} readOnly />
+                          <label>Check in: </label> {format( Date(checkIn), "MMM dd, yyyy")}
+                          <output value={checkIn} />
                         </div>
                         <div className="py-3 px-2  border-r">
                           <label>Check out: </label>
@@ -284,10 +307,35 @@ export default function BookingWindow({ place }) {
                         </div>
                       </div>
                       <hr className="mt-1 mb-2" />
+
+                      {extraGuests && (
+                        <div className="ml-4 grid grid-cols-2 mb-2">
+                          <div className="text-left">
+                            <text className="underline">
+                              {" "}
+                              € {place.price} x {diffInDays} nights
+                            </text>
+                          </div>
+                          <div className="text-center">
+                            <text>€ {place.price * diffInDays}</text>
+                          </div>
+
+                          <div className="text-left">
+                            <text className="underline">
+                              {" "}
+                              € {place.extraPrice} x {extraPerson} person x{" "}
+                              {diffInDays} nights
+                            </text>
+                          </div>
+                          <div className="text-center">
+                            <text>€ {extraCharges}</text>
+                          </div>
+                        </div>
+                      )}
                       <div className="ml-4 grid grid-cols-2 mb-4">
                         <div className="text-left">
                           <text className="font-semibold text-lg text-center">
-                            Total
+                            Total Cost
                           </text>
                         </div>
                         <div className="text-center">
@@ -304,7 +352,7 @@ export default function BookingWindow({ place }) {
                     >
                       Book it now
                     </button>
-                  </dialogContent>
+                  </div>
                 </div>
               )}
             </dialog>
@@ -319,9 +367,23 @@ export default function BookingWindow({ place }) {
             </text>
           </div>
           <div className="text-center">
-            <text>€ {totalCost}</text>
+            <text>€ {place.price * diffInDays}</text>
           </div>
         </div>
+        {extraGuests && (
+          <div className="ml-4 grid grid-cols-2">
+            <div className="text-left">
+              <text className="underline">
+                {" "}
+                € {place.extraPrice} x {extraPerson} person x {diffInDays}{" "}
+                nights
+              </text>
+            </div>
+            <div className="text-center">
+              <text>€ {extraCharges}</text>
+            </div>
+          </div>
+        )}
         <hr className="mt-4 mb-2" />
         <div className="ml-4 grid grid-cols-2">
           <div className="text-left">

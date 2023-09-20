@@ -21,7 +21,14 @@ const PlaceSchema = new Schema({
     maxBeds: Number,
     numBaths: Number,
     area: Number,
-    minDays: Number
+    minDays: Number,
+    selectedDays: [
+        {
+            startDate: Date,
+            endDate: Date,
+            key: String,
+        },
+    ],
 });
 
 const PlaceModel = mongoose.model('Place', PlaceSchema);
