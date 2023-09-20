@@ -56,8 +56,7 @@ export default function BookingsForHosts({}) {
                           </div>
                           <div>
                             <text className="font-semibold">Reservation Dates:</text>{" "}
-                            {format(new Date(booking.checkIn), "MMM dd, yyyy")}{" "}
-                            to{" "}
+                            {format(new Date(booking.checkIn), "MMM dd, yyyy")} -{" "}
                             {format(new Date(booking.checkOut), "MMM dd, yyyy")}
                           </div>
                           <div className="info-container text-sm text-gray-800">

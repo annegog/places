@@ -6,7 +6,11 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PhotosUploader from "../PhotoUploader";
 import "leaflet/dist/leaflet.css";
-
+import { parseISO, isValid } from "date-fns";
+import format from 'date-fns/format';
+import { DateRangePicker } from "react-date-range"; // react-date-range documentation: https://github.com/Adphorus/react-date-range
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Categories from "../Categories";
 
@@ -15,9 +19,14 @@ export default function PlacesFormPage() {
 
   const navigate = useNavigate();
 
+  const generateUniqueKey = () => {
+    const randomNumber = Math.floor(Math.random() * 10000); // Generate a random number
+    return `date${randomNumber}`;
+  };
+
   const [title, setTitle] = useState(""); // Default position
   const [address, setAddress] = useState("");
-  const [pinPosition, setPinPosition] = useState([45,37]);
+  const [pinPosition, setPinPosition] = useState([45, 37]);
   const [extraInfoAddress, setExtraInfoAddress] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
@@ -33,7 +42,14 @@ export default function PlacesFormPage() {
   const [area, setArea] = useState(50);
   const [minDays, setMinDays] = useState(2);
   const [price, setPrice] = useState(1);
-  
+  const [extraPrice, setExtraPrice] = useState(0);
+  const [selectedDays, setSelectedDays] = useState([
+    {
+      startDate: parseISO(new Date()),
+      endDate: parseISO(new Date()),
+      key: generateUniqueKey(),
+    },
+  ]);
 
   const [redirect, setRedirect] = useState(false);
 
@@ -64,6 +80,8 @@ export default function PlacesFormPage() {
         setArea(data.area);
         setMinDays(data.minDays);
         setPrice(data.price);
+        setExtraPrice(data.extraPrice);
+        setSelectedDays(data.selectedDays);
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {
@@ -102,6 +120,8 @@ export default function PlacesFormPage() {
         area,
         minDays,
         price,
+        extraPrice,
+        selectedDays,
       };
       if (id) {
         // update- edit existing place
@@ -148,6 +168,56 @@ export default function PlacesFormPage() {
       });
   };
 
+  const handleDateChange = (ranges) => {
+    console.log("handleDateChange called with ranges:", ranges);
+    try {
+      const newRanges = Object.keys(ranges).map((rangeKey) => {
+        const range = ranges[rangeKey];
+        const startDate = parseISO(range.startDate);
+        const endDate = parseISO(range.endDate);
+        console.log("Parsed Dates:", startDate, endDate);
+        return {
+          ...range,
+          startDate,
+          endDate,
+          key: generateUniqueKey(),
+        };
+      });
+      setSelectedDays([...selectedDays, ...newRanges]);
+    } catch (error) {
+      console.error("Error handling date change:", error);
+    }
+  };
+
+  const removeDateRange = (keyToRemove) => {
+    const updatedSelectedDays = selectedDays.filter(
+      (range) => range.key !== keyToRemove
+    );
+    setSelectedDays(updatedSelectedDays);
+  };
+
+  const setLastDate = () => {
+    if (selectedDays.length === 0) {
+      return new Date();
+    }
+    let maxEndDate = new Date(); // Initialize with todays date
+
+    selectedDays.forEach((range) => {
+      const endDate = parseISO(range.endDate);
+      console.log("Parsing END date: ", endDate);
+
+      if (!isNaN(endDate.getTime()) && endDate > maxEndDate) {
+        maxEndDate = endDate;
+      }
+      console.log("Parsing date set: ", maxEndDate);
+    });
+
+    const nextDate = new Date(maxEndDate);
+    nextDate.setDate(maxEndDate.getDate() + 1);
+
+    return nextDate;
+  };
+
   return (
     <div>
       <AccountNav />
@@ -186,7 +256,11 @@ export default function PlacesFormPage() {
           </div>
           <div className="mt-2">
             <h2 className="text-lg">Extra Information about the Address</h2>
-            <textarea value={extraInfoAddress} onChange={(ev) => setExtraInfoAddress(ev.target.value)} placeholder="Please provide details about the neighborhood surrounding your property and its accessibility via public transportation"/>
+            <textarea
+              value={extraInfoAddress}
+              onChange={(ev) => setExtraInfoAddress(ev.target.value)}
+              placeholder="Please provide details about the neighborhood surrounding your property and its accessibility via public transportation"
+            />
           </div>
 
           {inputHeader("Basic Informations")}
@@ -268,15 +342,13 @@ export default function PlacesFormPage() {
           </div>
 
           {inputHeader("Perks")}
-          <p className="text-gray-600">
-            Select all the perks about your place
-          </p>
+          <p className="text-gray-600">Select all the perks about your place</p>
           <div className="mt-2 grid gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <Perks selected={perks} onChange={setPerks} />
           </div>
           <div className="mt-4">
-            <h2 className="mb-2 text-gray-700 text-lg">Category of house</h2><text className="text-2xl font-bold">(not in database)</text>
-            <div className="mt-2 grid gap-2 md:grid-cols-3 lg:grid-cols-5">
+            <h2 className="text-gray-700 text-lg">Category of house</h2>
+            <div className="mt-1 grid gap-2 md:grid-cols-3 lg:grid-cols-5">
               <Categories selected={category} onChange={setCategory} />
             </div>
           </div>
@@ -288,21 +360,73 @@ export default function PlacesFormPage() {
             placeholder="Give a description about your place"
           />
 
-          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+          <div className="mt-4 mb-2 grid gap-4 sm:grid-cols-3">
             <div>
-              <h2 className="mb-2">Price per night</h2>
+              <h2 className="mb-2 font-serif text-xl">Price per night</h2>
               <input
                 type="number"
                 value={price}
                 onChange={(ev) => setPrice(ev.target.value)}
-                placeholder="99"
+                placeholder="€ 99"
+              />
+            </div>
+            <div>
+              <h2 className="mb-2 ">Extra charge for additional person</h2>
+              <input
+                type="number"
+                value={extraPrice}
+                onChange={(ev) => setExtraPrice(ev.target.value)}
+                placeholder="€ 10"
               />
             </div>
           </div>
-          
+
           {inputHeader("Photos")}
           <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
 
+          {inputHeader("Availability Days")}
+          <div className="mb-2 mt-2">
+            {/* <DateRangePicker
+              ranges={selectedDays}
+              onChange={(ranges) => handleDateChange(ranges)}
+              minDate={setLastDate()}
+            /> */}
+    
+            <div>
+              <h2 className="text-lg">Selected Dates:</h2>
+              {selectedDays.map((range) => {
+                console.log("Parsing: ", parseISO(range.startDate), range.endDate);
+                // 2023-11-14T22:00:00.000Z
+                if (isValid(parseISO(range.startDate)) && isValid(parseISO(range.endDate))) {
+                  return (
+                    <div className="flex gap-4" key={range.key}>
+                      <div>
+                        <p>
+                          {format(parseISO(range.startDate), "dd-MM-yyyy")} -{" "}
+                          {format(parseISO(range.endDate), "dd-MM-yyyy")}
+                          <button
+                            className="border rounded-2xl p-1 bg-orange-600"
+                            onClick={() => removeDateRange(range.key)}
+                          >
+                            Remove
+                          </button>
+                        </p>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  // Handle the case where range.startDate or range.endDate is not a valid date
+                  return (
+                    <div className="flex gap-4" key={range.key}>
+                      <div>
+                        <p>Invalid Date Range</p>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          </div>
           <div className="mt-2 grid ">
             <h2 className="text-gray-600  mt-2 test-sm">
               Anything else you need to add

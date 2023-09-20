@@ -36,13 +36,13 @@ export default function BookingPageHost() {
           </text>
           <div>
             <text className="font-semibold">Reservation Dates:</text>{" "}
-            {format(new Date(booking.checkIn), "MMM dd, yyyy")} to{" "}
+            {format(new Date(booking.checkIn), "MMM dd, yyyy")} -{" "}
             {format(new Date(booking.checkOut), "MMM dd, yyyy")}
           </div>
           <div className="info-container text-sm text-gray-800">
             <text>{booking.stayNights} nights</text>
             <text>{booking.numGuests} guests</text>
-            <text> extra guests</text>
+            <text>{booking.extraCharges} extraCharges</text>
           </div>
         </div>
         <div className="bg-indigo-400 p-6 text-white rounded-2xl">

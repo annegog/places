@@ -30,7 +30,7 @@ export default function Categories({ selected, onChange }) {
               type="checkbox"
               checked={selected===category.name}
               name={category.name}
-              onClick={handleCheckBox}
+              onChange={handleCheckBox}
             />
             <div style={{ width: 30 }}>{category.icon}</div>
             <span>{category.label}</span>

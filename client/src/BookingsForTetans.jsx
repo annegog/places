@@ -33,13 +33,14 @@ export default function BookingsTetants({}) {
                   <h2 className="text-xl">{booking.place.title}</h2>
                   <div>
                     You reserve this place for a duration spanning from{" "}
-                    {format(new Date(booking.checkIn), "MMMM dd, yyyy")} to{" "}
+                    {format(new Date(booking.checkIn), "MMMM dd, yyyy")} -{" "}
                     {format(new Date(booking.checkOut), "MMMM dd, yyyy")}
                     {"."}
                   </div>
                   <div className="info-container text-sm text-gray-800">
                     <text>{booking.stayNights} nights</text>
                     <text>{booking.numGuests} guests</text>
+                    <text>{booking.extraPerson}</text>
                   </div>
                   <div className="flex gap-1 mt-1">
                     <svg
