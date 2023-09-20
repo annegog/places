@@ -18,11 +18,11 @@ import BookingPageTenant from './pages/BookingPageTenant';
 import BookingPageHost from './pages/BookingPageHost';
 import { AdminContextProvider } from './AdminContext';
 import AdminPage from './pages/AdminPage';
-// import UsersPage from './pages/UsersPage';
+import UsersPage from './pages/UsersPage';
 import HostsPage from './pages/HostsPage';
 import TenantsPage from './pages/TenantsPage';
 import UserPage from './pages/UserPage';
-import AdminProfile from './pages/AdminProfile';
+// import AdminProfile from './pages/AdminProfile';
 
 
 
@@ -57,8 +57,9 @@ function App() {
             // Admins Pages - Admin access ONLY
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/admin/:id" element={<UserPage/>} />
-            <Route path="/admin/profile" element={<AdminProfile/>} />
-            {/* <Route path="/admin/users" element={<UsersPage />} /> */}
+            {/* <Route path="/admin/profile" element={<AdminProfile/>} /> */}
+            <Route path="/admin/users" element={<UsersPage />} />
+            <Route path="/admin/users/:id" element={<UserPage/>} />
 
             <Route path="/admin/hosts" element={<HostsPage />} />
             <Route path="/admin/hosts/:id" element={<UserPage/>} />

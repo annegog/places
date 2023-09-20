@@ -50,7 +50,7 @@ export default function UserPage () {
 
             {/* the places of the user as host */}
             {user && user.host && (
-                <div className="mt-4 grid gap-2 lg:ml-10 lg:mr-10">
+                <div className="mb-10 grid gap-2 lg:ml-10 lg:mr-10">
                     <h1 className="font-bold text-lg">{user.username}'s Accommodations</h1>
                     {places.length > 0 && places.map(place => (
                         <Link key={place._id} to={''} className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl">
@@ -79,9 +79,9 @@ export default function UserPage () {
             )}
 
             {/* users booking as host or as tenant */}
-            <div className="mt-10">
+            <div className="">
                 {user && user.tenant && (
-                    <div>
+                    <div className="mb-10">
                         <h1 className="font-bold text-lg">{user.username}'s Bookings As Tenant</h1>
                         No Bookings Yet!
                     </div>

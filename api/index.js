@@ -7,6 +7,7 @@ const User = require('./models/User.js');
 const Place = require('./models/Place.js');
 const Booking = require('./models/Booking.js');
 const cookieParser = require('cookie-parser');
+const { json2xml } = require('xml-js');
 
 require('dotenv').config();
 
@@ -287,6 +288,28 @@ app.get('/user/:id', async (req, res) => {
     } catch (error) {
         console.error('Error finding user:', error);
         res.status(500).json({ error: 'Fiding user failed' });
+    }
+});
+
+app.get('/JSON-data', verifyJWTadmin, async (req,res) => {
+    try {
+        res.json(await Place.find());        
+    } catch (error) {
+        console.error('Error at exporting data:', error);
+        res.status(500).json({ error: 'Exporting data failed' });
+    }
+});
+
+app.get('/XML-data', verifyJWTadmin, async (req,res) => {
+    try {
+        // res.json(await Place.find()); 
+        const data = await Place.find();
+        const jsonData = JSON.stringify(data, null, 2);
+        const xmlData = json2xml(jsonData, { compact: true, spaces: 4 });   
+        res.json(xmlData);    
+    } catch (error) {
+        console.error('Error at exporting data:', error);
+        res.status(500).json({ error: 'Exporting data failed' });
     }
 });
 
