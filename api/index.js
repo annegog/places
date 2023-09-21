@@ -179,6 +179,31 @@ app.post('/logout', (req, res) => {
     res.cookie('token', '').json(true);
 });
 
+app.post('/update-profile', verifyJWTuser, async (req, res) => {
+    try {
+        const userId = req.id;
+        const {first_name, last_name, username, profilephoto, phone, email} = req.body;
+        await User.updateOne({_id: userId}, {
+            $set: {
+                first_name: first_name,
+                last_name: last_name,
+                username: username,
+                profilephoto: profilephoto,
+                phone: phone,
+                email: email
+            }
+        }); 
+        res.status(200).json("Profile Updated");
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        res.status(500).json({ error: 'Updating profile failed' });
+    }
+    // password:
+    // host,
+    // tenant,
+    // isApproved
+});
+
 //
 // --------------------------------------------------------------------------------------
 // ADMIN
