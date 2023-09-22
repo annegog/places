@@ -1,4 +1,7 @@
 # Web Application Technologies - TEDI
 ----
-## Airbnb cool alike web app
+### Atalanti Papadaki - Anna Gogoula
+---------------------------------------
+In this Project we use M.E.R.N.
+
 

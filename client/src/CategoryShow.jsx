@@ -1,15 +1,19 @@
 
 import React from "react";
-import { ReactComponent as LikeIcon } from "./assets/svg/like.svg";
 import { ReactComponent as HomeIcon } from "./assets/svg/home.svg";
-
+import { ReactComponent as PrivateIcon} from "./assets/svg/hotel.svg";
+import { ReactComponent as AppartmentIcon} from "./assets/svg/house-appartment.svg";
+import { ReactComponent as VillaIcon} from "./assets/svg/fort.svg";
+import { ReactComponent as LoftIcon} from "./assets/svg/house-day.svg";
 
 export default function CategoryShow({ selected }) {
 
   const categoriesList = [
-    { label: "Single", name: "single", icon: <HomeIcon /> },
-    { label: "Big", name: "big", icon: <LikeIcon /> },
-    { label: "Very Big", name: "verybig", icon: <LikeIcon /> },
+    { label: "House", name: "house", icon: <HomeIcon /> },
+    { label: "Apartment", name: "apartment", icon: <AppartmentIcon /> },
+    { label: "Private room", name: "privateRoom", icon: <PrivateIcon /> },
+    { label: "Loft", name: "loft", icon: <LoftIcon /> },
+    {label: "Villa", name: "villa", icon: <VillaIcon/>},
   ];
 
   const selectedCategory = categoriesList.filter((category) => selected==category.name);
