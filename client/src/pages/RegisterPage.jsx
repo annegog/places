@@ -72,10 +72,8 @@ export default function RegisterPage() {
         isApproved
       });
       alert("Submission successful!");
-      //redirect as logged in-else to login!!!!!!!!
       setRedirect(true);
     } catch (e) {
-      // alert('Submission FAILED! Try again.');
       if (e.response) {
         if (e.response.status === 422) {
           const errorCode = e.response.data?.code; // Use optional chaining to handle undefined data.code
@@ -147,9 +145,6 @@ export default function RegisterPage() {
     // Check if passwords match immediately as the user types
     setPasswordsMatch(password === newConfirmPassword);
   };
-
-  // Determine if the submit button should be disabled
-  const isSubmitDisabled = !passwordsMatch;
 
   // Submit
   const handleSubmit = (ev) => {

@@ -1,12 +1,10 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
-import { UserContext } from "./UserContext";
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "./AdminContext";
 import AdminHeader from "./AdminHeader";
 
 export default function Layout(){
-    const {user} = useContext(UserContext);
     const {admin} = useContext(AdminContext);
     const [isAdmin, setIsAdmin] = useState(false);
 

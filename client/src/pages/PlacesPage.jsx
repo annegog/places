@@ -44,15 +44,14 @@ export default function PlacesPage() {
       </div>)}
 
       {user && !user.isApproved &&( //user.isApproved === "render"
-        <div className="text-center ">
-          <textarea className="text-lg font-bold mt-48 bg-primary text-white rounded-full py-4 ">
-            Your account, as host, must first be approved! 
+        <div className="flex justify-center">
+          <p className="text-center text-lg font-bold mt-48 bg-primary text-white rounded-full py-4 px-10">
+            Your account, as host, must first be approved! <br />
             The Admin will accept you soon (or not :D)!
-          </textarea>
-      </div>
+          </p>
+        </div>
       )}
-      {/* user && user.isApproved === false => host has been decline make host-false?
-      and show him a message onece??? */}
+      
       <div className="mt-4 grid gap-2 lg:ml-10 lg:mr-10">
           {places.length > 0 && places.map(place => (
             <Link key={place._id} to={'/account/places/'+place._id} className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl">

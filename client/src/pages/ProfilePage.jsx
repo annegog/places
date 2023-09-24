@@ -5,7 +5,6 @@ import axios from "axios";
 import ImageProfile from "../ImageProfile";
 
 export default function ProfilePage() {
-  const [redirect, setRedirect] = useState(false);
   const { ready, user, setUser } = useContext(UserContext);
   const [edit, setEdit] = useState(false);
 
@@ -15,7 +14,15 @@ export default function ProfilePage() {
   const [phone, setPhoneNumber] = useState("");
   const [profilephoto, setProfilePhoto] = useState([]);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  const [uploadedProfilePhoto, setUploadedProfilePhoto] = useState(true);
+
+  const [current_password, setCurrentPassword] = useState("");
+  const [new_password, setNewPassword] = useState("");
+  const [confirm_password, setConfirmPassword] = useState("");
+  const [currentPasswordsMatch, setCurrentPasswordsMatch] = useState(true);
+  const [newPasswordsMatch, setNewPasswordsMatch] = useState(true);
+
 
   useEffect(() => {
     // Check if user data is available from the context
@@ -25,6 +32,7 @@ export default function ProfilePage() {
       setUsername(user.username);
       setPhoneNumber(user.phone);
       setEmail(user.email);
+      setProfilePhoto(user.profilephoto);
     }
   }, [user]);
 
@@ -38,16 +46,15 @@ export default function ProfilePage() {
         );
     }
     
-     async function logout() {
-        await axios.post("/logout");
-        setUser(null);
-        setRedirect(true);
-     }
-    
-    if (redirect) {
-        return <Navigate to={"/"} />;
+    async function logout() {
+      await axios.post("/logout");
+      setUser(null);
     }
 
+    if (user === null){
+      return <Navigate to={"/"} />;
+    }
+   
     const handleEdit = () => {
       setEdit(!edit);
     };
@@ -55,31 +62,102 @@ export default function ProfilePage() {
     async function updateUser (ev) {
       ev.preventDefault();
       try {
-        // await axios.post('/update-profile', {
-        //   first_name,
-        //   last_name,
-        //   username,
-        //   phone,
-        //   profilephoto,
-        //   email,
-        // });
+        await axios.post('/update-profile', {
+          first_name,
+          last_name,
+          username,
+          phone,
+          profilephoto,
+          email,
+        });
+        setEdit(!edit);
       } catch (error) {
-        
+        alert(`Something went wrong with updating the profile's informations: "${error}"`);
       }
     };
 
+//----------------------------profile photo--------------------------------//
+function uploadPhoto(ev) {
+  ev.preventDefault();
+  try {
+    const files = ev.target.files;
+    const data = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      data.append("profilephoto", files[i]);
+    }
+    axios
+      .post("/upload-profilePhoto", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((response) => {
+        const { data: filenames } = response;
+        setProfilePhoto((prev) => {
+          return [...prev, ...filenames];
+        });
+        console.log("Image uploaded from your device:", files);
+      });
+      setUploadedProfilePhoto(true);
+  } catch (error) {
+    console.error("Error uploading the photo from your device:", error);
+  }
+}
+
+function removePhoto(filename){
+  setProfilePhoto([...profilephoto.filter(profilephoto => profilephoto !== filename)]);
+  setUploadedProfilePhoto(false);
+}
+
+const handleProfileSubmit = (ev) => {
+  if (profilephoto.length === 0) {
+    ev.preventDefault();
+    setUploadedProfilePhoto(false);
+  }
+};
+
+
+//---------------------------password----------------------------------//
     async function updatePassword (ev) {
       ev.preventDefault();
       try {
-        // await axios.post('/change-password', {
-        // });
+        await axios.post('/check-password', {current_password}).then( async ({data}) => {
+          if (data) {
+            await axios.post('/change-password', { 
+              new_password
+            });
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+            alert("Password changed succesfully!");
+          }
+          setCurrentPasswordsMatch(data);
+        });
       } catch (error) {
-        
+        alert(`Something went wrong with changing the password: "${error}"`);
       }
     };
 
+    async function handleCurrentPassword (ev) {
+      const currentPassword = ev.target.value;
+      setCurrentPassword(currentPassword);
+    }
+
+    const handlePasswordChange = (ev) => {
+      const newPassword = ev.target.value;
+      setNewPassword(newPassword);
+
+      setNewPasswordsMatch(
+        newPassword === confirm_password || confirm_password === ""
+      );
+    }
+
+    const handleConfirmPasswordChange = (ev) => {
+      const confirmPassword = ev.target.value;
+      setConfirmPassword(confirmPassword);
+  
+      setNewPasswordsMatch(new_password === confirmPassword);
+    }
+
     return (
-      // <div>profile</div>
       <div className="mt-4 grow flex items-center justify-around">
       <div className="mt-34">
         <h1 className="text-3xl text-center mt-6">Personal Informations</h1>
@@ -94,7 +172,7 @@ export default function ProfilePage() {
                   First name
                 </label>
                 <div className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
-                  {user.first_name}
+                  {first_name}
                 </div>
               </div>
                 
@@ -105,7 +183,7 @@ export default function ProfilePage() {
                   Last name
                 </label>
                 <div className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
-                  {user.last_name}
+                  {last_name}
                 </div>
               </div>
 
@@ -116,10 +194,10 @@ export default function ProfilePage() {
                   Profile Photo
                 </label>
 
-                {user.profilephoto?.[0] && ( 
+                {profilephoto?.[0] && ( 
                   <ImageProfile
                       className="w-full h-36 object-cover aspect-square rounded-lg"
-                      src={user.profilephoto?.[0]}
+                      src={profilephoto?.[0]}
                       alt="profile photo"
                   />
                 )}
@@ -132,7 +210,7 @@ export default function ProfilePage() {
                   Username
                 </label>
                 <div className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
-                  {user.username}
+                  {username}
                 </div>
               </div>
 
@@ -143,7 +221,7 @@ export default function ProfilePage() {
                   Phone number
                 </label>
                 <div className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
-                  {user.phone}
+                  {phone}
                 </div>
               </div>
 
@@ -154,7 +232,7 @@ export default function ProfilePage() {
                   Email address
                 </label>
                 <div className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
-                  {user.email}
+                  {email}
                 </div>
               </div>
 
@@ -195,7 +273,7 @@ export default function ProfilePage() {
                     id="first_name"
                     className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                     value={first_name}
-                    // onChange={(ev) => setFirstName(ev.target.value)}
+                    onChange={(ev) => setFirstName(ev.target.value)}
                     required
                   />
                 </div>
@@ -211,7 +289,7 @@ export default function ProfilePage() {
                     id="last_name"
                     className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                     value={last_name}
-                    // onChange={(ev) => setLastName(ev.target.value)}
+                    onChange={(ev) => setLastName(ev.target.value)}
                     required
                   />
                 </div>
@@ -223,7 +301,7 @@ export default function ProfilePage() {
                     Profile Photo
                   </label>
 
-                  {/* {profilephoto && profilephoto.length > 0 ? 
+                  {profilephoto && profilephoto.length > 0 ? 
                     profilephoto.map((filename) => (
                         <div
                           className="h-32 flex relative cursor-pointer"
@@ -238,14 +316,14 @@ export default function ProfilePage() {
                             </svg>
                           </button>
                         </div>
-                      )) : null} */}
+                      )) : null}
 
                   {profilephoto && profilephoto.length === 0 ? (
                     <label className="cursor-pointer flex items-center justify-center border bg-transparent rounded-3xl p-10 text-sm text-gray-450">
                       <input
                         type="file"
                         className="hidden"
-                        // onChange={uploadPhoto}
+                        onChange={uploadPhoto}
                         required
                       />
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-7 h-7">
@@ -254,9 +332,9 @@ export default function ProfilePage() {
                     </label>
                   ) : null} 
 
-                  {/* {!uploadedProfilePhoto && (
+                  {!uploadedProfilePhoto && (
                     <p className="mt-2 text-red-500 text-xs">Profile photo is required!</p>
-                  )} */}
+                  )}
                 </div>
 
                 <div>
@@ -312,7 +390,7 @@ export default function ProfilePage() {
               <button
                 type="submit"
                 className="primary"
-                onClick={() => handleEdit()}>
+                onClick={handleProfileSubmit}>
                 Save Changes
               </button>
             </form>
@@ -324,40 +402,40 @@ export default function ProfilePage() {
           <form onSubmit={updatePassword}>
             <div>
               <label
-                for="password"
+                for="current_password"
                 className="block mb-2 text-sm font-medium text-gray-900">
                 Current password
               </label>
               <input
                 type="password"
-                id="password"
+                id="current_password"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                // value={password}
-                // onChange={handlePasswordChange}
+                value={current_password}
+                onChange={handleCurrentPassword}
                 required
               />
-              {/* {!passwordsMatch && (
-                <p className="text-red-500 text-xs">Passwords do not match!</p>
-              )} */}
+              {!currentPasswordsMatch && (
+                <p className="text-red-500 text-xs">Your current passwords is wrong!</p>
+              )}
             </div>
 
             <div>
               <label
-                for="confirm_password"
+                for="new_password"
                 className="block mb-2 text-sm font-medium text-gray-900">
                 New password
               </label>
               <input
                 type="password"
-                id="confirm_password"
+                id="new_password"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                // value={confirmPassword}
-                // onChange={handleConfirmPasswordChange}
+                value={new_password}
+                onChange={handlePasswordChange}
                 required
-              ></input>
-              {/* {!passwordsMatch && (
+              />
+              {!newPasswordsMatch && (
                 <p className="text-red-500 text-xs">Passwords do not match!</p>
-              )} */}
+              )}
             </div>
 
             <div>
@@ -370,43 +448,35 @@ export default function ProfilePage() {
                 type="password"
                 id="confirm_password"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                // value={confirmPassword}
-                // onChange={handleConfirmPasswordChange}
+                value={confirm_password}
+                onChange={handleConfirmPasswordChange}
                 required
-              ></input>
-              {/* {!passwordsMatch && (
+              />
+              {!newPasswordsMatch && (
                 <p className="text-red-500 text-xs">Passwords do not match!</p>
-              )} */}
+              )}
             </div>
 
             <button
+              type="submit"
               className="primary"
-              onClick>
+              disabled={!newPasswordsMatch}>
               Change password
             </button> 
           </form>
+
+          
+        </div>
+
+        <div className="flex justify-center items-center mt-10">
+          <button
+            className="bg-red-700 text-white rounded-full py-2 px-6"
+            onClick={logout}>
+            Logout
+          </button>
         </div>
 
       </div>
-    </div>
-    );
+      </div>
+  );
 }
-
-{/* <div className="flex justify-end">
-            <button
-              className="primary max-w-fit mt-5"
-              onClick={logout}>
-              Logout
-            </button>
-    </div>
-  <button
-    className="primary max-w-fit "
-    onClick>
-    Change password
-  </button> 
-  <button
-    className="primary max-w-fit "
-    onClick>
-    Edit Profile
-  </button>
-*/}

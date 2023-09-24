@@ -16,7 +16,6 @@ export default function UsersPage() {
     const handleDelete = async (userId, username) => {
         if (window.confirm(`Are you sure, you want to DELETE user: ${username}`)) {
             await axios.post('/delete-user', {userId});
-            // setUsers(users.filter((user) => user._id !== userId));
             const response = await axios.get('/users');
             setUsers(response.data);
         } 
@@ -25,8 +24,6 @@ export default function UsersPage() {
     const handleAccept = async (userId, username) => {
         if (window.confirm(`Are you sure, you want to ACCEPT host: ${username}`)) {
             await axios.post('/accept-host', {userId});
-            // setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
-            // setUsers(users.filter((user) => user._id !== userId));
             const response = await axios.get('/users');
             setUsers(response.data);
         } 
@@ -34,6 +31,9 @@ export default function UsersPage() {
 
     const handleDecline = async (userId, username) => {
         if (window.confirm(`Are you sure, you want to DECLINE host: ${username}`)) {
+            await axios.post('/decline-host', {userId});
+            const response = await axios.get('/users');
+            setUsers(response.data);
         }
     };
     
