@@ -1,12 +1,14 @@
-import React from 'react';
+import React from "react";
 import { ReactComponent as PartyIcon } from "./assets/svg/party.svg";
 import { ReactComponent as LikeIcon } from "./assets/svg/like.svg";
-import { ReactComponent as SmokingIcon } from "./assets/svg/smoking.svg";
+import { ReactComponent as SmokingIcon } from "./assets/svg/smoke.svg";
 import { ReactComponent as WifiIcon } from "./assets/svg/wifi.svg";
-import { ReactComponent as ParkingIcon } from "./assets/svg/parking.svg";
-import { ReactComponent as AcIcon } from "./assets/svg/ac.svg";
-import { ReactComponent as EntersIcon } from "./assets/svg/enterns.svg";
+import { ReactComponent as ParkingIcon } from "./assets/svg/car.svg";
+import { ReactComponent as AcIcon } from "./assets/svg/snowflakes.svg";
+import { ReactComponent as EntersIcon } from "./assets/svg/portal-enter.svg";
 import { ReactComponent as TVIcon } from "./assets/svg/tv.svg";
+import { ReactComponent as FireplaceIcon } from "./assets/svg/fireplace.svg";
+import { ReactComponent as PetsIcon } from "./assets/svg/paw.svg";
 
 export default function PerksShow({ selected }) {
 //   function handleCheckBox(ev) {
@@ -19,15 +21,15 @@ export default function PerksShow({ selected }) {
 //   }
 
   const perksList = [
+    { label: "Wifi", name: "wifi", icon: <WifiIcon /> },
+    { label: "Parking spot", name: "parking", icon: <ParkingIcon /> },
+    { label: "Pets Allowed", name: "pets", icon: <PetsIcon /> },
+    { label: "Air Condition", name: "ac", icon: <AcIcon /> },
+    { label: "Private entrance", name: "enterns", icon: <EntersIcon /> },
+    { label: "TV", name: "tv", icon: <TVIcon /> },
+    { label: "Living Room", name: "livingRoom", icon: <FireplaceIcon /> },
+    { label: "Smoking Area", name: "smoking", icon: <SmokingIcon /> },
     { label: "Parties Allowed", name: "party", icon: <PartyIcon /> },
-    { label: "Living Room", name: "livingRoom", icon: <LikeIcon /> },
-    { label: "Smoking Area", name: "smoking", icon: <SmokingIcon/> },
-    { label: "Wifi", name: "wifi", icon: <WifiIcon/> },
-    { label: "Parking spot", name: "parking", icon: <ParkingIcon/> },
-    { label: "Pets Allowed", name: "pets", icon: <LikeIcon/> },
-    { label: "AC", name: "ac", icon: <AcIcon/> },
-    { label: "Private enterns", name: "enterns", icon: <EntersIcon/> },
-    { label: "TV", name: "tv", icon: <TVIcon/> },
   ];
 
   const checkedPerks = perksList.filter((perk) => selected.includes(perk.name));
