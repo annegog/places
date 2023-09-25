@@ -1,14 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Image from "../Image";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import BookingWindow from "../BookingWindow";
 import ImageProfile from "../ImageProfile";
 import PlaceGallery from "../PlaceGallery";
-import Perks from "../Perks";
 import PerksShow from "../PerksShow";
-import { ReactComponent as HomeIcon } from "../assets/svg/home.svg";
 import CategoryShow from "../CategoryShow";
 
 export default function PlacePage() {

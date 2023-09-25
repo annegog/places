@@ -65,7 +65,7 @@ export default function BookingsForHosts({}) {
                             <text> extra guests</text>
                           </div>
                           <span className="text-2xl">
-                            Total price: ${booking.price}
+                            Total price: €{booking.price}
                           </span>
                         </div>
                       </Link>

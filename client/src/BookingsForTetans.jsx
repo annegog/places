@@ -58,7 +58,7 @@ export default function BookingsTetants({}) {
                       />
                     </svg>
                     <span className="text-2xl">
-                      Total price: ${booking.price}
+                      Total price: €{booking.price}
                     </span>
                   </div>
                 </div>

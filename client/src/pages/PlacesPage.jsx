@@ -67,7 +67,7 @@ export default function PlacesPage() {
                   <text>{place.maxBeds} beds</text>
                   <text>{place.numBaths} baths</text>
                 </div> 
-                <text className="font-semibold">${place.price} per night</text>
+                <text className="font-semibold">€{place.price} per night</text>
                 <p className="text-sm mt-2">{place.description}</p>
               </div>
             </Link>
