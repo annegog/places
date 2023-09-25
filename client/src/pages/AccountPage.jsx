@@ -5,8 +5,8 @@ import ProfilePage from "./ProfilePage.jsx";
 
 
 export default function AccountPage() {
-
   let { subpage } = useParams();
+  
   if (subpage === undefined) {
     subpage = "profile";
   }

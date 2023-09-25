@@ -182,7 +182,7 @@ app.post('/logout', (req, res) => {
 app.post('/update-profile', verifyJWTuser, async (req, res) => {
     try {
         const userId = req.id;
-        const {first_name, last_name, username, profilephoto, phone, email} = req.body;
+        const {first_name, last_name, username, profilephoto, phone, email} = req.body; {/*profilephoto,*/}
         await User.updateOne({_id: userId}, {
             $set: {
                 first_name: first_name,
@@ -198,10 +198,41 @@ app.post('/update-profile', verifyJWTuser, async (req, res) => {
         console.error('Error updating profile:', error);
         res.status(500).json({ error: 'Updating profile failed' });
     }
-    // password:
-    // host,
-    // tenant,
-    // isApproved
+});
+
+app.post('/check-password', verifyJWTuser, async (req, res) => {
+    try {
+        const userId = req.id;
+        const {current_password} = req.body;  
+        const { password } = await User.findById(userId);
+    
+        const passOK = bcrypt.compareSync(current_password, password); 
+        if (passOK) {
+            res.json(true)
+        } else {
+            res.json(false);
+        }
+    } catch (error) {
+        console.error('Error checking password:', error);
+        res.status(500).json({ error: 'Checking password failed' });        
+    }
+});
+
+app.post('/change-password', verifyJWTuser, async (req, res) => {
+    try {
+        const userId = req.id;
+        const {new_password} = req.body;
+        await User.updateOne({_id: userId}, {
+            $set: {
+                password: bcrypt.hashSync(new_password, bcryptSalt)
+            }
+        }); 
+        res.status(200).json("Password changed");
+        
+    } catch (error) {
+        console.error('Error changing password:', error);
+        res.status(500).json({ error: 'Changing password failed' });
+    }
 });
 
 //
@@ -288,10 +319,27 @@ app.post('/accept-host', async (req, res) => {
                 isApproved: true
             }
         }); 
-        res.status(200).json("Host Accepted");
+        // res.status(200).json("Host Accepted");
+        res.cookie('showMessage', 'true').send('User declined successfully');
     } catch (error) {
         console.error('Error approving a user:', error);
         res.status(500).json({ error: 'Approve user failed' });
+    }
+});
+
+app.post('/decline-host', async (req,res) => {
+    try {
+        const {userId} = req.body;
+        await User.updateOne({_id: userId}, {
+            $set: {
+                isApproved: true,
+                host: false
+            }
+        }); 
+        res.status(200).json("Host Declined");
+    } catch (error) {
+        console.error('Error declining a user:', error);
+        res.status(500).json({ error: 'Decline user failed' });
     }
 });
 
