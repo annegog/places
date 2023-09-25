@@ -11,14 +11,6 @@ import { ReactComponent as FireplaceIcon } from "./assets/svg/fireplace.svg";
 import { ReactComponent as PetsIcon } from "./assets/svg/paw.svg";
 
 export default function PerksShow({ selected }) {
-//   function handleCheckBox(ev) {
-//     const { checked, name } = ev.target;
-//     if (checked) {
-//       onChange([...selected, name]);
-//     } else {
-//       onChange([...selected.filter((selectedName) => selectedName !== name)]);
-//     }
-//   }
 
   const perksList = [
     { label: "Wifi", name: "wifi", icon: <WifiIcon /> },
