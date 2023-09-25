@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/User.js');
 const Place = require('./models/Place.js');
 const Booking = require('./models/Booking.js');
+const Review = require('./models/Review.js');
 const cookieParser = require('cookie-parser');
 const { json2xml } = require('xml-js');
 
@@ -49,8 +50,8 @@ app.get('/test', (req, res) => {
 
 ///verification functions for admin
 const verifyJWTadmin = (req, res, next) => {
-    const {token} = req.cookies;
-    if (token){
+    const { token } = req.cookies;
+    if (token) {
         jwt.verify(token, jwtSecretAdmin, {}, async (err, adminData) => {
             if (err) {
                 return res.status(401).json({ error: 'Admin Token verification failed' });
@@ -65,8 +66,8 @@ const verifyJWTadmin = (req, res, next) => {
 };
 /// verification functions for user
 const verifyJWTuser = (req, res, next) => {
-    const {token} = req.cookies;
-    if (token){
+    const { token } = req.cookies;
+    if (token) {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) {
                 return res.status(401).json({ error: 'User Token verification failed' });
@@ -182,8 +183,8 @@ app.post('/logout', (req, res) => {
 app.post('/update-profile', verifyJWTuser, async (req, res) => {
     try {
         const userId = req.id;
-        const {first_name, last_name, username, profilephoto, phone, email} = req.body; {/*profilephoto,*/}
-        await User.updateOne({_id: userId}, {
+        const { first_name, last_name, username, profilephoto, phone, email } = req.body; {/*profilephoto,*/ }
+        await User.updateOne({ _id: userId }, {
             $set: {
                 first_name: first_name,
                 last_name: last_name,
@@ -192,7 +193,7 @@ app.post('/update-profile', verifyJWTuser, async (req, res) => {
                 phone: phone,
                 email: email
             }
-        }); 
+        });
         res.status(200).json("Profile Updated");
     } catch (error) {
         console.error('Error updating profile:', error);
@@ -203,10 +204,10 @@ app.post('/update-profile', verifyJWTuser, async (req, res) => {
 app.post('/check-password', verifyJWTuser, async (req, res) => {
     try {
         const userId = req.id;
-        const {current_password} = req.body;  
+        const { current_password } = req.body;
         const { password } = await User.findById(userId);
-    
-        const passOK = bcrypt.compareSync(current_password, password); 
+
+        const passOK = bcrypt.compareSync(current_password, password);
         if (passOK) {
             res.json(true)
         } else {
@@ -214,21 +215,21 @@ app.post('/check-password', verifyJWTuser, async (req, res) => {
         }
     } catch (error) {
         console.error('Error checking password:', error);
-        res.status(500).json({ error: 'Checking password failed' });        
+        res.status(500).json({ error: 'Checking password failed' });
     }
 });
 
 app.post('/change-password', verifyJWTuser, async (req, res) => {
     try {
         const userId = req.id;
-        const {new_password} = req.body;
-        await User.updateOne({_id: userId}, {
+        const { new_password } = req.body;
+        await User.updateOne({ _id: userId }, {
             $set: {
                 password: bcrypt.hashSync(new_password, bcryptSalt)
             }
-        }); 
+        });
         res.status(200).json("Password changed");
-        
+
     } catch (error) {
         console.error('Error changing password:', error);
         res.status(500).json({ error: 'Changing password failed' });
@@ -298,8 +299,8 @@ app.get('/tenants', async (req, res) => {
 app.post('/delete-user', async (req, res) => {
     try {
         //user id and token for verification
-        const {userId} = req.body;
-        await User.deleteOne({_id: userId});
+        const { userId } = req.body;
+        await User.deleteOne({ _id: userId });
         //also delete the places!!!!
         //and the photosssss
         ///!!!!!!!!!!!!!!!!
@@ -313,12 +314,12 @@ app.post('/delete-user', async (req, res) => {
 
 app.post('/accept-host', async (req, res) => {
     try {
-        const {userId} = req.body;
-        await User.updateOne({_id: userId}, {
+        const { userId } = req.body;
+        await User.updateOne({ _id: userId }, {
             $set: {
                 isApproved: true
             }
-        }); 
+        });
         // res.status(200).json("Host Accepted");
         res.cookie('showMessage', 'true').send('User declined successfully');
     } catch (error) {
@@ -327,15 +328,15 @@ app.post('/accept-host', async (req, res) => {
     }
 });
 
-app.post('/decline-host', async (req,res) => {
+app.post('/decline-host', async (req, res) => {
     try {
-        const {userId} = req.body;
-        await User.updateOne({_id: userId}, {
+        const { userId } = req.body;
+        await User.updateOne({ _id: userId }, {
             $set: {
                 isApproved: true,
                 host: false
             }
-        }); 
+        });
         res.status(200).json("Host Declined");
     } catch (error) {
         console.error('Error declining a user:', error);
@@ -345,9 +346,9 @@ app.post('/decline-host', async (req,res) => {
 
 app.get('/admin-user-places/:id', async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         // console.log(id);
-        res.json(await Place.find({owner: id}));
+        res.json(await Place.find({ owner: id }));
     } catch (error) {
         console.error('Error finding places:', error);
         res.status(500).json({ error: 'Fiding places failed' });
@@ -356,7 +357,7 @@ app.get('/admin-user-places/:id', async (req, res) => {
 
 app.get('/user/:id', async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         res.json(await User.findById(id));
     } catch (error) {
         console.error('Error finding user:', error);
@@ -364,22 +365,22 @@ app.get('/user/:id', async (req, res) => {
     }
 });
 
-app.get('/JSON-data', verifyJWTadmin, async (req,res) => {
+app.get('/JSON-data', verifyJWTadmin, async (req, res) => {
     try {
-        res.json(await Place.find());        
+        res.json(await Place.find());
     } catch (error) {
         console.error('Error at exporting data:', error);
         res.status(500).json({ error: 'Exporting data failed' });
     }
 });
 
-app.get('/XML-data', verifyJWTadmin, async (req,res) => {
+app.get('/XML-data', verifyJWTadmin, async (req, res) => {
     try {
         // res.json(await Place.find()); 
         const data = await Place.find();
         const jsonData = JSON.stringify(data, null, 2);
-        const xmlData = json2xml(jsonData, { compact: true, spaces: 4 });   
-        res.json(xmlData);    
+        const xmlData = json2xml(jsonData, { compact: true, spaces: 4 });
+        res.json(xmlData);
     } catch (error) {
         console.error('Error at exporting data:', error);
         res.status(500).json({ error: 'Exporting data failed' });
@@ -473,7 +474,7 @@ app.post('/places', (req, res) => {
                 photos: addedPhotos, extraInfoAddress,
                 description, perks, extraInfo, category,
                 checkIn, checkOut, maxGuests, numBaths,
-                maxBeds, numBedrooms, area, minDays, 
+                maxBeds, numBedrooms, area, minDays,
                 price, extraPrice, selectedDays
             });
             res.json(placeDoc);
@@ -515,8 +516,8 @@ app.put('/places/:id', async (req, res) => {
         const { token } = req.cookies;
         const { id, title, address, pinPosition,
             extraInfoAddress, addedPhotos,
-            description, perks, 
-            category ,extraInfo, selectedDays,
+            description, perks,
+            category, extraInfo, selectedDays,
             checkIn, checkOut, maxGuests,
             numBaths, maxBeds, numBedrooms,
             area, minDays, price, extraPrice } = req.body;
@@ -620,7 +621,7 @@ app.get('/bookings', (req, res) => {
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
-            res.json(await Booking.find({ user: userData.id }).populate('place')); 
+            res.json(await Booking.find({ user: userData.id }).populate('place'));
             // **Querying with .populate()**: When you use .populate('place') in your query,
             //  it tells Mongoose to retrieve the referenced Place document(s) associated with each Booking document in the result.
         });
@@ -638,6 +639,58 @@ app.get('/bookings-host', verifyJWTuser, async (req, res) => {
     } catch (error) {
         console.error('Error fetching bookings for the host:', error);
         res.status(500).json({ error: 'Error fetching bookings for the host' });
+    }
+});
+
+//
+// --------------------------------------------------------------------------------------
+// Reviews
+
+// make a review
+app.post('/review', async (req, res) => {
+    const { token } = req.cookies;
+    const {
+        place, booking, first_name, stars, review, reviewDate
+    } = req.body;
+    try {
+        jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
+            if (err) throw err;
+            const reviewDoc = await Review.create({
+                place, user: userData.id, booking, first_name, stars, review, reviewDate
+            })
+            res.json(reviewDoc);
+        });
+
+    } catch (error) {
+        console.error('Error at Saving a new review:', error);
+        res.status(500).json({ error: 'Error saving a new review' });
+    }
+});
+
+// get a review id= booking._id
+app.get('/review/:id', verifyJWTuser, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const review = await Review.findOne({ booking: id });
+        // if (reviews.length === 0) {
+        //     return res.status(404).json({ error: 'Review not found' });
+        // }
+        res.json(review);
+    } catch (error) {
+        console.error('Error fetching the review:', error);
+        res.status(500).json({ error: 'Error fetching the review' });
+    }
+});
+
+// find the reviews for one place
+app.get('/reviews-place/:id', verifyJWTuser, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const reviews = await Review.find({ place: id });
+        res.json(reviews);
+    } catch (error) {
+        console.error('Error fetching the review:', error);
+        res.status(500).json({ error: 'Error fetching the review' });
     }
 });
 

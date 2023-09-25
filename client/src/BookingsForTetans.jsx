@@ -7,21 +7,36 @@ import { useEffect, useState } from "react";
 
 export default function BookingsTetants({}) {
   const [bookings, setBookings] = useState([]);
+
   useEffect(() => {
     axios.get("/bookings").then((response) => {
       setBookings(response.data);
     });
   }, []);
 
+  const compareByCheckOutDate = (a, b) => {
+    const checkOutDateA = moment(a.checkOut);
+    const checkOutDateB = moment(b.checkOut);
+
+    if (checkOutDateA.isAfter(checkOutDateB)) {
+      return -1; // Sort in descending order
+    } else if (checkOutDateA.isBefore(checkOutDateB)) {
+      return 1; // Sort in descending order
+    } else {
+      return 0;
+    }
+  };
+
+  const currentDate = moment();
+
   return (
     <>
       <div className="mt-4 grid gap-2 lg:ml-10 lg:mr-10">
         {bookings?.length > 0 ? (
           bookings
-            .sort((a, b) => new Date(a.checkIn) - new Date(b.checkIn))
+            .sort((a, b) => compareByCheckOutDate(a, b))
             .map((booking) => (
               <Link
-                disabled={booking.checkOut > moment()}
                 key={booking._id}
                 to={`/account/bookings/${booking._id}`}
                 className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl"
