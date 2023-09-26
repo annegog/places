@@ -578,11 +578,13 @@ app.get('/place/:id', async (req, res) => {
     try {
         const place = await Place.findById(id).exec();
         const host = await User.findOne({ _id: place.owner }).exec();
+        const reviews = await Review.find({place: id}).exec();
         res.json({
             place: place, host: {
                 "username": host.username,
                 "photoprofile": host.profilephoto
-            }
+            },
+            reviews,
         });
     } catch (error) {
         res.status(500).json({ error: 'Error fetching place' });

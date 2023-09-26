@@ -16,6 +16,7 @@ export default function PlacePage() {
   const [showMap, setShowMap] = useState(false);
   const [open, setOpen] = useState(false); //for descriptions dialog
   const [reviews, setReviews] = useState([]);
+  const [stars, setStars] = useState(null);
 
   // descriptions smaller than 5
   const [expanded, setExpanded] = useState(false);
@@ -25,6 +26,22 @@ export default function PlacePage() {
   const handleShowMoreReviews = () => {
     // Increase the count to show more reviews (e.g., by 3 more)
     setVisibleReviews(visibleReviews + 3);
+  };
+
+  const calculate = () => {
+    console.log("re eisai edw?????");
+    let stars_mo = 0;
+    let counter = 0;
+    if (reviews) {
+      reviews.forEach((review) => {
+        counter++;
+        stars_mo += review.stars;
+      });
+      const averageStars = stars_mo / counter;
+      console.log(stars_mo, counter);
+      console.log("Average Stars:", averageStars); 
+      setStars(averageStars);
+    }
   };
 
   const toggleExpand = () => {
@@ -59,18 +76,13 @@ export default function PlacePage() {
     axios.get("/place/" + id).then((response) => {
       setPlace(response.data.place);
       setHost(response.data.host);
+      setReviews(response.data.reviews);
+      calculate();
     });
-  }, [id]);
+  }, []);
 
-  useEffect(() => {
-    if (!id) {
-      return;
-    }
-    axios.get("/reviews-place/" + id).then((response) => {
-      setReviews(response.data);
-    });
-  }, [id]);
-
+  console.log("REview: ", reviews);
+  
   if (!place) return "";
 
   if (showMap) {
@@ -178,7 +190,6 @@ export default function PlacePage() {
               <text>{place.numBedrooms} bedrooms</text>
               <text>{place.maxBeds} beds</text>
               <text>{place.numBaths} baths</text>
-              <text className="font-bold">Category</text>
             </div>
 
             <hr className="mt-1 mb-3" />
@@ -239,24 +250,22 @@ export default function PlacePage() {
                   About this place
                 </h2>
                 <div className="mt-2 mb-6">
-                  <dialogContent>
-                    <dialogContentText className="text-justify align-text-top">
+                    <p className="text-justify align-text-top">
                       {place.description}{" "}
-                    </dialogContentText>
+                    </p>
                     {place.extraInfo && place.extraInfo.length > 0 && (
                       <div>
                         <h3 className="mt-4 text-lg text-gray-700 font-semibold mb-2">
                           Extra informations
                         </h3>
-                        <dialogContentText className="text-justify align-text-top">
+                        <p className="text-justify align-text-top">
                           {place.extraInfo}{" "}
-                        </dialogContentText>
+                        </p>
                         <div className="mt-2 text-lg text-gray-700 font-semibold">
-                          <text>Area: {place.area} (m2)</text>
+                          <p>Area: {place.area} (m2)</p>
                         </div>
                       </div>
                     )}
-                  </dialogContent>
                 </div>
               </dialog>
             </div>
@@ -321,14 +330,28 @@ export default function PlacePage() {
       </div>
 
       {/* <hr className="mt-6 mb-6" /> */}
-      <h2 className="text-3xl font-light mb-2">Reviews</h2>
+      <div className="mb-2 flex gap-4">
+        <h2 className="text-3xl font-light">Reviews</h2>
+        {stars !== null && stars >= 0 && (
+          <div className="flex">
+            <svg className="w-7 h-7 text-yellow-400 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor" viewBox="0 0 22 20">
+              <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+            </svg>
+            <p className="origin-bottom font-serif text-xl">
+              {stars.toFixed(1)}/5
+            </p>
+          </div>
+        )}
+      </div>
+
       {reviews.length === 0 ? (
-        <p>No reviews yet!</p>
+        <p className="font-thin">No reviews yet..</p>
       ) : (
         <div className="grid lg:grid-cols-2">
           {reviews.length > 0 &&
             reviews.slice(0, visibleReviews).map((review) => (
-              <div className="gap-4">
+              <div key={review._id} className="gap-4">
                 <div className="mb-4">
                   {/* <hr className="mt-2 mb-1" /> */}
                   <div className="flex gap-2">
@@ -374,7 +397,10 @@ export default function PlacePage() {
 
                   <p className="text-xs font-light">
                     Rewiewed on{" "}
-                    {format(new Date(review.reviewDate || new Date()), "MMMM dd, yyyy")}
+                    {format(
+                      new Date(review.reviewDate || new Date()),
+                      "MMMM dd, yyyy"
+                    )}
                   </p>
                   <p className="mt-2 mb-1 ">{review.review}</p>
                 </div>
@@ -383,7 +409,7 @@ export default function PlacePage() {
           {reviews.length > visibleReviews && (
             <button
               onClick={handleShowMoreReviews}
-              className="underline bg-transparent text-indigo-500"
+              className="underline top-4 bg-transparent text-left text-indigo-500"
             >
               Show more
             </button>
