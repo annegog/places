@@ -655,8 +655,16 @@ app.post('/review', async (req, res) => {
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
+
+            const user = await User.findById(userData.id);
+            if (!user) 
+                throw new Error('User not found');
+            
+            const photoprofile = user.profilephoto[0] || null;
+
             const reviewDoc = await Review.create({
-                place, user: userData.id, booking, first_name, stars, review, reviewDate
+                place, user: userData.id, booking, 
+                first_name, photoprofile ,stars, review, reviewDate
             })
             res.json(reviewDoc);
         });

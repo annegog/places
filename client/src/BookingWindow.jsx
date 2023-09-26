@@ -3,6 +3,7 @@ import moment from "moment";
 import { UserContext } from "./UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { format } from "date-fns";
 
 export default function BookingWindow({ place }) {
   const { user, setUser } = useContext(UserContext);
@@ -256,15 +257,15 @@ export default function BookingWindow({ place }) {
                     <div className="border rounded-2xl mt-2 mb-2">
                       <div className="grid grid-cols-3">
                         <div className=" py-3 px-2 border-r">
-                          <label>Check in: </label> {format( Date(checkIn), "MMM dd, yyyy")}
-                          <output value={checkIn} />
+                          <label>Check in: </label> 
+                          <p>{format(new Date(checkIn), "dd/MM/yyyy")}</p>
                         </div>
                         <div className="py-3 px-2  border-r">
                           <label>Check out: </label>
-                          <input type="date" value={checkOut} readOnly />
+                          <p>{format(new Date(checkOut), "dd/MM/yyyy")}</p>
                         </div>
                         <div className=" py-3 px-2 border-t text-center">
-                          <text type="number">Guests: {numGuests}</text>
+                          <p type="number">Guests: {numGuests}</p>
                         </div>
                       </div>
                       <div>

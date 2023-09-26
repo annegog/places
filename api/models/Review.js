@@ -8,6 +8,7 @@ const reviewSchema = new mongoose.Schema({
   stars: Number,
   review: String,
   reviewDate: Date,
+  photoprofile: String,
 });
 
 const ReviewModel = mongoose.model('Review', reviewSchema);

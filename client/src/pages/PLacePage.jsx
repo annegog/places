@@ -7,6 +7,7 @@ import ImageProfile from "../ImageProfile";
 import PlaceGallery from "../PlaceGallery";
 import PerksShow from "../PerksShow";
 import CategoryShow from "../CategoryShow";
+import { format } from "date-fns";
 
 export default function PlacePage() {
   const { id } = useParams();
@@ -14,9 +15,17 @@ export default function PlacePage() {
   const [host, setHost] = useState(null);
   const [showMap, setShowMap] = useState(false);
   const [open, setOpen] = useState(false); //for descriptions dialog
+  const [reviews, setReviews] = useState([]);
 
   // descriptions smaller than 5
   const [expanded, setExpanded] = useState(false);
+
+  const [visibleReviews, setVisibleReviews] = useState(3); // Initial number of reviews to display
+
+  const handleShowMoreReviews = () => {
+    // Increase the count to show more reviews (e.g., by 3 more)
+    setVisibleReviews(visibleReviews + 3);
+  };
 
   const toggleExpand = () => {
     setExpanded(!expanded);
@@ -50,6 +59,15 @@ export default function PlacePage() {
     axios.get("/place/" + id).then((response) => {
       setPlace(response.data.place);
       setHost(response.data.host);
+    });
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    axios.get("/reviews-place/" + id).then((response) => {
+      setReviews(response.data);
     });
   }, [id]);
 
@@ -117,7 +135,6 @@ export default function PlacePage() {
       </div>
     );
   }
-
 
   return (
     <div
@@ -206,18 +223,18 @@ export default function PlacePage() {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
-                    class="w-6 h-6"
+                    className="w-6 h-6"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M6 18L18 6M6 6l12 12"
                     />
                   </svg>
                 </button>
-                <header></header>
+
                 <h2 className="mt-2 text-2xl font-semibold ">
                   About this place
                 </h2>
@@ -261,61 +278,122 @@ export default function PlacePage() {
             </h2>
             <div className="bg-gray-200 shadow-xl rounded-2xl p-2 grid grid-cols-1">
               <div>
-                <PerksShow selected={place.perks}/>
-                {place.category && (
-                  <CategoryShow selected={place.category}/>
-                )}
+                <PerksShow selected={place.perks} />
+                {place.category && <CategoryShow selected={place.category} />}
               </div>
-              
             </div>
           </div>
         </div>
       </div>
 
       <hr className="mt-6 mb-6" />
-      <div className="grid grid-cols-2 mb-2">
-        <div className="grid grid-cols-[0.1fr,0.8fr] gap-4">
-          <div className="rounded-full item-button border border-gray-600 ">
-            {host.photoprofile ? (
-              <ImageProfile
-                className="rounded-full object-cover"
-                src={host.photoprofile?.[0]}
-                alt=""
-                style={{ width: "40px" }}
+      <div className="flex gap-2 mb-2">
+        <div className="rounded-full item-button border border-gray-600 ">
+          {host.photoprofile ? (
+            <ImageProfile
+              className="rounded-full object-cover"
+              src={host.photoprofile?.[0]}
+              alt=""
+              style={{ width: "45px", height: "45px" }}
+            />
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="rounded-full w-10 h-10 relative self-center left-2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
               />
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="rounded-full w-10 h-10 relative self-center left-2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                />
-              </svg>
-            )}
-          </div>
-          <h2 className="text-3xl font-light">Hosting by: {host.username}</h2>
+            </svg>
+          )}
         </div>
+        <h2 className="text-3xl font-light">Hosting by: {host.username}</h2>
       </div>
 
-      <div className="px-4">
+      <div className="px-8 mb-6">
         <button className="contact">contact with the host</button>
       </div>
 
-      <hr className="mt-6 mb-6" />
-      <div>
-        <h2 className="font-semibold text-lg">Reviews </h2>
-      </div>
+      {/* <hr className="mt-6 mb-6" /> */}
+      <h2 className="text-3xl font-light mb-2">Reviews</h2>
+      {reviews.length === 0 ? (
+        <p>No reviews yet!</p>
+      ) : (
+        <div className="grid lg:grid-cols-2">
+          {reviews.length > 0 &&
+            reviews.slice(0, visibleReviews).map((review) => (
+              <div className="gap-4">
+                <div className="mb-4">
+                  {/* <hr className="mt-2 mb-1" /> */}
+                  <div className="flex gap-2">
+                    <div className="rounded-full item-button border border-gray-600 ">
+                      {review.photoprofile ? (
+                        <ImageProfile
+                          className="rounded-full object-cover"
+                          src={review.photoprofile}
+                          alt=""
+                          style={{ width: "40px", height: "40px" }}
+                        />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1}
+                          stroke="currentColor"
+                          className="rounded-full w-7 h-7 px-1 object-cover relative self-center "
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                    <h2 className="font-serif text-lg">{review.first_name}</h2>
+                  </div>
+                  <div className="flex align-baseline">
+                    <svg
+                      className="w-5 h-6 text-yellow-300 mr-1"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <p className="font-serif">{review.stars}/5</p>
+                  </div>
+
+                  <p className="text-xs font-light">
+                    Rewiewed on{" "}
+                    {format(new Date(review.reviewDate || new Date()), "MMMM dd, yyyy")}
+                  </p>
+                  <p className="mt-2 mb-1 ">{review.review}</p>
+                </div>
+              </div>
+            ))}
+          {reviews.length > visibleReviews && (
+            <button
+              onClick={handleShowMoreReviews}
+              className="underline bg-transparent text-indigo-500"
+            >
+              Show more
+            </button>
+          )}
+        </div>
+      )}
+
       <hr className="mt-6 mb-6" />
 
-      {/* <hr className="mt-3 mb-6" />
-      <div className="mb-10">
+      {/* <div className="mb-10">
         <h1 className="text-2xl font-semibold text-gray-700">
           Where you will be
         </h1>
