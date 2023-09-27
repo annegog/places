@@ -710,9 +710,42 @@ app.get('/reviews-place/:id', verifyJWTuser, async (req, res) => {
 // Home Page
 
 // get every place 
+// app.get('/places', async (req, res) => {
+//     res.json(await Place.find());
+// })
+
 app.get('/places', async (req, res) => {
-    res.json(await Place.find());
-})
+    try {
+        const placesWithAvgRating = await Place.aggregate([
+            {
+                $lookup: {
+                    from: 'reviews', // Your reviews collection name
+                    localField: '_id',
+                    foreignField: 'place',
+                    as: 'reviews',
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    photos: { $arrayElemAt: ['$photos', 0] },
+                    maxGuests: '$maxGuests',
+                    numBedrooms: '$numBedrooms', // Include numBedrooms field
+                    price: '$price', 
+                    averageRating: {
+                        $avg: '$reviews.stars',
+                    },
+                },
+            },
+        ]);
+        res.json(placesWithAvgRating);
+    } catch (error) {
+        console.error('Error fetching places with average ratings:', error);
+        res.status(500).json({ error: 'Error fetching places' });
+    }
+});
+
 
 //
 // -------------------------------------------------------------------------------------
