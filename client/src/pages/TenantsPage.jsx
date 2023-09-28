@@ -12,34 +12,100 @@ export default function TenantsPage() {
       });
     }, []);
     
+    const handleDelete = async (userId, username) => {
+        if (window.confirm(`Are you sure, you want to DELETE user: ${username}`)) {
+            await axios.post('/delete-user', {userId});
+            const response = await axios.get('/tenants');
+            setTenants(response.data);
+        } 
+    };
+
+    const handleAccept = async (userId, username) => {
+        if (window.confirm(`Are you sure, you want to ACCEPT host: ${username}`)) {
+            await axios.post('/accept-host', {userId});
+            const response = await axios.get('/tenants');
+            setTenants(response.data);
+        } 
+    };
+
+    const handleDecline = async (userId, username) => {
+        if (window.confirm(`Are you sure, you want to DECLINE host: ${username}`)) {
+            await axios.post('/decline-host', {userId});
+            const response = await axios.get('/tenants');
+            setTenants(response.data);
+        }
+    };
+
     return (
         <div>
             <AdminNav />
-            <div>
-                {tenants.length > 0 && tenants.map(tenant => (
-                    <Link to={tenant._id} className="bg-gray-500 mb-2 rounded-2xl flex space-x-2">
-                        {/* <div>{tenant.profilephoto} </div> */}
-                        {tenant.profilephoto?.[0] && ( 
-                            <ImageProfile
-                                className="rounded-3xl w-6 object-cover aspect-square"
-                                src={tenant.profilephoto?.[0]}
-                                alt="profile photo"
-                            />
+            <div className="flex justify-center items-center ">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">   
+                {tenants.length > 0 && tenants.map(user => (
+                    <div key={user._id} 
+                        className="relative flex gap-4 bg-gray-100 p-4 rounded-2xl mb-4">
+                        
+                        <Link to={user._id} className="flex w-36 h-36 bg-gray-300 shrink-0 rounded-lg">
+                            {user.profilephoto?.[0] && ( 
+                                <ImageProfile
+                                    className="object-cover aspect-square rounded-lg"
+                                    src={user.profilephoto?.[0]}
+                                    alt="profile photo"
+                                />
                             )}
-                        <div>{tenant.first_name} </div>
-                        <div>{tenant.last_name} </div>
-                        <div>{tenant.tenantname}</div>
-                        {!!tenant.host && (
-                            <div>Is Host</div>
-                        )}
-                        {!!tenant.tenant && (
-                            <div>Is Tenant</div>
-                        )}
-                        {/* <div>{tenant.phone} </div>
-                            <div>{tenant.email} </div>
-                            <div>{tenant.profilephoto} </div> */}
-                    </Link>
+                        </Link>
+
+                        <div className="grow-0 shrink ">
+                            <h2 className="text-xl">{user.username}</h2>
+                            <div className="text-gray-700">
+                                <text className="text-sm"> Fisrt Name:</text> {user.first_name} <br />
+                                <text className="text-sm"> Last Name: </text> {user.last_name} <br />
+                                <text className="text-sm"> Roles: </text> {user.host && user.tenant ? "host, tenant" : user.host? "host": user.tenant? "tenant":""} <br />
+                                <text className="text-sm"> Phone Number: </text> {user.phone} <br />
+                                <text className="text-sm"> Email: </text> {user.email} <br />
+                            </div> 
+                            {/* <text className="font-semibold">${} per night</text>
+                            <p className="text-sm mt-2">{}</p> */}
+                        </div> 
+                        
+                        <div className="ml-32">
+                            {!user.isApproved && (
+                                <div className="flex absolute top-2 right-2 "> 
+                                    <button 
+                                        className="bg-green-700 text-sm text-white p-2 rounded-2xl flex mr-2" 
+                                        onClick={() => handleAccept(user._id, user.username)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        </svg>
+                                        <text className="">Accept</text>
+                                    </button>
+
+                                    <button 
+                                        className="bg-yellow-500 text-sm text-white p-2 rounded-2xl flex" 
+                                        onClick={() => handleDecline(user._id, user.username)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Decline
+                                    </button> 
+                                </div>
+                            )}
+
+                            <div className="absolute bottom-2 right-2">
+                                <button 
+                                    className="bg-red-600 text-sm text-white fit-content p-2 rounded-2xl flex" 
+                                    onClick={() => handleDelete(user._id, user.username)} >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                    <text>delete</text>
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </div>
                 ))}
+            </div>
             </div>
         </div>
     );

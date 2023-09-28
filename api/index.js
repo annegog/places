@@ -352,15 +352,16 @@ app.get('/tenants', async (req, res) => {
     }
 });
 // should make a verification function for admin and user
-app.post('/delete-user', async (req, res) => {
+app.post('/delete-user', verifyJWTadmin, async (req, res) => {
     try {
         //user id and token for verification
         const { userId } = req.body;
-        await User.deleteOne({ _id: userId });
-        //also delete the places!!!!
+        const places = await Place.find({owner: userId});
+        const placesId = places.map((place) => place._id);
+        await Booking.deleteMany({place: { $in: placesId } }); //delete the bookings
+        await Place.deleteMany({owner: userId}); //delete his places
+        await User.deleteOne({ _id: userId }); //delete the user
         //and the photosssss
-        ///!!!!!!!!!!!!!!!!
-        //sosososososososso
         res.status(200).json("User Deleted");
     } catch (error) {
         console.error('Error deleting user:', error);
@@ -368,7 +369,7 @@ app.post('/delete-user', async (req, res) => {
     }
 });
 
-app.post('/accept-host', async (req, res) => {
+app.post('/accept-host', verifyJWTadmin, async (req, res) => {
     try {
         const { userId } = req.body;
         await User.updateOne({ _id: userId }, {
@@ -384,7 +385,7 @@ app.post('/accept-host', async (req, res) => {
     }
 });
 
-app.post('/decline-host', async (req, res) => {
+app.post('/decline-host', verifyJWTadmin, async (req, res) => {
     try {
         const { userId } = req.body;
         await User.updateOne({ _id: userId }, {
@@ -400,10 +401,9 @@ app.post('/decline-host', async (req, res) => {
     }
 });
 
-app.get('/admin-user-places/:id', async (req, res) => {
+app.get('/admin-user-places/:id', verifyJWTadmin, async (req, res) => {
     try {
         const { id } = req.params;
-        // console.log(id);
         res.json(await Place.find({ owner: id }));
     } catch (error) {
         console.error('Error finding places:', error);
@@ -411,7 +411,26 @@ app.get('/admin-user-places/:id', async (req, res) => {
     }
 });
 
-app.get('/user/:id', async (req, res) => {
+app.get('/admin-host-bookings/:id', verifyJWTadmin, async(req, res) => {
+    try {
+        const { id } = req.params;
+        const places = await Place.find({ owner: id });
+        res.json(await Booking.find({ 'place': places }));
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching bookings' });
+    }
+});
+
+app.get('/admin-tenant-bookings/:id', verifyJWTadmin, async(req, res) => {
+    try {
+        const { id } = req.params;
+        res.json(await Booking.find({ user: id }).populate('place'));
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching bookings' });
+    }
+});
+
+app.get('/user/:id', verifyJWTadmin, async (req, res) => {
     try {
         const { id } = req.params;
         res.json(await User.findById(id));

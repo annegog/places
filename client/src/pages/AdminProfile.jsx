@@ -9,6 +9,8 @@ import { Navigate } from "react-router-dom";
 export default function AdminProfile () {
   const {admin, setAdmin} = useContext(AdminContext)
   const [placesData, setPlacesData] = useState([]);
+  const [bookingsData, setBookigsData] = useState([]); //only tensnts
+  const [reviewsData, setReviewsData] = useState([]);
   const [xmlData, setXMLdata] = useState([]);
 
   const [edit, setEdit] = useState(false);

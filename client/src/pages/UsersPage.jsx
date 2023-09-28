@@ -12,7 +12,6 @@ export default function UsersPage() {
         });
     }, []);
 
-    //maybe and all the places a host has must be deleted
     const handleDelete = async (userId, username) => {
         if (window.confirm(`Are you sure, you want to DELETE user: ${username}`)) {
             await axios.post('/delete-user', {userId});
@@ -38,7 +37,6 @@ export default function UsersPage() {
     };
     
     return (
-        //grid
         <div>
         <AdminNav/>
         <div className="flex justify-center items-center ">
@@ -108,7 +106,7 @@ export default function UsersPage() {
                 </div>
             ))}
          </div>
-         </div>
-         </div>
+        </div>
+        </div>
     );
 };
