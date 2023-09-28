@@ -33,7 +33,7 @@ export default function IndexPage() {
                 <text>{place.numBedrooms} bedrooms</text>
               </div>
               {place.averageRating === null ? (
-                <p className="text-sm font-serif ">no reviews yes</p>
+                <p className="text-sm font-serif ">no reviews yet</p>
               ) : (
                 <div className="flex align-baseline">
                   <svg
