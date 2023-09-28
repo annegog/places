@@ -442,7 +442,12 @@ app.get('/user/:id', verifyJWTadmin, async (req, res) => {
 
 app.get('/JSON-data', verifyJWTadmin, async (req, res) => {
     try {
-        res.json(await Place.find());
+        const allData = {
+            places: await Place.find(),
+            bookings: await Booking.find(),
+            reviews: await Review.find()
+        }
+        res.json(allData);
     } catch (error) {
         console.error('Error at exporting data:', error);
         res.status(500).json({ error: 'Exporting data failed' });
@@ -451,9 +456,13 @@ app.get('/JSON-data', verifyJWTadmin, async (req, res) => {
 
 app.get('/XML-data', verifyJWTadmin, async (req, res) => {
     try {
-        // res.json(await Place.find()); 
-        const data = await Place.find();
-        const jsonData = JSON.stringify(data, null, 2);
+        const allData = {
+            places: await Place.find(),
+            bookings: await Booking.find(),
+            reviews: await Review.find()
+        }
+        // const data = await Place.find();
+        const jsonData = JSON.stringify(allData, null, 2);
         const xmlData = json2xml(jsonData, { compact: true, spaces: 4 });
         res.json(xmlData);
     } catch (error) {

@@ -8,9 +8,8 @@ import { Navigate } from "react-router-dom";
 
 export default function AdminProfile () {
   const {admin, setAdmin} = useContext(AdminContext)
-  const [placesData, setPlacesData] = useState([]);
-  const [bookingsData, setBookigsData] = useState([]); //only tensnts
-  const [reviewsData, setReviewsData] = useState([]);
+
+  const [allData, setAllData] = useState([]);
   const [xmlData, setXMLdata] = useState([]);
 
   const [edit, setEdit] = useState(false);
@@ -33,7 +32,7 @@ export default function AdminProfile () {
 
   useEffect(()=> {
       axios.get('/JSON-data').then(response => {
-          setPlacesData(response.data);
+          setAllData(response.data);
       });
       axios.get('/XML-data').then(response => {
           setXMLdata(response.data);
@@ -41,21 +40,21 @@ export default function AdminProfile () {
   }, []);
 
   const exportToJSON = () => {
-      const jsonData = JSON.stringify(placesData, null, 2); // Convert data to JSON format with 2-space indentation
-      // Create a Blob object containing the JSON data
-      //A Blob is a binary large object that can represent data
-      const blob = new Blob([jsonData], { type: "application/json" });
-      
-      // Create a download link and trigger the download
-      const url = URL.createObjectURL(blob);
-      const downloadLink = document.createElement("a");
-      downloadLink.href = url;
-      downloadLink.download = "FindYourPlace.json";
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
+    const jsonData = JSON.stringify(allData, null, 2); // Convert data to JSON format with 2-space indentation
+    // Create a Blob object containing the JSON data
+    //A Blob is a binary large object that can represent data
+    const blob = new Blob([jsonData], { type: "application/json" });
+    
+    // Create a download link and trigger the download
+    const url = URL.createObjectURL(blob);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = url;
+    downloadLink.download = "FindYourPlace.json";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
 
-      URL.revokeObjectURL(url); //revokes (deallocates) the blob URL
-      document.body.removeChild(downloadLink); //cleans up the dynamically created anchor element
+    URL.revokeObjectURL(url); //revokes (deallocates) the blob URL
+    document.body.removeChild(downloadLink); //cleans up the dynamically created anchor element
   };
 
   const exportToXML = () => {
@@ -124,8 +123,7 @@ export default function AdminProfile () {
       for (let i = 0; i < files.length; i++) {
         data.append("profilephoto", files[i]);
       }
-      axios
-        .post("/upload-profilePhoto", data, {
+      axios.post("/upload-profilePhoto", data, {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then((response) => {
