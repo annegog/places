@@ -6,11 +6,16 @@ import ImageProfile from "../ImageProfile";
 export default function UserPage () {
     const {id} = useParams(); //user id
     const [places, setPlaces] = useState([]);
+    const [bookings, setBookings] = useState([]);
     const [user, setUser] = useState([]);
 
     useEffect(()=> {
         axios.get('/admin-user-places/'+id).then(response => {
             setPlaces(response.data);
+        });
+
+        axios.get('/admin-user-bookings/'+id).then(response => {
+            setBookings(response.data);
         });
 
         axios.get('/user/'+id).then(response => {
@@ -37,12 +42,12 @@ export default function UserPage () {
                     </div>
 
                     <div className="mr-4">
-                        Username: <text className="font-bold"> {user.username} </text>  <br />
-                        Fisrt Name: <text className="text-lg"> {user.first_name} </text> <br />
-                        <text className="text-gray-800 font-serif"> Last Name: </text> <text className="text-lg">{user.last_name} </text> <br />
-                        <text className="text-gray-800"> Roles: </text> <text className="font-bold text-xl font-serif">{user.host && user.tenant ? "host, tenant" : user.host? "host": user.tenant? "tenant":""} </text> <br />
-                        <text className=""> Phone Number: </text> {user.phone} <br />
-                        <text className=""> Email: </text> {user.email} <br />
+                        <text className="text-gray-700"> Username: </text> {user.username} <br />
+                        <text className="text-gray-700"> Fisrt Name:</text> {user.first_name} <br />
+                        <text className="text-gray-700"> Last Name: </text> {user.last_name} <br />
+                        <text className="text-gray-700"> Roles: </text> {user.host && user.tenant ? "host, tenant" : user.host? "host": user.tenant? "tenant":""} <br />
+                        <text className="text-gray-700"> Phone Number: </text> {user.phone} <br />
+                        <text className="text-gray-700"> Email: </text> {user.email} <br />
                     </div> 
                 </div>
             </div>

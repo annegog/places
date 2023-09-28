@@ -250,6 +250,62 @@ app.get('/profile-admin', verifyJWTadmin, async (req, res) => {
     }
 });
 
+app.post('/update-profile-admin', verifyJWTadmin, async (req, res) => {
+    try {
+        const adminId = req.id;
+        const { first_name, last_name, username, profilephoto, phone, email } = req.body; {/*profilephoto,*/ }
+        await User.updateOne({ _id: adminId }, {
+            $set: {
+                first_name: first_name,
+                last_name: last_name,
+                username: username,
+                profilephoto: profilephoto,
+                phone: phone,
+                email: email
+            }
+        });
+        res.status(200).json("Profile Updated");
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        res.status(500).json({ error: 'Updating profile failed' });
+    }
+});
+
+app.post('/check-password-admin', verifyJWTadmin, async (req, res) => {
+    try {
+        const adminId = req.id;
+        const { current_password } = req.body;
+        const { password } = await User.findById(adminId);
+
+        const passOK = bcrypt.compareSync(current_password, password);
+        if (passOK) {
+            res.json(true)
+        } else {
+            res.json(false);
+        }
+    } catch (error) {
+        console.error('Error checking password:', error);
+        res.status(500).json({ error: 'Checking password failed' });
+    }
+});
+
+app.post('/change-password-admin', verifyJWTadmin, async (req, res) => {
+    try {
+        const adminId = req.id;
+        const { new_password } = req.body;
+        await User.updateOne({ _id: adminId }, {
+            $set: {
+                password: bcrypt.hashSync(new_password, bcryptSalt)
+            }
+        });
+        res.status(200).json("Password changed");
+
+    } catch (error) {
+        console.error('Error changing password:', error);
+        res.status(500).json({ error: 'Changing password failed' });
+    }
+});
+
 
 app.get('/users', async (req, res) => {
     const { token } = req.cookies;
