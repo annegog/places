@@ -183,7 +183,36 @@ app.post('/logout', (req, res) => {
 app.post('/update-profile', verifyJWTuser, async (req, res) => {
     try {
         const userId = req.id;
-        const { first_name, last_name, username, profilephoto, phone, email } = req.body; {/*profilephoto,*/ }
+        const { first_name, last_name, username, profilephoto, phone, email, changeToTenant, changeToHost } = req.body; {/*profilephoto,*/ }
+        if (changeToTenant) {
+            await User.updateOne({ _id: userId }, {
+                $set: {
+                    first_name: first_name,
+                    last_name: last_name,
+                    username: username,
+                    profilephoto: profilephoto,
+                    phone: phone,
+                    email: email,
+                    tenant: true
+                }
+            });
+            res.status(200).json("Profile Updated");
+        }
+        if (changeToHost) {
+            await User.updateOne({ _id: userId }, {
+                $set: {
+                    first_name: first_name,
+                    last_name: last_name,
+                    username: username,
+                    profilephoto: profilephoto,
+                    phone: phone,
+                    email: email,
+                    host: true,
+                    isApproved: false
+                }
+            });
+            res.status(200).json("Profile Updated");
+        }
         await User.updateOne({ _id: userId }, {
             $set: {
                 first_name: first_name,
