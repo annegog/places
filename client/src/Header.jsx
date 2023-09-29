@@ -1,12 +1,12 @@
-import {Link, Navigate} from "react-router-dom";
-import React, { useContext, useState } from 'react';
+import {Link} from "react-router-dom";
+import React, { useContext } from 'react';
 import './App.css';
 import { UserContext } from "./UserContext";
 import ImageProfile from "./ImageProfile";
 import logo from "./logo.png"
 
 export default function Header(){
-    const {user, setUser} = useContext(UserContext);
+    const {user} = useContext(UserContext);
 
     return(
         <div>
@@ -15,20 +15,7 @@ export default function Header(){
                     <img src={logo} alt="logo" className="object-f w-12 rounded-lg mr-2"/> 
                     <span className="text-indigo-400 tracking-tighter font-bold text-xl logo-text">Find Your Place</span>
                 </Link>
-                
-                <div className="flex gap-6 items-center border border-gray-300 rounded-full py-2 px-4 shadow-md shadow-gray-250">
-                    <div> Anywhere </div>
-                    <div className="border-l border-gray-300"></div>
-                    <div> Any week </div>
-                    <div className="border-l border-gray-300"></div>
-                    <div> Guests </div>
-                    <button className="bg-primary text-white p-2 rounded-full"> 
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                        </svg>
-                    </button>
-                </div>
-
+            
                 <div className="flex gap-2 items-center border border-gray-300 rounded-full py-2 px-4 shadow-md shadow-gray-250">
                     <Link to={user?'/account':'/login'} className="flex gap-2 items-center">
                         <div className="rounded-full item-button border border-gray-600 overflow-hidden">  

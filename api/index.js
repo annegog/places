@@ -236,6 +236,19 @@ app.post('/change-password', verifyJWTuser, async (req, res) => {
     }
 });
 
+app.get('/filter-places', async (req, res) => {
+    try {
+        const country = req.query.country;
+        const arrive = req.query.arrive;
+        const leave = req.query.leave;
+        const guests = req.query.guests;
+        console.log(country, arrive, leave, guests);
+        res.status(200).json(await Place.find({ maxGuests: {$gt: guests}})) //country: country,
+    } catch (error) {
+        
+    }
+});
+
 //
 // --------------------------------------------------------------------------------------
 // ADMIN
