@@ -7,12 +7,13 @@ import { useNavigate } from "react-router-dom";
 import PhotosUploader from "../PhotoUploader";
 import "leaflet/dist/leaflet.css";
 import { parseISO, isValid } from "date-fns";
-import format from 'date-fns/format';
+import format from "date-fns/format";
 import { DateRangePicker } from "react-date-range"; // react-date-range documentation: https://github.com/Adphorus/react-date-range
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Categories from "../Categories";
+import CountrySelector from "../CountrySelector";
 
 export default function PlacesFormPage() {
   const { id } = useParams();
@@ -26,6 +27,10 @@ export default function PlacesFormPage() {
 
   const [title, setTitle] = useState(""); // Default position
   const [address, setAddress] = useState("");
+  const [country, setCountry] = useState({
+    value: String,
+    label: String,
+});
   const [pinPosition, setPinPosition] = useState([45, 37]);
   const [extraInfoAddress, setExtraInfoAddress] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
@@ -64,6 +69,7 @@ export default function PlacesFormPage() {
         const { data } = response;
         setTitle(data.title);
         setAddress(data.address);
+        setCountry(data.country);
         setPinPosition(data.pinPosition);
         setExtraInfoAddress(data.extraInfoAddress);
         setDescription(data.description);
@@ -104,6 +110,7 @@ export default function PlacesFormPage() {
       const placeData = {
         title,
         address,
+        country,
         pinPosition,
         extraInfoAddress,
         addedPhotos,
@@ -232,12 +239,26 @@ export default function PlacesFormPage() {
           />
 
           {inputHeader("Address")}
-          <input
-            type="text"
-            value={address}
-            onChange={handleAddressChange}
-            placeholder="address"
-          />
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <div>
+              <p className="text-xs text-gray-500">Country</p>
+              <div className="my-3">
+                <CountrySelector
+                  value={country} placeholder={"Country"}
+                  onChange={(selectedOption) => setCountry(selectedOption)}
+                />
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Address</p>
+              <input
+                type="text"
+                value={address}
+                onChange={handleAddressChange}
+                placeholder="address"
+              />
+            </div>
+          </div>
 
           <div className="relative">
             <MapContainer
@@ -391,13 +412,20 @@ export default function PlacesFormPage() {
               onChange={(ranges) => handleDateChange(ranges)}
               minDate={setLastDate()}
             /> */}
-    
+
             <div>
               <h2 className="text-lg">Selected Dates:</h2>
               {selectedDays.map((range) => {
-                console.log("Parsing: ", parseISO(range.startDate), range.endDate);
+                console.log(
+                  "Parsing: ",
+                  parseISO(range.startDate),
+                  range.endDate
+                );
                 // 2023-11-14T22:00:00.000Z
-                if (isValid(parseISO(range.startDate)) && isValid(parseISO(range.endDate))) {
+                if (
+                  isValid(parseISO(range.startDate)) &&
+                  isValid(parseISO(range.endDate))
+                ) {
                   return (
                     <div className="flex gap-4" key={range.key}>
                       <div>
