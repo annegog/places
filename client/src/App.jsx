@@ -22,6 +22,7 @@ import UsersPage from './pages/UsersPage';
 import HostsPage from './pages/HostsPage';
 import TenantsPage from './pages/TenantsPage';
 import UserPage from './pages/UserPage';
+import MesaagesPage from './pages/MessagesPage';
 // import AdminProfile from './pages/AdminProfile';
 
 
@@ -43,10 +44,12 @@ function App() {
             <Route path="/account" element={ <AccountPage />} /> 
             <Route path="/place/:id" element={<PlacePage />} />
             <Route path="/account/bookings/:id" element={<BookingPageTenant/>} />
+            
+            <Route path="/account/messages" element={<MesaagesPage/>} />
 
             // Bookings - host and tenent access
             <Route path="/account/bookings" element={<BookingsPage />} />
-            //Bookign page - messages - host access
+            //Bookign page - host access
             <Route path="/account/forbookings/:id" element={<BookingPageHost/>} />
 
             // Places Page - host access
