@@ -31,7 +31,6 @@ export default function BookingWindow({ place }) {
   const navigate = useNavigate();
 
   if (user && user.tenant && !first_name && !last_name && !phone && !email) {
-    console.log("User:", user);
     setFirstName(user.first_name);
     setLastName(user.last_name);
     setPhone(user.phone);
@@ -52,27 +51,30 @@ export default function BookingWindow({ place }) {
   };
 
   // calucator and check in the check-in and check-out dates //
-  const calculate = () => {
-    console.log('Entering calculate function');
+  useEffect(() => {
+    calculate(checkIn, checkOut);
+  }, [checkOut]);
+
+  const calculate = (checkIn, checkOut) => {
+
     if (!checkIn || !checkOut) {
-      setDiffInDays(1); // Reset the result
+      setDiffInDays(place.minDays);
       return;
     }
 
     const arrival = moment(checkIn);
     const departure = moment(checkOut);
     const today = moment();
-    console.log(arrival, departure);
 
     if (arrival.isBefore(today) && !arrival.isSame(today)) {
       setCheckIn("");
-      setDiffInDays(1); // Reset - check-out before check-in
+      setDiffInDays(place.minDays);
       return;
     }
 
     if (arrival.isAfter(departure)) {
       setCheckOut("");
-      setDiffInDays(1); // Reset - check-out before check-in
+      setDiffInDays(place.minDays);
       return;
     }
 
@@ -81,7 +83,7 @@ export default function BookingWindow({ place }) {
     if (diffInDays < 1) {
       setCheckIn("");
       setCheckOut("");
-      setDiffInDays(0);
+      setDiffInDays(place.minDays);
       return;
     }
 
@@ -100,7 +102,7 @@ export default function BookingWindow({ place }) {
   //   return <Navigate to={"/register"} />;
   // }
 
-  // calculating the extra charges, updating the total price 
+  // calculating the extra charges, updating the total price
   const handleGuestsNum = (ev) => {
     setExtraCharges(0);
     const inputValue = parseInt(ev.target.value, 10);
@@ -156,10 +158,10 @@ export default function BookingWindow({ place }) {
               <label>Check in: </label>
               {/* <input
                 type="date"
-                value={checkIn}
+                value={checkIn} minDate={currentDate}
                 onChange={(ev) => setCheckIn(ev.target.value)}
                 onBlur={calculate}
-                dateFormat="dd/MM/yyyy"
+                
               /> */}
               <DatePicker
                 minDate={currentDate}
@@ -233,7 +235,7 @@ export default function BookingWindow({ place }) {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    class="w-6 h-6"
+                    className="w-6 h-6"
                   >
                     <path
                       strokeLinecap="round"
@@ -280,14 +282,20 @@ export default function BookingWindow({ place }) {
                       <div className="grid lg:grid-cols-3 sm:grid-cols-1">
                         <div className="py-3 px-2 border-r sm:border-b">
                           <label>Check in:</label>
-                          <p className="text-lg font-mono">{format(new Date(checkIn), "dd/MM/yyyy")}</p>
+                          <p className="text-lg font-mono">
+                            {format(new Date(checkIn), "dd/MM/yyyy")}
+                          </p>
                         </div>
                         <div className="py-3 px-2 border-r sm:border-b">
                           <label>Check out: </label>
-                          <p className="text-lg font-mono">{format(new Date(checkOut), "dd/MM/yyyy")}</p>
+                          <p className="text-lg font-mono">
+                            {format(new Date(checkOut), "dd/MM/yyyy")}
+                          </p>
                         </div>
                         <div className=" py-3 px-2 lg:text-center sm:border-b">
-                          <p type="number text-lg font-mono">Guests: {numGuests}</p>
+                          <p type="number text-lg font-mono">
+                            Guests: {numGuests}
+                          </p>
                         </div>
                       </div>
                       <div>
@@ -345,7 +353,7 @@ export default function BookingWindow({ place }) {
                           <text className="underline">
                             {" "}
                             € {place.extraPrice} extra charges x {numGuests} x{" "}
-                            {diffInDays} 
+                            {diffInDays}
                           </text>
                         </div>
                         <div className="text-center">
