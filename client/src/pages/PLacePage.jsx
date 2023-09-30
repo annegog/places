@@ -276,6 +276,13 @@ export default function PlacePage() {
             <text>Check-out: {place.checkOut}</text>
             <text>Minimum Days: {place.minDays}</text>
           </div>
+          {place.arrive && place.leave && (
+            <div>
+              Availiability: 
+              from <text className="font-bold">{format(new Date(place.arrive), 'dd-MM-yyyy')} </text>
+              to <text className="font-bold">{format(new Date(place.leave), 'dd-MM-yyyy')}</text>            
+            </div>
+          )}
           <hr className="w-60 mt-10 mb-6" />
         </div>
         <BookingWindow place={place} />
@@ -323,6 +330,13 @@ export default function PlacePage() {
           )}
         </div>
         <h2 className="text-3xl font-light">Hosting by: {host.username}</h2>
+      </div>
+      <div className="my-4 px-8">
+        <div><text className="text-gray-700">Full Name:</text> {host.first_name} {host.last_name}</div>
+        {/* <div> <text className="text-gray-800">First Name:</text> {host.first_name}</div> */}
+        {/* <div><text className="text-gray-800">Last Name:</text> {host.last_name}</div> */}
+        <div><text className="text-gray-700">Email:</text> {host.email}</div>
+        <div><text className="text-gray-700">Phone Number:</text> {host.phone}</div>
       </div>
 
       <div className="px-8 mb-6">

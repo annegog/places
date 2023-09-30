@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Image from "../Image";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css"; // Import the styles for the date picker
+import "react-datepicker/dist/react-datepicker.css";
 import CountrySelector from "../CountrySelector";
 
 export default function IndexPage() {
