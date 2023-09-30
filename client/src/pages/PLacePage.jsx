@@ -29,7 +29,6 @@ export default function PlacePage() {
   };
 
   const calculate = () => {
-    console.log("re eisai edw?????");
     let stars_mo = 0;
     let counter = 0;
     if (reviews) {
@@ -38,8 +37,6 @@ export default function PlacePage() {
         stars_mo += review.stars;
       });
       const averageStars = stars_mo / counter;
-      console.log(stars_mo, counter);
-      console.log("Average Stars:", averageStars); 
       setStars(averageStars);
     }
   };
@@ -81,7 +78,6 @@ export default function PlacePage() {
     });
   }, []);
 
-  console.log("REview: ", reviews);
   
   if (!place) return "";
 
@@ -342,23 +338,8 @@ export default function PlacePage() {
       <div className="px-8 mb-6">
         <button className="contact">contact with the host</button>
       </div>
-
-      {/* <hr className="mt-6 mb-6" /> */}
-      <div className="mb-2 flex gap-4">
-        <h2 className="text-3xl font-light">Reviews</h2>
-        {stars !== null && stars >= 0 && (
-          <div className="flex">
-            <svg className="w-7 h-7 text-yellow-400 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor" viewBox="0 0 22 20">
-              <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-            </svg>
-            <p className="origin-bottom font-serif text-xl">
-              {stars.toFixed(1)}/5
-            </p>
-          </div>
-        )}
-      </div>
-
+        
+      <h2 className="text-3xl mb-2 font-light">Reviews</h2>
       {reviews.length === 0 ? (
         <p className="font-thin">No reviews yet..</p>
       ) : (
@@ -432,7 +413,6 @@ export default function PlacePage() {
       )}
 
       <hr className="mt-6 mb-6" />
-
       {/* <div className="mb-10">
         <h1 className="text-2xl font-semibold text-gray-700">
           Where you will be
