@@ -577,7 +577,7 @@ app.post('/places', (req, res) => {
         extraInfoAddress, addedPhotos,
         description, perks, extraInfo, category,
         checkIn, checkOut, maxGuests, numBaths,
-        maxBeds, numBedrooms, extraPrice, selectedDays,
+        maxBeds, numBedrooms, extraPrice, arrive, leave,
         area, minDays, price } = req.body;
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
@@ -589,7 +589,7 @@ app.post('/places', (req, res) => {
                 description, perks, extraInfo, category,
                 checkIn, checkOut, maxGuests, numBaths,
                 maxBeds, numBedrooms, area, minDays,
-                price, extraPrice, selectedDays
+                price, extraPrice, arrive, leave
             });
             res.json(placeDoc);
         })
@@ -631,7 +631,7 @@ app.put('/places/:id', async (req, res) => {
         const { id, title, address, pinPosition,
             extraInfoAddress, addedPhotos,
             description, perks, country,
-            category, extraInfo, selectedDays,
+            category, extraInfo, arrive, leave,
             checkIn, checkOut, maxGuests,
             numBaths, maxBeds, numBedrooms,
             area, minDays, price, extraPrice } = req.body;
@@ -670,7 +670,8 @@ app.put('/places/:id', async (req, res) => {
             place.minDays = minDays;
             place.price = price;
             place.extraPrice = extraPrice;
-            place.selectedDays = selectedDays;
+            place.arrive = arrive;
+            place.leave = leave;
             // Save the updated place
             await place.save();
 
@@ -697,7 +698,11 @@ app.get('/place/:id', async (req, res) => {
         res.json({
             place: place, host: {
                 "username": host.username,
-                "photoprofile": host.profilephoto
+                "photoprofile": host.profilephoto,
+                "first_name": host.first_name,
+                "last_name": host.last_name,
+                "email": host.email,
+                "phone": host.phone
             },
             reviews,
         });
