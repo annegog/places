@@ -61,7 +61,7 @@ export default function IndexPage() {
               selected={arrive}
               onChange={(date) => setArrive(date)}
               className="w-full p-2 border rounded"
-              placeholderText="Add date"
+              placeholderText="Add date" dateFormat="dd/MM/yyyy"
             />
           </div>
           <div>
@@ -71,7 +71,7 @@ export default function IndexPage() {
               selected={leave}
               onChange={(date) => setLeave(date)}
               className="w-full p-2 border rounded"
-              placeholderText="Add date"
+              placeholderText="Add date"  dateFormat="dd/MM/yyyy"
             />
           </div>
           <div>
