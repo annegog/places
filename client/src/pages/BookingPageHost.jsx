@@ -25,6 +25,11 @@ export default function BookingPageHost() {
     return "";
   }
 
+  async function handleCancelation () {
+    axios.post('/booking-cancelation/'+id);
+    window.location.reload();
+  }
+
   return (
     <div className="my-8">
       <AccountNav />
@@ -50,11 +55,20 @@ export default function BookingPageHost() {
           <div className="text-3xl">€ {booking.price}</div>
         </div>
       </div>
-      <div className="">
-        <button className="bg-red-700 p-2 text-white rounded-2xl text-right">
-          Cancel the reservation
-        </button>
-      </div>
+      {!booking.canceled && (
+        <div className="">
+          <button 
+            className="bg-red-700 p-2 text-white rounded-2xl text-right"
+            onClick={handleCancelation}>
+            Cancel the reservation
+          </button>
+        </div>
+      )}
+       {booking.canceled && (
+        <div className="text-center text-white bg-red-800 py-2 mt-10 font-bold text-xl rounded-xl">
+            Your Reservation is Canceled!
+        </div>
+      )}
       <hr className="mt-6 mb-2" />
       <div className="mt-4">
         <h2 className="text-2xl">

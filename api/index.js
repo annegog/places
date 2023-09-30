@@ -764,6 +764,21 @@ app.get('/bookings-host', verifyJWTuser, async (req, res) => {
     }
 });
 
+app.post('/booking-cancelation/:id', verifyJWTuser, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Booking.updateOne({ _id: id }, {
+            $set: {
+                canceled: true
+            }
+        });
+        res.status(200).json("Booking Canceled");
+    } catch (error) {
+        console.error('Error canceling booking', error);
+        res.status(500).json({ error: 'Error canceling bookings' });
+    }
+});
+
 //
 // --------------------------------------------------------------------------------------
 // Reviews

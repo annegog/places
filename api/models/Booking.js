@@ -12,6 +12,7 @@ const bookingSchema = new mongoose.Schema({
   phone: {type:String, required:true},
   email: {type:String, required:true},
   price: Number,
+  canceled: {type:Boolean, default:false}
 });
 
 const BookingModel = mongoose.model('Booking', bookingSchema);

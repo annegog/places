@@ -16,7 +16,7 @@ export default function BookingPageTenant() {
   const [showMap, setShowMap] = useState(false);
   const [stars, setStars] = useState(0);
   const [review, setReview] = useState("");
-  const [canceled, setCanceled] = useState(false);
+  const [canceled, setCanceled] = useState(null);
   const [hasReview, setHasReview] = useState(false);
   const reviewDate = new Date();
 
@@ -26,6 +26,7 @@ export default function BookingPageTenant() {
         const foundBooking = response.data.find(({ _id }) => _id === id);
         if (foundBooking) {
           setBooking(foundBooking);
+          // setCanceled(booking.canceled)
         }
       });
     }
@@ -70,6 +71,11 @@ export default function BookingPageTenant() {
     } catch (error) {
       console.error("Error on review:", error);
     }
+  }
+
+  async function handleCancelation () {
+    axios.post('/booking-cancelation/'+id);
+    window.location.reload();
   }
 
   if (showMap) {
@@ -215,23 +221,30 @@ export default function BookingPageTenant() {
           Take a look at the place
         </Link>
       </div>
-      {moment().startOf('day') <= moment(booking.checkOut).startOf('day') && (
-      <div>
-        <p className="text-gray-700 text-sm">
-          To cancel your reservation, please provide us with a minimum of{" "}
-          <span className="font-semibold">20 days'</span> notice before your
-          intended cancellation date. This allows us to efficiently handle any
-          necessary arrangements. Your cooperation is greatly appreciated.
-        </p>
-        <button className="bg-red-700 p-3 mt-1 text-white rounded-2xl text-right">
-        Cancel the Reservation
-      </button>
-      </div>
+      {moment().startOf('day') <= moment(booking.checkOut).startOf('day') && !booking.canceled && (
+        <div>
+          <p className="text-gray-700 text-sm">
+            To cancel your reservation, please provide us with a minimum of{" "}
+            <span className="font-semibold">20 days'</span> notice before your
+            intended cancellation date. This allows us to efficiently handle any
+            necessary arrangements. Your cooperation is greatly appreciated.
+          </p>
+          <button 
+            className="bg-red-700 p-3 mt-1 text-white rounded-2xl text-right"
+            onClick={handleCancelation}>
+            Cancel the Reservation
+          </button>
+        </div>
+      )}
+      {booking.canceled && (
+        <div className="text-center text-white bg-red-800 py-2 mt-10 font-bold text-xl rounded-xl">
+            Your Reservation is Canceled!
+        </div>
       )}
 
       <hr className="mt-6 mb-2" />
       <div className="mt-4">
-      {moment().startOf('day') >= moment(booking.checkIn).startOf('day') && !hasReview && (
+      {moment().startOf('day') >= moment(booking.checkIn).startOf('day') && !hasReview && !booking.canceled && (
         <div>
             <h2 className="text-2xl">Leave your Review</h2>
             <div className="flex align-baseline">
