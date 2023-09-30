@@ -5,6 +5,10 @@ const PlaceSchema = new Schema({
     owner: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     title: String,
     address: String,
+    country: {
+        value: String,
+        label: String,
+    },
     pinPosition: [Number],
     extraInfoAddress: String, // about neib ect
     photos: [String],
@@ -22,13 +26,8 @@ const PlaceSchema = new Schema({
     numBaths: Number,
     area: Number,
     minDays: Number,
-    selectedDays: [
-        {
-            startDate: Date,
-            endDate: Date,
-            key: String,
-        },
-    ],
+    arrive: Date,
+    leave: Date
 });
 
 const PlaceModel = mongoose.model('Place', PlaceSchema);

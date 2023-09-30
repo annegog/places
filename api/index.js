@@ -183,7 +183,36 @@ app.post('/logout', (req, res) => {
 app.post('/update-profile', verifyJWTuser, async (req, res) => {
     try {
         const userId = req.id;
-        const { first_name, last_name, username, profilephoto, phone, email } = req.body; {/*profilephoto,*/ }
+        const { first_name, last_name, username, profilephoto, phone, email, changeToTenant, changeToHost } = req.body; {/*profilephoto,*/ }
+        if (changeToTenant) {
+            await User.updateOne({ _id: userId }, {
+                $set: {
+                    first_name: first_name,
+                    last_name: last_name,
+                    username: username,
+                    profilephoto: profilephoto,
+                    phone: phone,
+                    email: email,
+                    tenant: true
+                }
+            });
+            res.status(200).json("Profile Updated");
+        }
+        if (changeToHost) {
+            await User.updateOne({ _id: userId }, {
+                $set: {
+                    first_name: first_name,
+                    last_name: last_name,
+                    username: username,
+                    profilephoto: profilephoto,
+                    phone: phone,
+                    email: email,
+                    host: true,
+                    isApproved: false
+                }
+            });
+            res.status(200).json("Profile Updated");
+        }
         await User.updateOne({ _id: userId }, {
             $set: {
                 first_name: first_name,
@@ -235,6 +264,7 @@ app.post('/change-password', verifyJWTuser, async (req, res) => {
         res.status(500).json({ error: 'Changing password failed' });
     }
 });
+
 
 //
 // --------------------------------------------------------------------------------------
@@ -543,23 +573,23 @@ app.get('/mapCord/:address', async (req, res) => {
 // upload a new place
 app.post('/places', (req, res) => {
     const { token } = req.cookies;
-    const { title, address, pinPosition,
+    const { title, address, pinPosition, country,
         extraInfoAddress, addedPhotos,
         description, perks, extraInfo, category,
         checkIn, checkOut, maxGuests, numBaths,
-        maxBeds, numBedrooms, extraPrice, selectedDays,
+        maxBeds, numBedrooms, extraPrice, arrive, leave,
         area, minDays, price } = req.body;
     try {
         jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
             if (err) throw err;
             const placeDoc = await Place.create({
                 owner: userData.id,
-                title, address, pinPosition,
+                title, address, pinPosition, country,
                 photos: addedPhotos, extraInfoAddress,
                 description, perks, extraInfo, category,
                 checkIn, checkOut, maxGuests, numBaths,
                 maxBeds, numBedrooms, area, minDays,
-                price, extraPrice, selectedDays
+                price, extraPrice, arrive, leave
             });
             res.json(placeDoc);
         })
@@ -600,8 +630,8 @@ app.put('/places/:id', async (req, res) => {
         const { token } = req.cookies;
         const { id, title, address, pinPosition,
             extraInfoAddress, addedPhotos,
-            description, perks,
-            category, extraInfo, selectedDays,
+            description, perks, country,
+            category, extraInfo, arrive, leave,
             checkIn, checkOut, maxGuests,
             numBaths, maxBeds, numBedrooms,
             area, minDays, price, extraPrice } = req.body;
@@ -623,6 +653,7 @@ app.put('/places/:id', async (req, res) => {
             place.title = title;
             place.address = address;
             place.pinPosition = pinPosition;
+            place.country = country;
             place.extraInfoAddress = extraInfoAddress;
             place.photos = addedPhotos;
             place.description = description;
@@ -639,7 +670,8 @@ app.put('/places/:id', async (req, res) => {
             place.minDays = minDays;
             place.price = price;
             place.extraPrice = extraPrice;
-            place.selectedDays = selectedDays;
+            place.arrive = arrive;
+            place.leave = leave;
             // Save the updated place
             await place.save();
 
@@ -666,7 +698,11 @@ app.get('/place/:id', async (req, res) => {
         res.json({
             place: place, host: {
                 "username": host.username,
-                "photoprofile": host.profilephoto
+                "photoprofile": host.profilephoto,
+                "first_name": host.first_name,
+                "last_name": host.last_name,
+                "email": host.email,
+                "phone": host.phone
             },
             reviews,
         });
@@ -725,6 +761,21 @@ app.get('/bookings-host', verifyJWTuser, async (req, res) => {
     } catch (error) {
         console.error('Error fetching bookings for the host:', error);
         res.status(500).json({ error: 'Error fetching bookings for the host' });
+    }
+});
+
+app.post('/booking-cancelation/:id', verifyJWTuser, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Booking.updateOne({ _id: id }, {
+            $set: {
+                canceled: true
+            }
+        });
+        res.status(200).json("Booking Canceled");
+    } catch (error) {
+        console.error('Error canceling booking', error);
+        res.status(500).json({ error: 'Error canceling bookings' });
     }
 });
 
@@ -793,10 +844,8 @@ app.get('/reviews-place/:id', verifyJWTuser, async (req, res) => {
 // --------------------------------------------------------------------------------------
 // Home Page
 
-// get every place 
-// app.get('/places', async (req, res) => {
-//     res.json(await Place.find());
-// })
+// transforming documents into a new format, possibly reshaping them, grouping, sorting, and performing various operations on them.
+// The $lookup stage is used to perform a left outer join between the Place collection and the reviews
 
 app.get('/places', async (req, res) => {
     try {
@@ -827,6 +876,54 @@ app.get('/places', async (req, res) => {
     } catch (error) {
         console.error('Error fetching places with average ratings:', error);
         res.status(500).json({ error: 'Error fetching places' });
+    }
+});
+
+app.get('/filter-places', async (req, res) => {
+    try {
+        const { country, arrive, leave, guests } = req.query;
+        console.log(country, arrive, leave, guests);
+        let query = {};
+        if (country) {
+            query.country = country;
+        }
+        // greater than or equal
+        if (arrive && leave) {
+            query.arrivalDate = { $gte: new Date(arrive), $lte: new Date(leave) };
+        }
+        if (guests) {
+            query.maxGuests = { $gte: parseInt(guests) };
+        }
+        // price
+        //perks
+        const places = await Place.aggregate([
+            { $match: query },
+            {
+                $lookup: {
+                    from: 'reviews', // Your reviews collection name
+                    localField: '_id',
+                    foreignField: 'place',
+                    as: 'reviews',
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    photos: { $arrayElemAt: ['$photos', 0] },
+                    maxGuests: '$maxGuests',
+                    numBedrooms: '$numBedrooms', // Include numBedrooms field
+                    price: '$price', 
+                    averageRating: {
+                        $avg: '$reviews.stars',
+                    },
+                },
+            },
+        ]);
+        res.status(200).json(places);    
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 

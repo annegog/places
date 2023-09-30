@@ -67,6 +67,11 @@ export default function BookingsForHosts({}) {
                           <span className="text-2xl">
                             Total price: €{booking.price}
                           </span>
+                          {booking.canceled && (
+                            <div className="text-white bg-red-800 flex items-center px-2 rounded-xl w-fit">
+                              Canceled
+                            </div>
+                          )}
                         </div>
                       </Link>
                     ))

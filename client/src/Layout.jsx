@@ -13,7 +13,7 @@ export default function Layout(){
     }, [admin]);
 
     return(
-        <div className="px-10 py-4 flex-col min-h-screen max-w-1xl mx-auto"> 
+        <div className="px-10 py-4 flex-col min-h-screen max-w-1xl mx-auto" > 
             {isAdmin ? <AdminHeader /> : <Header />}
             <Outlet />
         </div>

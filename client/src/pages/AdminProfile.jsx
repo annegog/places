@@ -7,7 +7,7 @@ import { Navigate } from "react-router-dom";
 // const { json2xml } = require('xml-js');
 
 export default function AdminProfile () {
-  const {admin, setAdmin} = useContext(AdminContext)
+  const {admin, setAdmin, ready} = useContext(AdminContext)
 
   const [allData, setAllData] = useState([]);
   const [xmlData, setXMLdata] = useState([]);
@@ -84,6 +84,16 @@ export default function AdminProfile () {
     }
   }, [admin]);
 
+  if (!ready) {
+    return (
+      <div className="flex justify-center items-center ">
+        <div className="mt-20 text-lg text-white bg-gray-500 rounded-full w-fit px-4 py-1">
+          Data Loading... Try to refresh!
+        </div>
+      </div>
+    );
+  }
+
   async function logout() {
     await axios.post("/logout");
     setAdmin(null);
@@ -108,7 +118,7 @@ export default function AdminProfile () {
         profilephoto,
         email,
       });
-      setEdit(!edit);
+      window.location.reload();
     } catch (error) {
       alert(`Something went wrong with updating the profile's informations: "${error}"`);
     }

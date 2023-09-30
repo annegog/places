@@ -6,26 +6,24 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PhotosUploader from "../PhotoUploader";
 import "leaflet/dist/leaflet.css";
-import { parseISO, isValid } from "date-fns";
-import format from 'date-fns/format';
-import { DateRangePicker } from "react-date-range"; // react-date-range documentation: https://github.com/Adphorus/react-date-range
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Categories from "../Categories";
+import CountrySelector from "../CountrySelector";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function PlacesFormPage() {
   const { id } = useParams();
 
   const navigate = useNavigate();
 
-  const generateUniqueKey = () => {
-    const randomNumber = Math.floor(Math.random() * 10000); // Generate a random number
-    return `date${randomNumber}`;
-  };
 
   const [title, setTitle] = useState(""); // Default position
   const [address, setAddress] = useState("");
+  const [country, setCountry] = useState({
+    value: String,
+    label: String,
+  });
   const [pinPosition, setPinPosition] = useState([45, 37]);
   const [extraInfoAddress, setExtraInfoAddress] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
@@ -43,13 +41,9 @@ export default function PlacesFormPage() {
   const [minDays, setMinDays] = useState(2);
   const [price, setPrice] = useState(1);
   const [extraPrice, setExtraPrice] = useState(0);
-  const [selectedDays, setSelectedDays] = useState([
-    {
-      startDate: parseISO(new Date()),
-      endDate: parseISO(new Date()),
-      key: generateUniqueKey(),
-    },
-  ]);
+  const currentDate = new Date();
+  const [arrive, setArrive] = useState(null);
+  const [leave, setLeave] = useState(null);
 
   const [redirect, setRedirect] = useState(false);
 
@@ -64,6 +58,7 @@ export default function PlacesFormPage() {
         const { data } = response;
         setTitle(data.title);
         setAddress(data.address);
+        setCountry(data.country);
         setPinPosition(data.pinPosition);
         setExtraInfoAddress(data.extraInfoAddress);
         setDescription(data.description);
@@ -81,7 +76,8 @@ export default function PlacesFormPage() {
         setMinDays(data.minDays);
         setPrice(data.price);
         setExtraPrice(data.extraPrice);
-        setSelectedDays(data.selectedDays);
+        setArrive(new Date(data.arrive));
+        setLeave(new Date(data.leave));
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {
@@ -104,6 +100,7 @@ export default function PlacesFormPage() {
       const placeData = {
         title,
         address,
+        country,
         pinPosition,
         extraInfoAddress,
         addedPhotos,
@@ -121,7 +118,8 @@ export default function PlacesFormPage() {
         minDays,
         price,
         extraPrice,
-        selectedDays,
+        arrive,
+        leave
       };
       if (id) {
         // update- edit existing place
@@ -168,56 +166,6 @@ export default function PlacesFormPage() {
       });
   };
 
-  const handleDateChange = (ranges) => {
-    console.log("handleDateChange called with ranges:", ranges);
-    try {
-      const newRanges = Object.keys(ranges).map((rangeKey) => {
-        const range = ranges[rangeKey];
-        const startDate = parseISO(range.startDate);
-        const endDate = parseISO(range.endDate);
-        console.log("Parsed Dates:", startDate, endDate);
-        return {
-          ...range,
-          startDate,
-          endDate,
-          key: generateUniqueKey(),
-        };
-      });
-      setSelectedDays([...selectedDays, ...newRanges]);
-    } catch (error) {
-      console.error("Error handling date change:", error);
-    }
-  };
-
-  const removeDateRange = (keyToRemove) => {
-    const updatedSelectedDays = selectedDays.filter(
-      (range) => range.key !== keyToRemove
-    );
-    setSelectedDays(updatedSelectedDays);
-  };
-
-  const setLastDate = () => {
-    if (selectedDays.length === 0) {
-      return new Date();
-    }
-    let maxEndDate = new Date(); // Initialize with todays date
-
-    selectedDays.forEach((range) => {
-      const endDate = parseISO(range.endDate);
-      console.log("Parsing END date: ", endDate);
-
-      if (!isNaN(endDate.getTime()) && endDate > maxEndDate) {
-        maxEndDate = endDate;
-      }
-      console.log("Parsing date set: ", maxEndDate);
-    });
-
-    const nextDate = new Date(maxEndDate);
-    nextDate.setDate(maxEndDate.getDate() + 1);
-
-    return nextDate;
-  };
-
   return (
     <div>
       <AccountNav />
@@ -232,12 +180,26 @@ export default function PlacesFormPage() {
           />
 
           {inputHeader("Address")}
-          <input
-            type="text"
-            value={address}
-            onChange={handleAddressChange}
-            placeholder="address"
-          />
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <div>
+              <p className="text-xs text-gray-500">Country</p>
+              <div className="my-3">
+                <CountrySelector
+                  value={country} placeholder={"Country"}
+                  onChange={(selectedOption) => setCountry(selectedOption)}
+                />
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Address</p>
+              <input
+                type="text"
+                value={address}
+                onChange={handleAddressChange}
+                placeholder="address"
+              />
+            </div>
+          </div>
 
           <div className="relative">
             <MapContainer
@@ -362,7 +324,7 @@ export default function PlacesFormPage() {
 
           <div className="mt-4 mb-2 grid gap-4 sm:grid-cols-3">
             <div>
-              <h2 className="mb-2 font-serif text-xl">Price per night</h2>
+              <h2 className="mb-1 text-xl">Price per night</h2>
               <input
                 type="number"
                 value={price}
@@ -371,7 +333,7 @@ export default function PlacesFormPage() {
               />
             </div>
             <div>
-              <h2 className="mb-2 ">Extra charge for additional person</h2>
+              <h2 className="mb-2 ">Extra charges</h2>
               <input
                 type="number"
                 value={extraPrice}
@@ -385,47 +347,44 @@ export default function PlacesFormPage() {
           <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
 
           {inputHeader("Availability Days")}
-          <div className="mb-2 mt-2">
-            {/* <DateRangePicker
-              ranges={selectedDays}
-              onChange={(ranges) => handleDateChange(ranges)}
-              minDate={setLastDate()}
-            /> */}
-    
-            <div>
-              <h2 className="text-lg">Selected Dates:</h2>
-              {selectedDays.map((range) => {
-                console.log("Parsing: ", parseISO(range.startDate), range.endDate);
-                // 2023-11-14T22:00:00.000Z
-                if (isValid(parseISO(range.startDate)) && isValid(parseISO(range.endDate))) {
-                  return (
-                    <div className="flex gap-4" key={range.key}>
-                      <div>
-                        <p>
-                          {format(parseISO(range.startDate), "dd-MM-yyyy")} -{" "}
-                          {format(parseISO(range.endDate), "dd-MM-yyyy")}
-                          <button
-                            className="border rounded-2xl p-1 bg-orange-600"
-                            onClick={() => removeDateRange(range.key)}
-                          >
-                            Remove
-                          </button>
-                        </p>
-                      </div>
-                    </div>
-                  );
-                } else {
-                  // Handle the case where range.startDate or range.endDate is not a valid date
-                  return (
-                    <div className="flex gap-4" key={range.key}>
-                      <div>
-                        <p>Invalid Date Range</p>
-                      </div>
-                    </div>
-                  );
-                }
-              })}
+          <div className="mb-2 mt-1">
+            <span className="text-gray-600">Range of Availability: </span>
+          <div>
+              <DatePicker
+                minDate={currentDate}
+                selected={arrive}
+                selectsStart
+                onChange={(date) => setArrive(date)}
+                className="ml-3"
+                placeholderText="Check-in date" dateFormat="dd/MM/yyyy"
+              />
+              <DatePicker
+                minDate={arrive}
+                selected={leave}
+                selectsEnd
+                onChange={(date) => setLeave(date)}
+                className="ml-6"
+                placeholderText="Check-in date" dateFormat="dd/MM/yyyy"
+              />
             </div>
+
+            {/* <div>
+              <span>Second Range of Availability: </span>
+              <DatePicker
+                minDate={currentDate}
+                selected={arrive.a2}
+                onChange={(date) => setArrive(date)}
+                className="w-full p-2 border rounded"
+                placeholderText="Check-in date"
+              />
+              <DatePicker
+                minDate={currentDate}
+                selected={leave.l2}
+                onChange={(date) => setLeave(date)}
+                className="w-full p-2 border rounded"
+                placeholderText="Check-in date"
+              />
+            </div> */}
           </div>
           <div className="mt-2 grid ">
             <h2 className="text-gray-600  mt-2 test-sm">
