@@ -6,8 +6,6 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PhotosUploader from "../PhotoUploader";
 import "leaflet/dist/leaflet.css";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Categories from "../Categories";
 import CountrySelector from "../CountrySelector";
@@ -20,10 +18,6 @@ export default function PlacesFormPage() {
 
   const navigate = useNavigate();
 
-  const generateUniqueKey = () => {
-    const randomNumber = Math.floor(Math.random() * 10000); // Generate a random number
-    return `date${randomNumber}`;
-  };
 
   const [title, setTitle] = useState(""); // Default position
   const [address, setAddress] = useState("");
@@ -83,8 +77,8 @@ export default function PlacesFormPage() {
         setMinDays(data.minDays);
         setPrice(data.price);
         setExtraPrice(data.extraPrice);
-        setArrive(new Date(data.arrive));
-        setLeave(new Date(data.leave));
+        setArrive(format(new Date(data.arrive),'dd/MM/yyyy'));
+        setLeave(format(new Date(data.leave),'dd/MM/yyyy'));
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {
@@ -331,7 +325,7 @@ export default function PlacesFormPage() {
 
           <div className="mt-4 mb-2 grid gap-4 sm:grid-cols-3">
             <div>
-              <h2 className="mb-2 font-serif text-xl">Price per night</h2>
+              <h2 className="mb-2  text-xl">Price per night</h2>
               <input
                 type="number"
                 value={price}
@@ -340,7 +334,7 @@ export default function PlacesFormPage() {
               />
             </div>
             <div>
-              <h2 className="mb-2 ">Extra charge for additional person</h2>
+              <h2 className="mb-2 ">Extra charges</h2>
               <input
                 type="number"
                 value={extraPrice}
@@ -354,9 +348,9 @@ export default function PlacesFormPage() {
           <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
 
           {inputHeader("Availability Days")}
-          <div className="mb-2 mt-2">
+          <div className="mb-2 mt-1">
+            <span className="text-gray-600">Range of Availability: </span>
           <div>
-              <span>Range of Availability: </span>
               <DatePicker
                 minDate={currentDate}
                 selected={arrive}
