@@ -11,7 +11,6 @@ import Categories from "../Categories";
 import CountrySelector from "../CountrySelector";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import format from "date-fns/format";
 
 export default function PlacesFormPage() {
   const { id } = useParams();
@@ -77,8 +76,8 @@ export default function PlacesFormPage() {
         setMinDays(data.minDays);
         setPrice(data.price);
         setExtraPrice(data.extraPrice);
-        setArrive(format(new Date(data.arrive),'dd/MM/yyyy'));
-        setLeave(format(new Date(data.leave),'dd/MM/yyyy'));
+        setArrive(new Date(data.arrive));
+        setLeave(new Date(data.leave));
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {
@@ -325,7 +324,7 @@ export default function PlacesFormPage() {
 
           <div className="mt-4 mb-2 grid gap-4 sm:grid-cols-3">
             <div>
-              <h2 className="mb-2  text-xl">Price per night</h2>
+              <h2 className="mb-1 text-xl">Price per night</h2>
               <input
                 type="number"
                 value={price}
@@ -357,7 +356,7 @@ export default function PlacesFormPage() {
                 selectsStart
                 onChange={(date) => setArrive(date)}
                 className="ml-3"
-                placeholderText="Check-in date"
+                placeholderText="Check-in date" dateFormat="dd/MM/yyyy"
               />
               <DatePicker
                 minDate={arrive}
@@ -365,7 +364,7 @@ export default function PlacesFormPage() {
                 selectsEnd
                 onChange={(date) => setLeave(date)}
                 className="ml-6"
-                placeholderText="Check-in date"
+                placeholderText="Check-in date" dateFormat="dd/MM/yyyy"
               />
             </div>
 
