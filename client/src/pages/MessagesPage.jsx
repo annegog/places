@@ -8,11 +8,10 @@ import { UserContext } from "../UserContext";
 export default function MessagesPage() {
   const { id } = useParams();
   const { user } = useContext(UserContext);
-  console.log('user:', user); 
   const [messages, setMessages] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [selectedParticipant, setSelectedParticipant] = useState(null);
-  const [messageInput, setMessageInput] = useState(""); // Add state for message input
+  const [messageInput, setMessageInput] = useState("");
 
   useEffect(() => {
     axios
@@ -67,14 +66,14 @@ export default function MessagesPage() {
     
     try {
       await axios.post('/message', {
-        receiver: selectedParticipant,
+        resiver: selectedParticipant,
         message: messageInput,
         messageDate: today,
       });
 
       const newMessage = {
         sender: user,
-        receiver: selectedParticipant,
+        resiver: selectedParticipant,
         message: messageInput,
         messageDate: new Date().toISOString(), // Current timestamp
       };
@@ -168,7 +167,7 @@ export default function MessagesPage() {
             />
             <button
               onClick={sendMessage}
-              className="ml-2 p-3 rounded-2xl  bg-indigo-400 text-white"
+              className="ml-2 p-3 rounded-2xl bg-indigo-400 text-white"
             >
               Send
             </button>

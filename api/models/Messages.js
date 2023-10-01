@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const messageSchema = new Schema({
   sender: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'},
-  resiver: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'},
+  resiver: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'}, // yes it's a typo
   message: String,
   messageDate: Date,
 });
