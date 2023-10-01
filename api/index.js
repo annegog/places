@@ -935,7 +935,7 @@ app.get('/places', async (req, res) => {
 
 app.get('/filter-places', async (req, res) => {
     try {
-        const { country, arrive, leave, guests, minPrice, maxPrice, category, perks } = req.query;
+        const { country, arrive, leave, guests, minPrice, maxPrice, category, perks, bedrooms, beds, bathrooms } = req.query;
         let query = {};
         if (country) {
             query.country = country;
@@ -958,10 +958,24 @@ app.get('/filter-places', async (req, res) => {
         if (maxPrice) {
             query.price = { $lte: parseInt(maxPrice) };
         }
-        if (perks.length > 0) {
+        if (category) {
+            query.category = category;
+        }
+        if (perks && perks.length > 0) {
             query.perks = { $all: perks};
         }
-        //perks
+        if (bedrooms)
+        {
+            query.numBedrooms = { $gte: parseInt(bedrooms)};
+        }
+        if (beds)
+        {
+            query.maxBeds = { $gte: parseInt(beds)};
+        }
+        if (bathrooms)
+        {
+            query.numBaths = { $gte: parseInt(bathrooms)};
+        }
         const places = await Place.aggregate([
             { $match: query },
             {

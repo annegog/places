@@ -26,6 +26,12 @@ export default function IndexPage() {
   const [category, setCategory] = useState("");
   const [selectedPerks, setSelectedPerks] = useState([]);
   const [perks, setPerks] = useState([]);
+  const [bedrooms, setBedrooms] = useState([]);
+  const [beds, setBeds] = useState([]);
+  const [bathrooms, setBathrooms] = useState([]);
+
+
+
 
   const customStyles = {
     control: (provided) => ({
@@ -60,23 +66,6 @@ export default function IndexPage() {
     { label: "Parties Allowed", value: "party" },
   ];
 
-  // const handlePerksChange = (ev) => {
-  //   // setSelectedPerks([...selectedPerks, selectedOption]);
-  //   // setPerks([...perks, selectedOption.value]);
-
-  //   const { selected, value } = ev.target;
-  //   if (selected) {
-  //     setSelectedPerks([...selectedPerks, perks]);
-  //     setPerks([...perks, selectedOption.value]);    
-  //   } else {
-  //     // setSelectedPerks([...selectedPerks, selectedOption]);
-  //     // setPerks([...perks, selectedOption.value]);
-  //     setSelectedPerks([...selectedPerks.filter((selectedValue) => selectedValue !== value)]);
-  //     setPerks([...perks.filter((selectedValue) => selectedValue !== value)]);
-  //   }
-  //   console.log(perks)
-  //   console.log(selectedPerks)
-  // };
   const handlePerksChange = (selectedOptions) => {
     const selectedPerkValue = selectedOptions.map(option => option.value);
     setSelectedPerks(selectedOptions);
@@ -104,7 +93,10 @@ export default function IndexPage() {
           minPrice,
           maxPrice,
           category,
-          perks
+          perks,
+          bedrooms,
+          beds,
+          bathrooms
         },
       })
       .then((response) => {
@@ -220,7 +212,7 @@ export default function IndexPage() {
             options={categoriesList}
             value={selectedCategory}
             onChange={handleCategoryChange}
-            styles={customStyles} // Apply custom styles to the control
+            styles={customStyles} 
             placeholder="Select..."
           />
         </div>
@@ -236,7 +228,7 @@ export default function IndexPage() {
                 handlePerkDeselect(e.removedValue);
               }
             }}
-            styles={customStyles} // Apply custom styles to the control
+            styles={customStyles} 
             placeholder="Select..."
             isMulti
           />
@@ -251,9 +243,8 @@ export default function IndexPage() {
             <input
               type="number"
               min="1"
-              placeholder=""
-              value={minPrice}
-              onChange={(ev) => setMinPrice(ev.target.value)}
+              value={bedrooms}
+              onChange={(ev) => setBedrooms(ev.target.value)}
               className="text-gray-800 cursor-pointer "
             />
           </div>
@@ -265,9 +256,8 @@ export default function IndexPage() {
             <input
               type="number"
               min="1"
-              placeholder=""
-              value={maxPrice}
-              onChange={(ev) => setMaxPrice(ev.target.value)}
+              value={beds}
+              onChange={(ev) => setBeds(ev.target.value)}
               className="text-gray-800 cursor-pointer" />
           </div>
           <div>
@@ -275,9 +265,8 @@ export default function IndexPage() {
             <input
               type="number"
               min="1"
-              placeholder=""
-              value={maxPrice}
-              onChange={(ev) => setMaxPrice(ev.target.value)}
+              value={bathrooms}
+              onChange={(ev) => setBathrooms(ev.target.value)}
               className="text-gray-800 cursor-pointer" />
           </div>
         </div>
