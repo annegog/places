@@ -560,8 +560,8 @@ app.get('/mapCord/:address', async (req, res) => {
                 const place = data.results[0];
                 res.json(place.geometry);
             } else {
-                console.log('Status', data.status.message);
-                console.log('total_results', data.total_results);
+                // console.log('Status', data.status.message);
+                // console.log('total_results', data.total_results);
             }
         })
         .catch((error) => {
@@ -839,32 +839,57 @@ app.get('/reviews-place/:id', verifyJWTuser, async (req, res) => {
 // Messages - MessagePage - PlacePage
 
 // Sending a message - sender
-app.post('/message', (req, res) => {
-    const { token } = req.cookies;
+app.post('/message', verifyJWTuser, async (req, res) => {
     const { resiver, message, messageDate } = req.body;
     try {
-        jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
-            if (err) throw err;
-            const resiver_ = await User.findById(resiver._id);
-            if (!resiver_)
-                throw new Error('Resiver not found');
+        const senderId = req.id;
+        if (!resiver) {
+            return res.status(400).json({ error: 'Receiver is required' });
+        }
 
-            const messageDoc = await Message.create({
-                sender: userData.id, 
-                resiver: resiver_._id,
-                message,
-                messageDate,
-            });
-            // console.log("Message is ready!!  ", messageDoc);
-            res.json(messageDoc);
+        const resiverUser = await User.findById(resiver);
+        if (!resiverUser) {
+            return res.status(404).json({ error: 'Receiver not found' });
+        }
+
+        const messageDoc = await Message.create({
+            sender: senderId,
+            resiver: resiverUser._id,
+            message,
+            messageDate,
         });
+        res.json(messageDoc);
     } catch (err) {
+        console.error('Error sending message:', err);
         res.status(500).json({ error: 'Error uploading the message' });
     }
 });
 
 // Getting back the message you have - resiver
+app.get('/messages', verifyJWTuser, async (req, res) => {
+    try {
+        const messages = await Message.find({ resiver: req.id });
+        // console.log(messages);
+        res.json(messages);
+    } catch (error) {
+        console.error('aaaa Error fetching the messages:', error);
+        res.status(500).json({ error: 'Error fetching the messages' });
+    }
+});
 
+// get the user=id 
+app.get('/users/:id', verifyJWTuser, async (req, res) => {
+    const { id } = req.params;
+    // console.log('Received ID:', id); 
+    try {
+        const user = await User.findById(id).exec();
+        console.log(user);
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: 'Error fetching user' });
+    }
+});
 
 //
 // --------------------------------------------------------------------------------------

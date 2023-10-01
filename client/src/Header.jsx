@@ -34,7 +34,7 @@ export default function Header(){
                             )}
                         </div>
                         {!!!user &&
-                            <text className="">login/register </text>
+                            <p className="">login/register </p>
                         }
                         
                         {!!user && (
