@@ -888,10 +888,9 @@ app.get('/messages', verifyJWTuser, async (req, res) => {
 // get the user=id 
 app.get('/users/:id', verifyJWTuser, async (req, res) => {
     const { id } = req.params;
-    console.log('Received - SENDER ID:', id); 
     try {
         const user = await User.findById(id).exec();
-        console.log(user);
+        // console.log(user);
         res.json(user);
     } catch (error) {
         console.error('Error fetching user:', error);
