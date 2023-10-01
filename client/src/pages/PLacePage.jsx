@@ -1,5 +1,6 @@
-import { Link, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from "../UserContext";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import BookingWindow from "../BookingWindow";
@@ -11,6 +12,9 @@ import { format } from "date-fns";
 
 export default function PlacePage() {
   const { id } = useParams();
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
   const [place, setPlace] = useState(null);
   const [host, setHost] = useState(null);
   const [showMap, setShowMap] = useState(false);
@@ -23,6 +27,29 @@ export default function PlacePage() {
 
   const [visibleReviews, setVisibleReviews] = useState(3); // Initial number of reviews to display
 
+  // ------ Messages ----- //
+  const [openhost, setOpenHost] = useState(false);
+  const [message, setMessage] = useState("");
+  const resiver = host;
+  const messageDate = new Date();
+  async function sendMessage(ev) {
+    ev.preventDefault();
+    try {
+      const messageData = {
+        resiver,
+        message,
+        messageDate,
+      };
+      if (user) {
+        await axios.post("/message", messageData); // Use messageData here        
+        setMessage("");
+      }
+    } catch (error) {
+      console.error("Error sending the message:", error);
+    }
+  }
+
+  // ----------------------------- //
   const handleShowMoreReviews = () => {
     // Increase the count to show more reviews (e.g., by 3 more)
     setVisibleReviews(visibleReviews + 3);
@@ -66,6 +93,14 @@ export default function PlacePage() {
     setOpen(false);
   };
 
+  const handleHostToOpen = () => {
+    setOpenHost(true);
+  };
+
+  const handleHostToClose = () => {
+    setOpenHost(false);
+  };
+
   useEffect(() => {
     if (!id) {
       return;
@@ -78,7 +113,6 @@ export default function PlacePage() {
     });
   }, []);
 
-  
   if (!place) return "";
 
   if (showMap) {
@@ -246,22 +280,22 @@ export default function PlacePage() {
                   About this place
                 </h2>
                 <div className="mt-2 mb-6">
-                    <p className="text-justify align-text-top">
-                      {place.description}{" "}
-                    </p>
-                    {place.extraInfo && place.extraInfo.length > 0 && (
-                      <div>
-                        <h3 className="mt-4 text-lg text-gray-700 font-semibold mb-2">
-                          Extra informations
-                        </h3>
-                        <p className="text-justify align-text-top">
-                          {place.extraInfo}{" "}
-                        </p>
-                        <div className="mt-2 text-lg text-gray-700 font-semibold">
-                          <p>Area: {place.area} (m2)</p>
-                        </div>
+                  <p className="text-justify align-text-top">
+                    {place.description}{" "}
+                  </p>
+                  {place.extraInfo && place.extraInfo.length > 0 && (
+                    <div>
+                      <h3 className="mt-4 text-lg text-gray-700 font-semibold mb-2">
+                        Extra informations
+                      </h3>
+                      <p className="text-justify align-text-top">
+                        {place.extraInfo}{" "}
+                      </p>
+                      <div className="mt-2 text-lg text-gray-700 font-semibold">
+                        <p>Area: {place.area} (m2)</p>
                       </div>
-                    )}
+                    </div>
+                  )}
                 </div>
               </dialog>
             </div>
@@ -274,9 +308,14 @@ export default function PlacePage() {
           </div>
           {place.arrive && place.leave && (
             <div>
-              Availiability: 
-              from <text className="font-bold">{format(new Date(place.arrive), 'dd-MM-yyyy')} </text>
-              to <text className="font-bold">{format(new Date(place.leave), 'dd-MM-yyyy')}</text>            
+              Availiability: from{" "}
+              <text className="font-bold">
+                {format(new Date(place.arrive), "dd-MM-yyyy")}{" "}
+              </text>
+              to{" "}
+              <text className="font-bold">
+                {format(new Date(place.leave), "dd-MM-yyyy")}
+              </text>
             </div>
           )}
           <hr className="w-60 mt-10 mb-6" />
@@ -301,10 +340,10 @@ export default function PlacePage() {
       <hr className="mt-6 mb-6" />
       <div className="flex gap-2 mb-2">
         <div className="rounded-full item-button border border-gray-600 ">
-          {host.photoprofile ? (
+          {host.profilephoto ? (
             <ImageProfile
               className="rounded-full object-cover"
-              src={host.photoprofile?.[0]}
+              src={host.profilephoto?.[0]}
               alt=""
               style={{ width: "45px", height: "45px" }}
             />
@@ -328,17 +367,132 @@ export default function PlacePage() {
         <h2 className="text-3xl font-light">Hosting by: {host.username}</h2>
       </div>
       <div className="my-4 px-8">
-        <div><text className="text-gray-700">Full Name:</text> {host.first_name} {host.last_name}</div>
+        <div>
+          <text className="text-gray-700">Full Name:</text> {host.first_name}{" "}
+          {host.last_name}
+        </div>
         {/* <div> <text className="text-gray-800">First Name:</text> {host.first_name}</div> */}
         {/* <div><text className="text-gray-800">Last Name:</text> {host.last_name}</div> */}
-        <div><text className="text-gray-700">Email:</text> {host.email}</div>
-        <div><text className="text-gray-700">Phone Number:</text> {host.phone}</div>
+        <div>
+          <text className="text-gray-700">Email:</text> {host.email}
+        </div>
+        <div>
+          <text className="text-gray-700">Phone Number:</text> {host.phone}
+        </div>
       </div>
 
       <div className="px-8 mb-6">
-        <button className="contact">contact with the host</button>
+        <Link
+          onClick={handleHostToOpen}
+          className="border rounded-2xl p-4 w-40 text-white text-center bg-indigo-400"
+        >
+          contact with the host
+        </Link>
       </div>
-        
+      <dialog
+        style={{
+          width: "70%",
+          maxWidth: "800px",
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          backgroundColor: "white",
+          boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.2)",
+          padding: "1rem",
+          zIndex: 1000,
+        }}
+        className=" rounded-2xl"
+        open={openhost}
+        onClose={handleHostToClose}
+      >
+        <button onClick={handleHostToClose} className="bg-transparent">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+        <div className="flex gap-2">
+          <div className="rounded-full item-button border border-gray-600 ">
+            {host.profilephoto ? (
+              <ImageProfile
+                className="rounded-full object-cover"
+                src={host.profilephoto?.[0]}
+                alt=""
+                style={{ width: "45px", height: "45px" }}
+              />
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="rounded-full w-10 h-10 relative self-center left-2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                />
+              </svg>
+            )}
+          </div>
+          <h2 className="mt-2 text-xl font-sans ">
+            {host.first_name} {host.last_name}
+          </h2>
+        </div>
+        <div className="mt-2 mb-6">
+          <text className="text-gray-700">Email:</text> {host.email}
+          <div>
+            <text className="text-gray-700">Phone Number:</text> {host.phone}
+          </div>
+          <div className="mt-2">
+            <p className="text-gray-600">Sent a message to the host</p>
+            <div className="flex">
+              <input
+                type="text"
+                value={message}
+                onChange={(ev) => setMessage(ev.target.value)}
+              />
+              <button className="bg-transparent" onClick={sendMessage}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+                  />
+                </svg>
+              </button>
+            </div>
+            <p className="text-xs text-gray-700">
+              You have to be a memeber to Send a message to the host{" "}
+              <Link className="underline text-black" to={"/login"}>
+                Login Now
+              </Link>
+            </p>
+          </div>
+        </div>
+      </dialog>
+
       <h2 className="text-3xl mb-2 font-light">Reviews</h2>
       {reviews.length === 0 ? (
         <p className="font-thin">No reviews yet..</p>

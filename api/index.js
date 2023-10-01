@@ -7,6 +7,7 @@ const User = require('./models/User.js');
 const Place = require('./models/Place.js');
 const Booking = require('./models/Booking.js');
 const Review = require('./models/Review.js');
+const Message = require('./models/Messages.js');
 const cookieParser = require('cookie-parser');
 const { json2xml } = require('xml-js');
 
@@ -22,6 +23,7 @@ const multer = require('multer');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const opencage = require('opencage-api-client'); //for map
+const { send } = require('process');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -386,10 +388,10 @@ app.post('/delete-user', verifyJWTadmin, async (req, res) => {
     try {
         //user id and token for verification
         const { userId } = req.body;
-        const places = await Place.find({owner: userId});
+        const places = await Place.find({ owner: userId });
         const placesId = places.map((place) => place._id);
-        await Booking.deleteMany({place: { $in: placesId } }); //delete the bookings
-        await Place.deleteMany({owner: userId}); //delete his places
+        await Booking.deleteMany({ place: { $in: placesId } }); //delete the bookings
+        await Place.deleteMany({ owner: userId }); //delete his places
         await User.deleteOne({ _id: userId }); //delete the user
         //and the photosssss
         res.status(200).json("User Deleted");
@@ -441,7 +443,7 @@ app.get('/admin-user-places/:id', verifyJWTadmin, async (req, res) => {
     }
 });
 
-app.get('/admin-host-bookings/:id', verifyJWTadmin, async(req, res) => {
+app.get('/admin-host-bookings/:id', verifyJWTadmin, async (req, res) => {
     try {
         const { id } = req.params;
         const places = await Place.find({ owner: id });
@@ -451,7 +453,7 @@ app.get('/admin-host-bookings/:id', verifyJWTadmin, async(req, res) => {
     }
 });
 
-app.get('/admin-tenant-bookings/:id', verifyJWTadmin, async(req, res) => {
+app.get('/admin-tenant-bookings/:id', verifyJWTadmin, async (req, res) => {
     try {
         const { id } = req.params;
         res.json(await Booking.find({ user: id }).populate('place'));
@@ -694,17 +696,9 @@ app.get('/place/:id', async (req, res) => {
     try {
         const place = await Place.findById(id).exec();
         const host = await User.findOne({ _id: place.owner }).exec();
-        const reviews = await Review.find({place: id}).exec();
+        const reviews = await Review.find({ place: id }).exec();
         res.json({
-            place: place, host: {
-                "username": host.username,
-                "photoprofile": host.profilephoto,
-                "first_name": host.first_name,
-                "last_name": host.last_name,
-                "email": host.email,
-                "phone": host.phone
-            },
-            reviews,
+            place: place, host, reviews,
         });
     } catch (error) {
         res.status(500).json({ error: 'Error fetching place' });
@@ -794,14 +788,14 @@ app.post('/review', async (req, res) => {
             if (err) throw err;
 
             const user = await User.findById(userData.id);
-            if (!user) 
+            if (!user)
                 throw new Error('User not found');
-            
+
             const photoprofile = user.profilephoto[0] || null;
 
             const reviewDoc = await Review.create({
-                place, user: userData.id, booking, 
-                first_name, photoprofile ,stars, review, reviewDate
+                place, user: userData.id, booking,
+                first_name, photoprofile, stars, review, reviewDate
             })
             res.json(reviewDoc);
         });
@@ -842,6 +836,38 @@ app.get('/reviews-place/:id', verifyJWTuser, async (req, res) => {
 
 //
 // --------------------------------------------------------------------------------------
+// Messages - MessagePage - PlacePage
+
+// Sending a message - sender
+app.post('/message', (req, res) => {
+    const { token } = req.cookies;
+    const { resiver, message, messageDate } = req.body;
+    try {
+        jwt.verify(token, jwtSecretUser, {}, async (err, userData) => {
+            if (err) throw err;
+            const resiver_ = await User.findById(resiver._id);
+            if (!resiver_)
+                throw new Error('Resiver not found');
+
+            const messageDoc = await Message.create({
+                sender: userData.id, 
+                resiver: resiver_._id,
+                message,
+                messageDate,
+            });
+            // console.log("Message is ready!!  ", messageDoc);
+            res.json(messageDoc);
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Error uploading the message' });
+    }
+});
+
+// Getting back the message you have - resiver
+
+
+//
+// --------------------------------------------------------------------------------------
 // Home Page
 
 // transforming documents into a new format, possibly reshaping them, grouping, sorting, and performing various operations on them.
@@ -865,7 +891,7 @@ app.get('/places', async (req, res) => {
                     photos: { $arrayElemAt: ['$photos', 0] },
                     maxGuests: '$maxGuests',
                     numBedrooms: '$numBedrooms', // Include numBedrooms field
-                    price: '$price', 
+                    price: '$price',
                     averageRating: {
                         $avg: '$reviews.stars',
                     },
@@ -913,14 +939,14 @@ app.get('/filter-places', async (req, res) => {
                     photos: { $arrayElemAt: ['$photos', 0] },
                     maxGuests: '$maxGuests',
                     numBedrooms: '$numBedrooms', // Include numBedrooms field
-                    price: '$price', 
+                    price: '$price',
                     averageRating: {
                         $avg: '$reviews.stars',
                     },
                 },
             },
         ]);
-        res.status(200).json(places);    
+        res.status(200).json(places);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
