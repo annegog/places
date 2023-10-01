@@ -66,7 +66,7 @@ export default function BookingPageHost() {
       )}
        {booking.canceled && (
         <div className="text-center text-white bg-red-800 py-2 mt-10 font-bold text-xl rounded-xl">
-            Your Reservation is Canceled!
+            This Reservation is Canceled!
         </div>
       )}
       <hr className="mt-6 mb-2" />

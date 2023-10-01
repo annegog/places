@@ -672,8 +672,11 @@ app.put('/places/:id', async (req, res) => {
             place.minDays = minDays;
             place.price = price;
             place.extraPrice = extraPrice;
+            // if( arrive && leave) {
+                
             place.arrive = arrive;
             place.leave = leave;
+            console.log( "hello", arrive, leave)
             // Save the updated place
             await place.save();
 
@@ -907,20 +910,32 @@ app.get('/places', async (req, res) => {
 
 app.get('/filter-places', async (req, res) => {
     try {
-        const { country, arrive, leave, guests } = req.query;
-        console.log(country, arrive, leave, guests);
+        const { country, arrive, leave, guests, minPrice, maxPrice, category, perks } = req.query;
         let query = {};
         if (country) {
             query.country = country;
         }
         // greater than or equal
-        if (arrive && leave) {
-            query.arrivalDate = { $gte: new Date(arrive), $lte: new Date(leave) };
-        }
+        if (arrive) {
+            const arriveDate = new Date(arrive);
+            query.arrive = { $lte: arriveDate};
+        }  
+        if (leave) {
+            const leaveDate = new Date(leave);
+            query.leave ={ $gte: leaveDate };
+        } 
         if (guests) {
             query.maxGuests = { $gte: parseInt(guests) };
         }
-        // price
+        if (minPrice) {
+            query.price = { $gte: parseInt(minPrice) };
+        }
+        if (maxPrice) {
+            query.price = { $lte: parseInt(maxPrice) };
+        }
+        if (perks.length > 0) {
+            query.perks = { $all: perks};
+        }
         //perks
         const places = await Place.aggregate([
             { $match: query },

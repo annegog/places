@@ -76,8 +76,13 @@ export default function PlacesFormPage() {
         setMinDays(data.minDays);
         setPrice(data.price);
         setExtraPrice(data.extraPrice);
-        setArrive(new Date(data.arrive));
-        setLeave(new Date(data.leave));
+        if (data.arrive) {
+          setArrive(new Date(data.arrive));
+        }
+        if (data.leave) {
+          setLeave(new Date(data.leave));
+        }
+        console.log(perks);
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {
@@ -177,6 +182,7 @@ export default function PlacesFormPage() {
             value={title}
             onChange={(ev) => setTitle(ev.target.value)}
             placeholder="for example: My exotic house"
+            required
           />
 
           {inputHeader("Address")}
@@ -197,6 +203,7 @@ export default function PlacesFormPage() {
                 value={address}
                 onChange={handleAddressChange}
                 placeholder="address"
+                required
               />
             </div>
           </div>
@@ -349,7 +356,7 @@ export default function PlacesFormPage() {
           {inputHeader("Availability Days")}
           <div className="mb-2 mt-1">
             <span className="text-gray-600">Range of Availability: </span>
-          <div>
+            <div>
               <DatePicker
                 minDate={currentDate}
                 selected={arrive}
@@ -367,24 +374,6 @@ export default function PlacesFormPage() {
                 placeholderText="Check-in date" dateFormat="dd/MM/yyyy"
               />
             </div>
-
-            {/* <div>
-              <span>Second Range of Availability: </span>
-              <DatePicker
-                minDate={currentDate}
-                selected={arrive.a2}
-                onChange={(date) => setArrive(date)}
-                className="w-full p-2 border rounded"
-                placeholderText="Check-in date"
-              />
-              <DatePicker
-                minDate={currentDate}
-                selected={leave.l2}
-                onChange={(date) => setLeave(date)}
-                className="w-full p-2 border rounded"
-                placeholderText="Check-in date"
-              />
-            </div> */}
           </div>
           <div className="mt-2 grid ">
             <h2 className="text-gray-600  mt-2 test-sm">

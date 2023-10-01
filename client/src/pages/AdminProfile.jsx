@@ -2,9 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../AdminContext";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-// import js2xml from "js2xml";
-// import {json2xml} from "xml-js";
-// const { json2xml } = require('xml-js');
+import ImageProfile from "../ImageProfile";
 
 export default function AdminProfile () {
   const {admin, setAdmin, ready} = useContext(AdminContext)

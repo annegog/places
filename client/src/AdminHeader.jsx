@@ -4,6 +4,7 @@ import './App.css';
 import { AdminContext } from "./AdminContext";
 import logo from "./logo.png"
 import axios from "axios";
+import ImageProfile from "./ImageProfile";
 
 export default function AdminHeader(){
     const {admin, setAdmin} = useContext(AdminContext);
