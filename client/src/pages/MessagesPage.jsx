@@ -26,7 +26,7 @@ export default function MessagesPage() {
         const participantIds = [
           ...new Set([
             ...data.map((message) => message.sender),
-            ...data.map((message) => message.receiver),
+            ...data.map((message) => message.resiver),
           ]),
         ];
 
@@ -141,7 +141,7 @@ export default function MessagesPage() {
               const isFromSelectedParticipant =
                 message.sender === selectedParticipant;
               const isToSelectedParticipant =
-                message.receiver === selectedParticipant;
+                message.resiver === selectedParticipant;
               return (
                 (isFromSelectedParticipant || isToSelectedParticipant) && (
                   <div

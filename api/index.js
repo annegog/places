@@ -673,10 +673,10 @@ app.put('/places/:id', async (req, res) => {
             place.price = price;
             place.extraPrice = extraPrice;
             // if( arrive && leave) {
-                
+
             place.arrive = arrive;
             place.leave = leave;
-            console.log( "hello", arrive, leave)
+            console.log("hello", arrive, leave)
             // Save the updated place
             await place.save();
 
@@ -871,11 +871,16 @@ app.post('/message', verifyJWTuser, async (req, res) => {
 // Getting back the message you have - resiver
 app.get('/messages', verifyJWTuser, async (req, res) => {
     try {
-        const messages = await Message.find({ resiver: req.id });
+        const messages = await Message.find({
+            $or: [
+                { sender: req.id },
+                { resiver: req.id }
+            ]
+        });
         // console.log(messages);
         res.json(messages);
     } catch (error) {
-        console.error('aaaa Error fetching the messages:', error);
+        console.error('Error fetching the messages:', error);
         res.status(500).json({ error: 'Error fetching the messages' });
     }
 });
@@ -883,7 +888,7 @@ app.get('/messages', verifyJWTuser, async (req, res) => {
 // get the user=id 
 app.get('/users/:id', verifyJWTuser, async (req, res) => {
     const { id } = req.params;
-    // console.log('Received ID:', id); 
+    console.log('Received - SENDER ID:', id); 
     try {
         const user = await User.findById(id).exec();
         console.log(user);
@@ -943,12 +948,12 @@ app.get('/filter-places', async (req, res) => {
         // greater than or equal
         if (arrive) {
             const arriveDate = new Date(arrive);
-            query.arrive = { $lte: arriveDate};
-        }  
+            query.arrive = { $lte: arriveDate };
+        }
         if (leave) {
             const leaveDate = new Date(leave);
-            query.leave ={ $gte: leaveDate };
-        } 
+            query.leave = { $gte: leaveDate };
+        }
         if (guests) {
             query.maxGuests = { $gte: parseInt(guests) };
         }
@@ -962,19 +967,16 @@ app.get('/filter-places', async (req, res) => {
             query.category = category;
         }
         if (perks && perks.length > 0) {
-            query.perks = { $all: perks};
+            query.perks = { $all: perks };
         }
-        if (bedrooms)
-        {
-            query.numBedrooms = { $gte: parseInt(bedrooms)};
+        if (bedrooms) {
+            query.numBedrooms = { $gte: parseInt(bedrooms) };
         }
-        if (beds)
-        {
-            query.maxBeds = { $gte: parseInt(beds)};
+        if (beds) {
+            query.maxBeds = { $gte: parseInt(beds) };
         }
-        if (bathrooms)
-        {
-            query.numBaths = { $gte: parseInt(bathrooms)};
+        if (bathrooms) {
+            query.numBaths = { $gte: parseInt(bathrooms) };
         }
         const places = await Place.aggregate([
             { $match: query },
