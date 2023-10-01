@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState, useContext} from "react";
+import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../UserContext";
 import axios from "axios";
 import AccountNav from "../AccounNav";
@@ -36,20 +36,22 @@ export default function BookingPageTenant() {
     if (!id) {
       return;
     }
-    axios.get("/review/" + id)
-    .then((response) => {
-      if (response.data && response.data.stars && response.data.review) {
-        setHasReview(true);
-        setStars(response.data.stars);
-        setReview(response.data.review);
-      } else {
+    axios
+      .get("/review/" + id)
+      .then((response) => {
+        if (response.data && response.data.stars && response.data.review) {
+          setHasReview(true);
+          setStars(response.data.stars);
+          setReview(response.data.review);
+        } else {
+          setHasReview(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching review:", error);
         setHasReview(false);
-      }
-    }).catch((error) => {
-      console.error("Error fetching review:", error);
-      setHasReview(false);
-    });
-}, [id]);
+      });
+  }, [id]);
 
   if (!booking) {
     return "";
@@ -59,7 +61,7 @@ export default function BookingPageTenant() {
     ev.preventDefault();
     try {
       const response = await axios.post("/review", {
-        place: booking.place, 
+        place: booking.place,
         booking: booking._id,
         first_name: booking.first_name,
         stars,
@@ -73,8 +75,8 @@ export default function BookingPageTenant() {
     }
   }
 
-  async function handleCancelation () {
-    axios.post('/booking-cancelation/'+id);
+  async function handleCancelation() {
+    axios.post("/booking-cancelation/" + id);
     window.location.reload();
   }
 
@@ -221,35 +223,78 @@ export default function BookingPageTenant() {
           Take a look at the place
         </Link>
       </div>
-      {moment().startOf('day') <= moment(booking.checkOut).startOf('day') && !booking.canceled && (
-        <div>
-          <p className="text-gray-700 text-sm">
-            To cancel your reservation, please provide us with a minimum of{" "}
-            <span className="font-semibold">20 days'</span> notice before your
-            intended cancellation date. This allows us to efficiently handle any
-            necessary arrangements. Your cooperation is greatly appreciated.
-          </p>
-          <button 
-            className="bg-red-700 p-3 mt-1 text-white rounded-2xl text-right"
-            onClick={handleCancelation}>
-            Cancel the Reservation
-          </button>
-        </div>
-      )}
+      {moment().startOf("day") <= moment(booking.checkOut).startOf("day") &&
+        !booking.canceled && (
+          <div>
+            <p className="text-gray-700 text-sm">
+              To cancel your reservation, please provide us with a minimum of{" "}
+              <span className="font-semibold">20 days'</span> notice before your
+              intended cancellation date. This allows us to efficiently handle
+              any necessary arrangements. Your cooperation is greatly
+              appreciated.
+            </p>
+            <button
+              className="bg-red-700 p-3 mt-1 text-white rounded-2xl text-right"
+              onClick={handleCancelation}
+            >
+              Cancel the Reservation
+            </button>
+          </div>
+        )}
       {booking.canceled && (
         <div className="text-center text-white bg-red-800 py-2 mt-10 font-bold text-xl rounded-xl">
-            Your Reservation is Canceled!
+          Your Reservation is Canceled!
         </div>
       )}
 
       <hr className="mt-6 mb-2" />
       <div className="mt-4">
-      {moment().startOf('day') >= moment(booking.checkIn).startOf('day') && !hasReview && !booking.canceled && (
-        <div>
-            <h2 className="text-2xl">Leave your Review</h2>
+        {moment().startOf("day") >= moment(booking.checkIn).startOf("day") &&
+          !hasReview &&
+          !booking.canceled && (
+            <div>
+              <h2 className="text-2xl">Leave your Review</h2>
+              <div className="flex align-baseline">
+                <svg
+                  className="w-6 h-6 text-yellow-300 mr-1"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 22 20"
+                >
+                  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                </svg>
+                <input
+                  type="number"
+                  className="w-4 h-8 p-4 rounded-md border border-gray-300 text-gray-700"
+                  min="1"
+                  max="5"
+                  step="1"
+                  placeholder="Rate"
+                  value={stars}
+                  onChange={(ev) => setStars(ev.target.value)}
+                />
+                /5
+              </div>
+              <textarea
+                placeholder="Write your opinion about this place. The host, the city, the neighborhood ..."
+                value={review}
+                onChange={(ev) => setReview(ev.target.value)}
+              />
+              <button
+                className="bg-indigo-400 p-3 text-white rounded-2xl text-right"
+                onClick={reviewIt}
+              >
+                Save Review
+              </button>
+            </div>
+          )}
+        {hasReview && (
+          <div>
+            <h2 className="text-2xl">Your Review</h2>
             <div className="flex align-baseline">
               <svg
-                className="w-6 h-6 text-yellow-300 mr-1"
+                className="w-6 h-7 text-yellow-300 mr-1"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -257,39 +302,11 @@ export default function BookingPageTenant() {
               >
                 <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
               </svg>
-              <input
-                type="number"
-                className="w-4 h-8 p-4 rounded-md border border-gray-300 text-gray-700"
-                min="1" max="5" step="1" placeholder="Rate" value={stars}
-                onChange={(ev) => setStars(ev.target.value)}
-              />
-              /5
+              <text className="font-serif text-lg">{stars}/5</text>
             </div>
-            <textarea placeholder="Write your opinion about this place. The host, the city, the neighborhood ..."
-            value={review}
-            onChange={(ev) => setReview(ev.target.value)}/>
-            <button className="bg-indigo-400 p-3 text-white rounded-2xl text-right" 
-                  onClick={reviewIt}>
-              Save Review
-            </button>
+            <textarea readOnly value={review} />
           </div>
         )}
-        {hasReview && (
-          <div>
-          <h2 className="text-2xl">Your Review</h2>
-          <div className="flex align-baseline">
-            <svg className="w-6 h-7 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-              <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-            </svg>
-            <text className="font-serif text-lg">{stars}/5</text>
-          </div>
-          <textarea readOnly value={review}/>
-        </div>
-        )}
-      </div>
-      <div className="mt-4">
-        <h2 className="text-2xl">Messages with the Host</h2>
-        {/* <Messages></Messages> */}
       </div>
     </div>
   );
