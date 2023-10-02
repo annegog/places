@@ -25,8 +25,8 @@ export default function BookingPageHost() {
     return "";
   }
 
-  async function handleCancelation () {
-    axios.post('/booking-cancelation/'+id);
+  async function handleCancelation() {
+    axios.post("/booking-cancelation/" + id);
     window.location.reload();
   }
 
@@ -57,26 +57,19 @@ export default function BookingPageHost() {
       </div>
       {!booking.canceled && (
         <div className="">
-          <button 
+          <button
             className="bg-red-700 p-2 text-white rounded-2xl text-right"
-            onClick={handleCancelation}>
+            onClick={handleCancelation}
+          >
             Cancel the reservation
           </button>
         </div>
       )}
-       {booking.canceled && (
+      {booking.canceled && (
         <div className="text-center text-white bg-red-800 py-2 mt-10 font-bold text-xl rounded-xl">
-            This Reservation is Canceled!
+          This Reservation is Canceled!
         </div>
       )}
-      <hr className="mt-6 mb-2" />
-      <div className="mt-4">
-        <h2 className="text-2xl">
-          Messages with {booking.first_name} {booking.last_name}
-        </h2>
-        {/* <Messages></Messages> */}
-      </div>
-      
     </div>
   );
 }
