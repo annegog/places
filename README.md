@@ -1,54 +1,37 @@
 # Web Application Technologies - TEDI
-----
+
 ### Atalanti Papadaki - Anna Gogoula
+
 ---------------------------------------
-In this Project we use M.E.R.N.
 
+The project involves the development of a fully functional website for renting houses and rooms. The application allows users with different roles to search for and offer accommodations with ease and convenience. Key features of the application include the ability to create user accounts, log in using email, and manage user profiles. Renters can search for available accommodations based on their preferences and make reservations. They can also rate the accommodations they have used, access reviews and ratings from other users, aiding them in making accommodation choices.
 
-Documentation
-------
-- Περιγραφή του Project: 
-Το έργο αφορά την ανάπτυξη μιας πλήρως λειτουργικής ιστοσελίδας για την ενοικίαση κατοικιών και δωματίων. Η εφαρμογή θα επιτρέπει σε χρήστες από διάφορους ρόλους να αναζητούν και να προσφέρουν καταλύματα με άνεση και ευκολία. Χαρακτηριστικά η εφαρμογή δίνει την δυνατότητα δημιουργίας λογαριασμού και σύνδεσης χρηστών με την χρήση mail και την διαχείριση του λογαριασμού τους. 
-Οι ενοικιαστές μπορούν να αναζητούν διαθέσιμα καταλύματα με βάση τις προτιμήσεις τους και να πραγματοποιούν κρατήσεις. Μπορούν επίσης να αξιολογούν τα καταλύματα που έχουν χρησιμοποιήσει, να ανατρέχουν σε γνώμες και αξιολογήσεις από άλλους χρήστες για να λάβουν αποφάσεις σχετικά με την επιλογή του καταλύματος. 
-Οι χρήστες με τον ρόλο του οικοδεσπότη μπορούν να καταχωρούν τα ακίνητά τους προς ενοικίαση, αυτό περιλαμβάνει την παροχή λεπτομερών πληροφοριών για τον τύπο του καταλύματος, την τοποθεσία, τις διαθέσιμες ημερομηνίες, τις τιμές και τις φωτογραφίες.
-Ο διαχειριστής έχει την δυνατότητα να διαχειρίζεται τους χρήστες της εφαρμογής, να επικυρώνει λογαριασμούς και να διαγράφει χρήστες όταν αυτό κρίνεται απαραίτητο.
-Στόχος του project είναι η δημιουργία μιας ευέλικτης και ευχάριστης εμπειρίας χρήστη, προσφέροντας ταυτόχρονα ευκαιρίες για ενοικίαση και εξερεύνηση κατοικιών.
+Users with the role of hosts can list their properties for rent, including providing detailed information such as the type of accommodation, location, available dates, pricing, and photos.
 
-- Αρχιτεκτονική: 
-Η αρχιτεκτονική ενός web app είναι κρίσιμη για την αποτελεσματική ανάπτυξη και λειτουργία του. Στην περίπτωση του MERN (MongoDB, Express.js, React, Node.js), το οποίο χρησιμοποιήσαμε, πρόκειται για μια σύγχρονη αρχιτεκτονική που χρησιμοποιείται ευρέως για την ανάπτυξη web εφαρμογών. 
+Administrators have the ability to manage application users, verify accounts, and delete users when necessary.
 
-Δομή του Κώδικα και Οργάνωση:
+The project's goal is to create a flexible and enjoyable user experience while offering opportunities for renting and exploring houses.
 
-- client: Εδώ βρίσκεται ο κώδικας του React, συμπεριλαμβανομένων των συστατικών, των διαδρομών και των στυλ.
+- Architecture
+The architecture of a web app is crucial for its effective development and operation. In the case of MERN (MongoDB, Express.js, React, Node.js), which we utilized, it represents a contemporary architecture widely used for web application development.
+    * Code Structure and Organization
+    here are two main folders:
 
-- api: Αυτός ο φάκελος περιέχει τον κώδικα του server Node.js, συμπεριλαμβανομένων των διαδρομών, των ελέγχων (controllers) και των αρχείων που σχετίζονται με τη βάση δεδομένων.
+        -   client: This is where the React code resides, including components, routes, and styles.
+        -   api: This folder contains the Node.js server code, including routes, controllers, and database-related files. Additionally, it includes a 'models' folder where MongoDB data models are stored. Another folder is for images, for rental and user profile photos.
 
-- models: Εδώ αποθηκεύονται τα μοντέλα που αντιστοιχούν στα δεδομένα της MongoDB.
+The MERN architecture allows for the development of a dynamic and efficient web app that leverages the advantages of JavaScript on both the client and server sides.
+We used Express.js, as it helped us manage HTTP requests and create routes, allowing the creation of an API that connects the MongoDB database to the client side. Due to difficulties in implementing the SSL/TLS protocol, it is not included.
 
-δεν το έχουμε - routes: Ο φάκελος αυτός περιλαμβάνει τις διαδρομές (routes) που χρησιμοποιούνται για τη διαχείριση των αιτημάτων από τον πελάτη προς τον εξυπηρετητή.
+- Installation Instructions:
+Install yarn ('npm install --global yarn' if yarn is not already installed).
+    *   Run 'yarn install'.
+    *   To run the application (while in the 'airbnb' folder):
+        **  Navigate to 'client' folder.
+        **  Run 'yarn dev'.
+        **  Navigate to 'api' folder.
+        **  Run 'node index.js'.
 
-- config: Εδώ υπάρχουν αρχεία που περιέχουν ρυθμίσεις, όπως τα κλειδιά της βάσης δεδομένων και άλλες παραμέτρους περιβάλλοντος.
-
-Η αρχιτεκτονική MERN επιτρέπει την ανάπτυξη ενός δυναμικού και αποδοτικού web app που εκμεταλλεύεται τις πλεονεκτήματα της JavaScript στην πλευρά του πελάτη και του εξυπηρετητή.
-
-- Οδηγίες Εγκατάστασης: 
-Παρέχετε αναλυτικές οδηγίες για το πώς να εγκαταστήσετε το web app σε έναν τοπικό υπολογιστή. Αυτό περιλαμβάνει εγκατάσταση απαιτούμενων εξαρτημάτων και βήματα για την εκκίνηση του.
-
-- Οδηγός Χρήσης: 
-Δημιουργήστε έναν οδηγό χρήσης που εξηγεί πώς να χρησιμοποιήσουν το web app οι χρήστες. Αναλύστε τις διάφορες λειτουργίες και τις ενέργειες που μπορούν να πραγματοποιήσουν.
-
-- Διαγράμματα και Οθόνες: 
-Παρέχετε διαγράμματα ροής και στιγμιότυπα οθονών που εξηγούν τη διαδικασία χρήσης του web app. Αυτά μπορούν να βοηθήσουν τους χρήστες να κατανοήσουν το πώς να πλοηγηθούν στο web app.
-
-- API Documentation: 
-Εάν το web app σας χρησιμοποιεί APIs, παρέχετε τεκμηρίωση για τα APIs, περιλαμβανομένων των αιτημάτων και των απαντήσεων.
-
-- Συχνές Ερωτήσεις (FAQ): 
-Δημιουργήστε ένα τμήμα με συχνές ερωτήσεις που μπορεί να έχουν οι χρήστες και παρέχετε απαντήσεις σε αυτές τις ερωτήσεις.
-
-
---------------
--- MongoDB (M): Το MongoDB είναι ένα NoSQL σύστημα διαχείρισης βάσεων δεδομένων που χρησιμοποιείται για την αποθήκευση και την ανάκτηση δεδομένων. Συνήθως χρησιμοποιείται για την αποθήκευση πληροφοριών όπως οικοδομικά στοιχεία, χρήστες, αξιολογήσεις και κρατήσεις.
--- Express.js (E): Το Express.js είναι ένα δημοφιλές πλαίσιο εφαρμογής στον εξυπηρετητή (server-side framework) που βοηθά στην διαχείριση αιτημάτων HTTP και στη δημιουργία των διαδρομών (routes). Επιτρέπει τη δημιουργία ενός API που συνδέει τη βάση δεδομένων MongoDB με την πλευρά του πελάτη.
--- React (R): Το React είναι ένα ανοιχτού κώδικα JavaScript βιβλιοθήκη που χρησιμοποιείται για την δημιουργία του πελάτη (client-side) της εφαρμογής. Χρησιμοποιεί συστατικά (components) για την οργάνωση και την ανανέωση της διεπαφής χρήστη, και προσφέρει μια αποδοτική και δυναμική εμπειρία.
--- Node.js (N): Το Node.js είναι μια πλατφόρμα που χρησιμοποιείται για την εκτέλεση κώδικα JavaScript στην πλευρά του εξυπηρετητή. Επιτρέπει την ανάπτυξη εφαρμογών στην πλευρά του εξυπηρετητή και την επικοινωνία με τη βάση δεδομένων MongoDB.
+The application runs on http://localhost:5173/, which is also displayed in the terminal when running 'yarn dev'.
+➜ Local: http://localhost:5173/
+(Note: The project has been run and tested only on Linux machines.)"
