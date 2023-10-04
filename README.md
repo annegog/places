@@ -35,4 +35,4 @@ We used Express.js, as it helped us manage HTTP requests and create routes, allo
 The application runs on http://localhost:5173/, which is also displayed in the terminal when running 'yarn dev'.
       ➜ Local: http://localhost:5173/
       
-      (Note: The project has been run and tested only on Linux machines.)"
+(Note: The project has been run and tested only on Linux machines.)
